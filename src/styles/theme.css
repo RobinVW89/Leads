@@ -1,17 +1,17 @@
 :root {
-  --color-bg: #f4f7fb;
+  --color-bg: #f6f4ef;
   --color-surface: #ffffff;
-  --color-primary: #0f3b66;
-  --color-primary-strong: #082947;
-  --color-primary-soft: #e7eff8;
-  --color-accent: #d97a2b;
-  --color-accent-soft: #fff1e4;
-  --color-text: #1f2a37;
-  --color-muted: #526074;
-  --color-border: #d7deea;
+  --color-primary: #16324f;
+  --color-primary-strong: #0f253b;
+  --color-primary-soft: #e4ebf3;
+  --color-accent: #b9602d;
+  --color-accent-soft: #f9eee7;
+  --color-text: #222629;
+  --color-muted: #5c646d;
+  --color-border: #d8d1c6;
   --radius: 14px;
-  --shadow: 0 12px 30px rgba(15, 59, 102, 0.08);
-  --shadow-soft: 0 6px 20px rgba(8, 41, 71, 0.08);
+  --shadow: 0 8px 22px rgba(25, 30, 36, 0.07);
+  --shadow-soft: 0 4px 14px rgba(25, 30, 36, 0.08);
   --container: 1100px;
 }
 
@@ -26,8 +26,8 @@ body {
   font-family: 'Manrope', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   color: var(--color-text);
   background:
-    radial-gradient(circle at 10% 8%, #eef6ff 0, transparent 40%),
-    radial-gradient(circle at 90% 0, #fef3ea 0, transparent 28%),
+    radial-gradient(circle at 85% 5%, #fbeedc 0, transparent 25%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45) 1px, transparent 1px, transparent 36px),
     var(--color-bg);
   line-height: 1.5;
 }
@@ -86,6 +86,7 @@ textarea:focus-visible {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 1.2rem;
+  position: relative;
 }
 
 .card p:last-child {
@@ -122,7 +123,7 @@ button,
 }
 
 .site-header {
-  background: #fffffff0;
+  background: #fbfaf7f0;
   backdrop-filter: blur(3px);
   border-bottom: 1px solid var(--color-border);
   position: sticky;
@@ -143,6 +144,7 @@ button,
   text-decoration: none;
   font-weight: 800;
   font-size: 1.05rem;
+  letter-spacing: 0.01em;
 }
 
 .tel-link {
@@ -176,7 +178,8 @@ button,
 }
 
 .hero-main {
-  background: linear-gradient(145deg, #ffffff 40%, #f1f7ff 100%);
+  background: linear-gradient(170deg, #fff 45%, #f8f5ef 100%);
+  border-left: 4px solid var(--color-accent);
 }
 
 .hero-main p {
@@ -184,7 +187,7 @@ button,
 }
 
 .quick-card {
-  background: linear-gradient(145deg, #fff9f3 0, #ffffff 60%);
+  background: #fcfaf6;
 }
 
 .pill-list {
@@ -202,6 +205,21 @@ button,
   border: 1px solid #f0d7bc;
   background: var(--color-accent-soft);
   color: #874312;
+}
+
+.eyebrow {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.74rem;
+  color: var(--color-muted);
+  margin-bottom: 0.7rem;
+  font-weight: 700;
+}
+
+.note {
+  font-size: 0.95rem;
+  color: var(--color-muted);
 }
 
 .grid {
@@ -222,6 +240,10 @@ button,
   padding: 0.4rem 0.8rem;
   font-weight: 600;
   font-size: 0.9rem;
+}
+
+.card .badge {
+  margin-right: 0.4rem;
 }
 
 .footer {

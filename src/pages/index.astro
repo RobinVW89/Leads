@@ -6,6 +6,8 @@ import { metiersData, villesData } from '../lib/data';
 
 const title = `${SITE_CONFIG.siteName} | Devis gratuit dans l'Yonne`;
 const description = SITE_CONFIG.tagline;
+const metiersActifs = metiersData.filter((metier) => metier.actif).length;
+const metiersBientot = metiersData.filter((metier) => !metier.actif).length;
 
 const organizationSchema = {
 	'@context': 'https://schema.org',
@@ -22,18 +24,23 @@ const organizationSchema = {
 	<section class="hero">
 		<div class="hero-grid">
 			<article class="card hero-main">
+				<span class="eyebrow">Portail local - Yonne (89)</span>
 				<h1>Trouvez un artisan de confiance dans l'Yonne</h1>
-				<p>{SITE_CONFIG.tagline}</p>
+				<p>
+					Nous mettons en relation les particuliers avec des professionnels locaux, selon votre metier et votre
+					commune. La demande est simple, sans engagement, et traitee rapidement.
+				</p>
 				<ReassuranceBadges />
 				<div class="pill-list" aria-label="Indicateurs de couverture locale">
-					<span class="pill">6 métiers couverts</span>
-					<span class="pill">15 villes locales</span>
-					<span class="pill">Mise en relation gratuite</span>
+					<span class="pill">{metiersActifs} metiers ouverts</span>
+					<span class="pill">{metiersBientot} metiers bientot</span>
+					<span class="pill">{villesData.length} villes couvertes</span>
 				</div>
+				<p class="note">Aucun faux avis, aucune promesse irrealiste: uniquement de la mise en relation locale.</p>
 			</article>
 			<aside class="card quick-card">
 				<h2>Accès rapide</h2>
-				<p class="muted">Choisissez un métier et une ville pour ouvrir la page dédiée.</p>
+				<p class="muted">Selectionnez votre besoin pour arriver directement sur la bonne page locale.</p>
 				<form id="quick-access-form">
 					<div>
 						<label for="quick-metier">Métier</label>
@@ -61,6 +68,7 @@ const organizationSchema = {
 
 	<section class="section" id="metiers">
 		<h2>Nos métiers</h2>
+		<p class="muted" style="margin-top: -0.2rem;">Chaque page metier explique les prestations, les prix indicatifs et les cas frequents dans l'Yonne.</p>
 		<div class="grid cols-3">
 			{metiersData.map((metier) => (
 				<article class="card">
