@@ -25,6 +25,12 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
@@ -42,15 +48,21 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 		))}
 	</head>
 	<body>
+		<a href="#contenu" class="skip-link">Aller au contenu principal</a>
 		<header class="site-header">
 			<div class="container inner">
 				<a class="brand" href="/">{SITE_CONFIG.siteName}</a>
+				<nav class="top-nav" aria-label="Navigation principale">
+					<a href="/#metiers">Métiers</a>
+					<a href="/comment-ca-marche">Comment ça marche</a>
+					<a href="/mentions-legales">Mentions légales</a>
+				</nav>
 				<a class="tel-link" href={`tel:${SITE_CONFIG.telContactHref}`}>
 					{SITE_CONFIG.telContact}
 				</a>
 			</div>
 		</header>
-		<main class="container">
+		<main class="container" id="contenu">
 			{breadcrumbs.length > 0 && (
 				<nav class="breadcrumbs" aria-label="Fil d'Ariane">
 					{breadcrumbs.map((crumb, index) => (

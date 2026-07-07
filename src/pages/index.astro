@@ -21,12 +21,17 @@ const organizationSchema = {
 <Layout title={title} description={description} jsonLd={organizationSchema}>
 	<section class="hero">
 		<div class="hero-grid">
-			<article class="card">
+			<article class="card hero-main">
 				<h1>Trouvez un artisan de confiance dans l'Yonne</h1>
 				<p>{SITE_CONFIG.tagline}</p>
 				<ReassuranceBadges />
+				<div class="pill-list" aria-label="Indicateurs de couverture locale">
+					<span class="pill">6 métiers couverts</span>
+					<span class="pill">15 villes locales</span>
+					<span class="pill">Mise en relation gratuite</span>
+				</div>
 			</article>
-			<aside class="card">
+			<aside class="card quick-card">
 				<h2>Accès rapide</h2>
 				<p class="muted">Choisissez un métier et une ville pour ouvrir la page dédiée.</p>
 				<form id="quick-access-form">
@@ -54,7 +59,7 @@ const organizationSchema = {
 		</div>
 	</section>
 
-	<section class="section">
+	<section class="section" id="metiers">
 		<h2>Nos métiers</h2>
 		<div class="grid cols-3">
 			{metiersData.map((metier) => (
