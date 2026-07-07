@@ -1,0 +1,79 @@
+---
+import { SITE_CONFIG } from '../config/site';
+import '../styles/theme.css';
+
+type Crumb = {
+	label: string;
+	href?: string;
+};
+
+type Props = {
+	title: string;
+	description: string;
+	canonicalPath?: string;
+	breadcrumbs?: Crumb[];
+	jsonLd?: object | object[];
+};
+
+const { title, description, canonicalPath = Astro.url.pathname, breadcrumbs = [], jsonLd = [] } = Astro.props;
+const canonicalUrl = new URL(canonicalPath, SITE_CONFIG.siteUrl).toString();
+const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
+---
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalUrl} />
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content="fr_FR" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:site_name" content={SITE_CONFIG.siteName} />
+		{jsonLdList.map((entry) => (
+			<script type="application/ld+json" set:html={JSON.stringify(entry)} />
+		))}
+	</head>
+	<body>
+		<header class="site-header">
+			<div class="container inner">
+				<a class="brand" href="/">{SITE_CONFIG.siteName}</a>
+				<a class="tel-link" href={`tel:${SITE_CONFIG.telContactHref}`}>
+					{SITE_CONFIG.telContact}
+				</a>
+			</div>
+		</header>
+		<main class="container">
+			{breadcrumbs.length > 0 && (
+				<nav class="breadcrumbs" aria-label="Fil d'Ariane">
+					{breadcrumbs.map((crumb, index) => (
+						<>
+							{index > 0 && ' / '}
+							{crumb.href ? <a href={crumb.href}>{crumb.label}</a> : <span>{crumb.label}</span>}
+						</>
+					))}
+				</nav>
+			)}
+			<slot />
+		</main>
+		<footer class="footer">
+			<div class="container">
+				<p>
+					{SITE_CONFIG.siteName} • Mise en relation gratuite avec des professionnels locaux vérifiés dans
+					l'Yonne.
+				</p>
+				<p>
+					<a href="/comment-ca-marche">Comment ça marche</a> • <a href="/mentions-legales">Mentions légales</a>{' '}
+					• <a href="/politique-confidentialite">Politique de confidentialité</a>
+				</p>
+			</div>
+		</footer>
+	</body>
+</html>

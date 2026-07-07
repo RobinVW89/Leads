@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE_CONFIG } from '../config/site';
+
+const title = 'Mentions légales | Travaux & Pros de l\'Yonne';
+const description = 'Informations légales du portail Travaux & Pros de l\'Yonne.';
+const breadcrumbs = [
+  { label: 'Accueil', href: '/' },
+  { label: 'Mentions légales' }
+];
+---
+
+<Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath="/mentions-legales">
+  <section class="section">
+    <h1>Mentions légales</h1>
+    <article class="card">
+      <h2>Éditeur du site</h2>
+      <p>
+        {SITE_CONFIG.siteName}<br />
+        Contact : <a href={`mailto:${SITE_CONFIG.contactEmail}`}>{SITE_CONFIG.contactEmail}</a><br />
+        Téléphone : <a href={`tel:${SITE_CONFIG.telContactHref}`}>{SITE_CONFIG.telContact}</a>
+      </p>
+    </article>
+
+    <article class="card" style="margin-top: 1rem;">
+      <h2>Hébergement</h2>
+      <p>
+        Site hébergé sur Cloudflare Pages.<br />
+        Cloudflare, Inc. - 101 Townsend St, San Francisco, CA 94107, USA.
+      </p>
+    </article>
+
+    <article class="card" style="margin-top: 1rem;">
+      <h2>Objet du service</h2>
+      <p>
+        Ce site propose un service de mise en relation entre particuliers et professionnels locaux de l'Yonne dans
+        le cadre d'une demande de devis.
+      </p>
+    </article>
+  </section>
+</Layout>

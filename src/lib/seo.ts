@@ -1,0 +1,41 @@
+import { SITE_CONFIG } from '../config/site';
+import type { Metier, Ville } from './data';
+
+export function serviceSchema(metier: Metier, ville: Ville, canonicalPath: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: `${metier.nom} à ${ville.nom}`,
+    serviceType: metier.nom,
+    areaServed: {
+      '@type': 'City',
+      name: ville.nom
+    },
+    provider: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.siteName,
+      telephone: SITE_CONFIG.telContact,
+      url: SITE_CONFIG.siteUrl
+    },
+    offers: {
+      '@type': 'Offer',
+      description: 'Mise en relation gratuite avec un professionnel local.'
+    },
+    url: new URL(canonicalPath, SITE_CONFIG.siteUrl).toString()
+  };
+}
+
+export function faqSchema(metier: Metier) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: metier.questionsFrequentes.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.reponse
+      }
+    }))
+  };
+}

@@ -1,0 +1,70 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE_CONFIG } from '../config/site';
+
+const title = 'Politique de confidentialité | Travaux & Pros de l\'Yonne';
+const description = 'Politique de confidentialité et traitement des données personnelles.';
+const breadcrumbs = [
+  { label: 'Accueil', href: '/' },
+  { label: 'Politique de confidentialité' }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  canonicalPath="/politique-confidentialite"
+>
+  <section class="section">
+    <h1>Politique de confidentialité</h1>
+
+    <article class="card">
+      <h2>Finalité du traitement</h2>
+      <p>
+        Les données saisies dans les formulaires sont collectées pour la seule finalité de mise en relation avec le
+        professionnel concerné par votre demande.
+      </p>
+    </article>
+
+    <article class="card" style="margin-top: 1rem;">
+      <h2>Données collectées</h2>
+      <p>
+        Prénom, téléphone, email, commune, description du besoin, délai souhaité, métier recherché, ville concernée et
+        page source de la demande.
+      </p>
+    </article>
+
+    <article class="card" style="margin-top: 1rem;">
+      <h2>Destinataires des données</h2>
+      <p>
+        Les données sont transmises au professionnel local concerné afin qu'il puisse vous recontacter. Elles ne sont
+        pas revendues à des tiers non concernés par votre demande.
+      </p>
+    </article>
+
+    <article class="card" style="margin-top: 1rem;">
+      <h2>Durée de conservation</h2>
+      <p>
+        Les données sont conservées pour la durée nécessaire au traitement de la demande et au suivi commercial
+        raisonnable, puis supprimées ou anonymisées selon les obligations légales en vigueur.
+      </p>
+    </article>
+
+    <article class="card" style="margin-top: 1rem;">
+      <h2>Vos droits</h2>
+      <p>
+        Vous disposez d'un droit d'accès, de rectification, de suppression et de limitation du traitement de vos
+        données. Pour exercer ces droits, contactez : <a href={`mailto:${SITE_CONFIG.contactEmail}`}>{SITE_CONFIG.contactEmail}</a>.
+      </p>
+    </article>
+
+    <article class="card" style="margin-top: 1rem;">
+      <h2>Cookies et traceurs</h2>
+      <p>
+        Le site n'utilise pas de cookies non nécessaires ni de tracking tiers. Aucun bandeau cookie n'est requis dans
+        la configuration actuelle.
+      </p>
+    </article>
+  </section>
+</Layout>

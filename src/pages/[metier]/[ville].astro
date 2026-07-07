@@ -1,0 +1,112 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import LeadForm from '../../components/LeadForm.astro';
+import ReassuranceBadges from '../../components/ReassuranceBadges.astro';
+import { metiersData, villesData, type Metier, type Ville } from '../../lib/data';
+import { getLocalizedIntro, getSectionOrder } from '../../lib/content';
+import { faqSchema, serviceSchema } from '../../lib/seo';
+
+export async function getStaticPaths() {
+  return metiersData.flatMap((metier) =>
+    villesData.map((ville) => ({
+      params: { metier: metier.slug, ville: ville.slug },
+      props: { metier, ville }
+    }))
+  );
+}
+
+type Props = {
+  metier: Metier;
+  ville: Ville;
+};
+
+const { metier, ville } = Astro.props;
+
+const h1 = `${metier.nom} à ${ville.nom} - devis gratuit`;
+const description = `${metier.nom} à ${ville.nom} (${ville.codePostal}). ${ville.phraseLocale} Mise en relation gratuite avec un professionnel local.`;
+const intro = getLocalizedIntro(metier, ville);
+const sectionOrder = getSectionOrder(metier.slug, ville.slug);
+const nearby = ville.quartiersOuCommunesProches.join(', ');
+const canonicalPath = `/${metier.slug}/${ville.slug}/`;
+
+const breadcrumbs = [
+  { label: 'Accueil', href: '/' },
+  { label: metier.nom, href: `/${metier.slug}/` },
+  { label: ville.nom }
+];
+
+const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)];
+---
+
+<Layout
+  title={h1}
+  description={description}
+  canonicalPath={canonicalPath}
+  breadcrumbs={breadcrumbs}
+  jsonLd={schemas}
+>
+  <h1 style="margin-top: 1.4rem;">{h1}</h1>
+  <p class="muted">{ville.codePostal} • {ville.population}</p>
+  {
+    sectionOrder.map((sectionKey) => (
+      <>
+        {sectionKey === 'presentation' && (
+          <section class="section" id="presentation">
+            <h2>{metier.nom} à {ville.nom}</h2>
+            <p>{intro}</p>
+            <p>{ville.phraseLocale}</p>
+            <p class="muted">
+              Zone couverte autour de {ville.nom} : {nearby}.
+            </p>
+            {metier.urgence && <p class="badge">Intervention rapide possible pour les demandes urgentes.</p>}
+            <div style="margin-top: 1rem;">
+              <ReassuranceBadges />
+            </div>
+          </section>
+        )}
+        {sectionKey === 'prestations' && (
+          <section class="section" id="prestations">
+            <article class="card">
+              <h2>Prestations à {ville.nom}</h2>
+              <ul>
+                {metier.prestations.map((prestation) => (
+                  <li>{prestation}</li>
+                ))}
+              </ul>
+            </article>
+          </section>
+        )}
+        {sectionKey === 'tarifs' && (
+          <section class="section" id="tarifs">
+            <article class="card">
+              <h2>Prix indicatifs dans le secteur de {ville.nom}</h2>
+              <p>{metier.fourchettePrix}</p>
+              <p class="muted">
+                Les montants sont donnés à titre indicatif et varient selon l'état du bien et la nature précise du
+                chantier.
+              </p>
+            </article>
+          </section>
+        )}
+        {sectionKey === 'faq' && (
+          <section class="section" id="faq">
+            <h2>Questions fréquentes</h2>
+            <div class="grid cols-2">
+              {metier.questionsFrequentes.map((faq) => (
+                <article class="card">
+                  <h3>{faq.question}</h3>
+                  <p>{faq.reponse}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+        {sectionKey === 'formulaire' && (
+          <section class="section" id="devis">
+            <LeadForm metier={metier.slug} ville={ville.nom} />
+          </section>
+        )}
+      </>
+    ))
+  }
+</Layout>

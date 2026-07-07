@@ -1,0 +1,141 @@
+---
+import { SITE_CONFIG } from '../config/site';
+
+type Props = {
+  metier: string;
+  ville?: string;
+};
+
+const { metier, ville = '' } = Astro.props;
+const formId = `lead-form-${metier}-${ville || 'global'}`;
+---
+
+<div class="card" id={`${formId}-wrapper`}>
+  <h2>Demander un devis gratuit</h2>
+  <p class="muted">Décrivez votre besoin en 2 minutes. Un professionnel local vous rappelle sous 24 h.</p>
+
+  <form id={formId} novalidate>
+    <div>
+      <label for={`${formId}-prenom`}>Prénom *</label>
+      <input id={`${formId}-prenom`} name="prenom" autocomplete="given-name" required />
+    </div>
+
+    <div>
+      <label for={`${formId}-telephone`}>Téléphone *</label>
+      <input id={`${formId}-telephone`} name="telephone" autocomplete="tel" inputmode="tel" required />
+    </div>
+
+    <div>
+      <label for={`${formId}-email`}>Email</label>
+      <input id={`${formId}-email`} name="email" autocomplete="email" type="email" />
+    </div>
+
+    <div>
+      <label for={`${formId}-commune`}>Commune</label>
+      <input id={`${formId}-commune`} name="commune" value={ville} />
+    </div>
+
+    <div>
+      <label for={`${formId}-description`}>Description du besoin</label>
+      <textarea id={`${formId}-description`} name="description" rows={4}></textarea>
+    </div>
+
+    <div>
+      <label for={`${formId}-delai`}>Délai souhaité</label>
+      <select id={`${formId}-delai`} name="delaiSouhaite">
+        <option value="des-que-possible">Dès que possible</option>
+        <option value="sous-1-mois">Sous 1 mois</option>
+        <option value="je-me-renseigne">Je me renseigne</option>
+      </select>
+    </div>
+
+    <input type="hidden" name="metier" value={metier} />
+    <input type="hidden" name="ville" value={ville} />
+    <input type="hidden" name="page_source" />
+    <input type="hidden" name="startedAt" />
+
+    <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+      <label for={`${formId}-website`}>Ne pas remplir</label>
+      <input id={`${formId}-website`} name="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <button type="submit">Envoyer ma demande</button>
+    <p class="muted" style="margin: 0;">En envoyant, vous acceptez la transmission de votre demande au professionnel concerné.</p>
+  </form>
+
+  <div id={`${formId}-message`} aria-live="polite" style="margin-top: 0.8rem;"></div>
+</div>
+
+<script is:inline define:vars={{ formId, webhookUrl: SITE_CONFIG.n8nWebhookUrl, telContact: SITE_CONFIG.telContact }}>
+  const form = document.getElementById(formId);
+  const messageBox = document.getElementById(`${formId}-message`);
+
+  if (form instanceof HTMLFormElement && messageBox) {
+    const startedAtInput = form.elements.namedItem('startedAt');
+    const pageSourceInput = form.elements.namedItem('page_source');
+
+    if (startedAtInput instanceof HTMLInputElement) {
+      startedAtInput.value = String(Date.now());
+    }
+    if (pageSourceInput instanceof HTMLInputElement) {
+      pageSourceInput.value = window.location.href;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const data = new FormData(form);
+      const startedAt = Number(data.get('startedAt') || Date.now());
+      const elapsedSeconds = (Date.now() - startedAt) / 1000;
+      const honeypot = String(data.get('website') || '');
+
+      if (honeypot.trim().length > 0 || elapsedSeconds < 3) {
+        messageBox.className = 'error';
+        messageBox.textContent = 'Votre demande n\'a pas pu être envoyée. Veuillez réessayer.';
+        return;
+      }
+
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      const payload = {
+        prenom: String(data.get('prenom') || ''),
+        telephone: String(data.get('telephone') || ''),
+        email: String(data.get('email') || ''),
+        commune: String(data.get('commune') || ''),
+        description: String(data.get('description') || ''),
+        delaiSouhaite: String(data.get('delaiSouhaite') || ''),
+        metier: String(data.get('metier') || ''),
+        ville: String(data.get('ville') || ''),
+        page_source: String(data.get('page_source') || ''),
+        submittedAt: new Date().toISOString()
+      };
+
+      try {
+        const response = await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error('Webhook error');
+        }
+
+        form.reset();
+        if (startedAtInput instanceof HTMLInputElement) {
+          startedAtInput.value = String(Date.now());
+        }
+        if (pageSourceInput instanceof HTMLInputElement) {
+          pageSourceInput.value = window.location.href;
+        }
+        messageBox.className = 'success';
+        messageBox.textContent = 'Un professionnel local vous rappelle sous 24 h.';
+      } catch (error) {
+        messageBox.className = 'error';
+        messageBox.innerHTML = `Une erreur est survenue. Vous pouvez aussi nous joindre au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;
+      }
+    });
+  }
+</script>

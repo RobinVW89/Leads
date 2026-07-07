@@ -1,0 +1,122 @@
+[
+  {
+    "slug": "auxerre",
+    "nom": "Auxerre",
+    "codePostal": "89000",
+    "population": "environ 35 000 habitants",
+    "quartiersOuCommunesProches": ["Les Brichères", "Saint-Gervais", "Perrigny", "Monéteau"],
+    "phraseLocale": "Entre centre ancien et quartiers résidentiels plus récents, les besoins mêlent rénovation de l'ancien et amélioration du confort énergétique."
+  },
+  {
+    "slug": "moneteau",
+    "nom": "Monéteau",
+    "codePostal": "89470",
+    "population": "environ 4 300 habitants",
+    "quartiersOuCommunesProches": ["Les Chesnez", "Sommeville", "Auxerre", "Appoigny"],
+    "phraseLocale": "La commune combine zones pavillonnaires et secteurs d'activité, avec des demandes fréquentes en entretien et modernisation d'habitat."
+  },
+  {
+    "slug": "appoigny",
+    "nom": "Appoigny",
+    "codePostal": "89380",
+    "population": "environ 3 200 habitants",
+    "quartiersOuCommunesProches": ["Le Petit Vaux", "Les Bries", "Monéteau", "Chemilly-sur-Yonne"],
+    "phraseLocale": "Appoigny présente un tissu résidentiel où les travaux d'amélioration thermique et de mise au goût du jour sont réguliers."
+  },
+  {
+    "slug": "saint-georges-sur-baulche",
+    "nom": "Saint-Georges-sur-Baulche",
+    "codePostal": "89000",
+    "population": "environ 3 300 habitants",
+    "quartiersOuCommunesProches": ["Le Bourg", "Auxerre", "Perrigny", "Vallan"],
+    "phraseLocale": "À proximité immédiate d'Auxerre, la commune concentre de nombreuses maisons individuelles nécessitant entretien et rénovation ciblée."
+  },
+  {
+    "slug": "joigny",
+    "nom": "Joigny",
+    "codePostal": "89300",
+    "population": "environ 9 300 habitants",
+    "quartiersOuCommunesProches": ["Saint-André", "La Madeleine", "Migennes", "Chamvres"],
+    "phraseLocale": "Le bâti jovinien alterne habitat ancien en cœur de ville et secteurs plus récents, ce qui implique des besoins techniques variés."
+  },
+  {
+    "slug": "migennes",
+    "nom": "Migennes",
+    "codePostal": "89400",
+    "population": "environ 7 000 habitants",
+    "quartiersOuCommunesProches": ["Cheny", "Laroche-Saint-Cydroine", "Joigny", "Bussy-en-Othe"],
+    "phraseLocale": "Ville marquée par son histoire ferroviaire, Migennes regroupe des logements de périodes différentes demandant des solutions adaptées."
+  },
+  {
+    "slug": "avallon",
+    "nom": "Avallon",
+    "codePostal": "89200",
+    "population": "environ 6 300 habitants",
+    "quartiersOuCommunesProches": ["Les Chaumes", "Magny", "Sauvigny-le-Bois", "Pontaubert"],
+    "phraseLocale": "Autour d'Avallon, l'habitat entre ville et campagne conduit souvent à des chantiers de rénovation et de modernisation progressive."
+  },
+  {
+    "slug": "tonnerre",
+    "nom": "Tonnerre",
+    "codePostal": "89700",
+    "population": "environ 4 300 habitants",
+    "quartiersOuCommunesProches": ["Épineuil", "Junay", "Dannemoine", "Mélisey"],
+    "phraseLocale": "Le secteur de Tonnerre comporte de nombreuses bâtisses anciennes nécessitant des interventions techniques soignées."
+  },
+  {
+    "slug": "chablis",
+    "nom": "Chablis",
+    "codePostal": "89800",
+    "population": "environ 2 200 habitants",
+    "quartiersOuCommunesProches": ["Fyé", "Préhy", "Chichée", "Lignorelles"],
+    "phraseLocale": "À Chablis, les logements de bourg et maisons environnantes exigent souvent des travaux respectant le cachet local."
+  },
+  {
+    "slug": "toucy",
+    "nom": "Toucy",
+    "codePostal": "89130",
+    "population": "environ 2 700 habitants",
+    "quartiersOuCommunesProches": ["Pourrain", "Parly", "Villiers-Saint-Benoît", "Molesmes"],
+    "phraseLocale": "Toucy attire des résidences principales et secondaires, avec des besoins réguliers en entretien et amélioration de l'habitat."
+  },
+  {
+    "slug": "saint-florentin",
+    "nom": "Saint-Florentin",
+    "codePostal": "89600",
+    "population": "environ 4 300 habitants",
+    "quartiersOuCommunesProches": ["Vergigny", "Chéu", "Brienon-sur-Armançon", "Turny"],
+    "phraseLocale": "La ville et ses alentours présentent un parc immobilier mixte, avec des chantiers fréquents de remise à niveau."
+  },
+  {
+    "slug": "brienon-sur-armancon",
+    "nom": "Brienon-sur-Armançon",
+    "codePostal": "89210",
+    "population": "environ 3 100 habitants",
+    "quartiersOuCommunesProches": ["Bellechaume", "Champlost", "Saint-Florentin", "Ormoy"],
+    "phraseLocale": "À Brienon-sur-Armançon, beaucoup de projets concernent l'entretien durable de maisons individuelles et de bâtiments de bourg."
+  },
+  {
+    "slug": "champs-sur-yonne",
+    "nom": "Champs-sur-Yonne",
+    "codePostal": "89290",
+    "population": "environ 1 700 habitants",
+    "quartiersOuCommunesProches": ["Augy", "Vincelottes", "Escolives-Sainte-Camille", "Auxerre"],
+    "phraseLocale": "Le long de l'Yonne, la commune combine habitat ancien et pavillons, avec des besoins en confort thermique et modernisation."
+  },
+  {
+    "slug": "vermenton",
+    "nom": "Vermenton",
+    "codePostal": "89270",
+    "population": "environ 1 200 habitants",
+    "quartiersOuCommunesProches": ["Sacy", "Accolay", "Arcy-sur-Cure", "Lucy-sur-Cure"],
+    "phraseLocale": "Le secteur de Vermenton, entre vallée et villages alentours, demande des interventions adaptées aux maisons rurales."
+  },
+  {
+    "slug": "sens",
+    "nom": "Sens",
+    "codePostal": "89100",
+    "population": "environ 26 000 habitants",
+    "quartiersOuCommunesProches": ["Les Champs Plaisants", "Sainte-Béate", "Paron", "Maillot"],
+    "phraseLocale": "À Sens, la diversité du parc immobilier génère des demandes allant du dépannage rapide aux projets de rénovation plus structurés."
+  }
+]

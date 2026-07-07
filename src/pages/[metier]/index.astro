@@ -1,0 +1,81 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import LeadForm from '../../components/LeadForm.astro';
+import ReassuranceBadges from '../../components/ReassuranceBadges.astro';
+import { metiersData, villesData, type Metier } from '../../lib/data';
+
+export async function getStaticPaths() {
+  return metiersData.map((metier) => ({
+    params: { metier: metier.slug },
+    props: { metier }
+  }));
+}
+
+type Props = {
+  metier: Metier;
+};
+
+const { metier } = Astro.props;
+const title = `${metier.nom} dans l'Yonne | Devis gratuit`;
+const description = `${metier.description} Demandez un devis gratuit et soyez recontacté par un professionnel local de l'Yonne.`;
+const breadcrumbs = [
+  { label: 'Accueil', href: '/' },
+  { label: metier.nom }
+];
+---
+
+<Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath={`/${metier.slug}/`}>
+  <section class="section">
+    <h1>{metier.nom} dans l'Yonne</h1>
+    <p>{metier.description}</p>
+    <ReassuranceBadges />
+    {metier.urgence && <p class="badge" style="margin-top: 1rem;">Intervention rapide possible selon disponibilité locale.</p>}
+  </section>
+
+  <section class="section">
+    <div class="grid cols-2">
+      <article class="card">
+        <h2>Prestations courantes</h2>
+        <ul>
+          {metier.prestations.map((prestation) => (
+            <li>{prestation}</li>
+          ))}
+        </ul>
+      </article>
+      <article class="card">
+        <h2>Fourchettes de prix indicatives</h2>
+        <p>{metier.fourchettePrix}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Questions fréquentes</h2>
+    <div class="grid cols-2">
+      {metier.questionsFrequentes.map((faq) => (
+        <article class="card">
+          <h3>{faq.question}</h3>
+          <p>{faq.reponse}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <LeadForm metier={metier.slug} />
+  </section>
+
+  <section class="section">
+    <h2>Nos pages locales dans l'Yonne</h2>
+    <div class="grid cols-3">
+      {villesData.map((ville) => (
+        <article class="card">
+          <h3>
+            <a href={`/${metier.slug}/${ville.slug}/`}>{metier.nom} à {ville.nom}</a>
+          </h3>
+          <p class="muted">{ville.codePostal} • {ville.population}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+</Layout>

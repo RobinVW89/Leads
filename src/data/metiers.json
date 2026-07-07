@@ -1,0 +1,204 @@
+[
+  {
+    "slug": "plombier-chauffagiste",
+    "nom": "Plombier chauffagiste",
+    "nomPluriel": "plombiers chauffagistes",
+    "description": "Le plombier chauffagiste intervient pour les dépannages urgents, les installations et l'entretien des équipements sanitaires et thermiques. Dans l'Yonne, il accompagne aussi les projets de rénovation énergétique des maisons anciennes. Son expertise couvre les réseaux d'eau, de chauffage et de production d'eau chaude.",
+    "prestations": [
+      "Dépannage fuite et recherche de panne",
+      "Installation ou remplacement de chaudière",
+      "Entretien chauffage et désembouage",
+      "Pose de pompe à chaleur",
+      "Rénovation salle de bain et réseaux sanitaires"
+    ],
+    "fourchettePrix": "Dépannage : 80-150 €, entretien chaudière : 120-220 €, remplacement chaudière : 3 000-8 000 €, pose pompe à chaleur : 8 000-16 000 €",
+    "questionsFrequentes": [
+      {
+        "question": "Que faire en cas de fuite d'eau importante ?",
+        "reponse": "Coupez l'arrivée d'eau générale, sécurisez la zone puis contactez un professionnel rapidement pour limiter les dégâts."
+      },
+      {
+        "question": "À quelle fréquence entretenir sa chaudière ?",
+        "reponse": "Un entretien annuel est recommandé et souvent obligatoire selon le type d'équipement."
+      },
+      {
+        "question": "Une pompe à chaleur est-elle adaptée dans l'Yonne ?",
+        "reponse": "Oui, sous réserve d'une étude du logement et d'un dimensionnement précis selon l'isolation et les besoins."
+      },
+      {
+        "question": "Peut-on moderniser un réseau de chauffage ancien ?",
+        "reponse": "Oui, un audit technique permet d'identifier les améliorations possibles : régulation, émetteurs, désembouage et changement de générateur."
+      },
+      {
+        "question": "Intervenez-vous pour un chauffe-eau en panne ?",
+        "reponse": "Oui, le diagnostic peut mener à une réparation, un détartrage ou un remplacement selon l'état de l'appareil."
+      }
+    ],
+    "urgence": true
+  },
+  {
+    "slug": "peintre-batiment",
+    "nom": "Peintre en bâtiment",
+    "nomPluriel": "peintres en bâtiment",
+    "description": "Le peintre en bâtiment prépare les supports et applique des finitions durables en intérieur comme en extérieur. Il conseille sur les teintes, les produits et la résistance adaptée à chaque pièce. Son travail valorise le bien tout en améliorant le confort visuel.",
+    "prestations": [
+      "Préparation des murs et plafonds",
+      "Peinture intérieure pièces de vie",
+      "Ravalement et peinture de façade",
+      "Pose de revêtements muraux",
+      "Traitement anti-humidité avant finition"
+    ],
+    "fourchettePrix": "Peinture murale : 25-45 €/m2, plafond : 30-50 €/m2, façade : 35-80 €/m2 selon état et accès",
+    "questionsFrequentes": [
+      {
+        "question": "Combien de temps faut-il avant d'occuper une pièce repeinte ?",
+        "reponse": "La plupart des peintures sèchent en surface rapidement, mais une aération de 24 à 48 h est recommandée."
+      },
+      {
+        "question": "Faut-il refaire les enduits avant peinture ?",
+        "reponse": "Lorsque les supports sont irréguliers ou fissurés, une préparation soignée est nécessaire pour un rendu durable."
+      },
+      {
+        "question": "Quelle peinture choisir pour une salle de bain ?",
+        "reponse": "Une peinture technique lessivable et résistante à l'humidité est préférable."
+      },
+      {
+        "question": "Le devis inclut-il les protections ?",
+        "reponse": "Oui, les protections des sols et mobiliers font généralement partie de la prestation."
+      }
+    ],
+    "urgence": false
+  },
+  {
+    "slug": "macon-renovation",
+    "nom": "Maçon rénovation",
+    "nomPluriel": "maçons rénovation",
+    "description": "Le maçon rénovation intervient sur la structure et l'aménagement des bâtiments : ouvertures, reprises, dallages et murs. Dans l'ancien, il adapte les techniques pour conserver le caractère du bâti tout en améliorant sa solidité. Il coordonne souvent son travail avec d'autres corps de métier.",
+    "prestations": [
+      "Création d'ouverture dans un mur porteur",
+      "Réfection de murs et joints",
+      "Réalisation de chape et dalle béton",
+      "Aménagement de dépendances",
+      "Reprise de fissures et consolidation"
+    ],
+    "fourchettePrix": "Ouverture mur porteur : 2 000-6 000 €, dalle béton : 70-140 €/m2, reprise fissure : 400-2 000 €",
+    "questionsFrequentes": [
+      {
+        "question": "Faut-il une étude avant d'ouvrir un mur porteur ?",
+        "reponse": "Oui, une validation technique est indispensable pour sécuriser le projet."
+      },
+      {
+        "question": "Peut-on rénover un mur en pierre ancien ?",
+        "reponse": "Oui, avec des matériaux adaptés et une mise en œuvre respectueuse du support d'origine."
+      },
+      {
+        "question": "Quel délai pour couler une dalle ?",
+        "reponse": "Le chantier dépend de la préparation et des conditions météo, puis un temps de séchage est nécessaire avant usage."
+      },
+      {
+        "question": "Intervenez-vous sur petits travaux de maçonnerie ?",
+        "reponse": "Oui, de nombreux projets concernent des réparations localisées ou des améliorations ciblées."
+      }
+    ],
+    "urgence": false
+  },
+  {
+    "slug": "menuisier-portail-fenetre",
+    "nom": "Menuisier portail fenêtre",
+    "nomPluriel": "menuisiers portail fenêtre",
+    "description": "Le menuisier installe et remplace les ouvertures qui participent au confort thermique, acoustique et à la sécurité. Il conseille sur les matériaux (PVC, alu, bois) selon le budget et le style du logement. Son intervention améliore la performance énergétique et l'esthétique extérieure.",
+    "prestations": [
+      "Pose de fenêtres et portes-fenêtres",
+      "Remplacement de porte d'entrée",
+      "Installation de portail battant ou coulissant",
+      "Motorisation de portail",
+      "Réglage et maintenance des fermetures"
+    ],
+    "fourchettePrix": "Fenêtre : 450-1 200 € posée, porte d'entrée : 1 200-3 500 €, portail : 1 800-6 000 € selon matériau et motorisation",
+    "questionsFrequentes": [
+      {
+        "question": "Quel matériau privilégier pour une fenêtre ?",
+        "reponse": "Le choix dépend de vos priorités : budget, isolation, entretien, rendu esthétique et contraintes locales."
+      },
+      {
+        "question": "Un portail motorisé est-il possible sur toutes les entrées ?",
+        "reponse": "Une visite technique vérifie l'espace, l'alimentation et le type de pilier avant validation."
+      },
+      {
+        "question": "Combien de temps dure la pose de fenêtres ?",
+        "reponse": "Selon le nombre d'ouvertures, le chantier peut s'étaler d'une demi-journée à plusieurs jours."
+      },
+      {
+        "question": "Peut-on gagner en isolation en changeant les menuiseries ?",
+        "reponse": "Oui, un remplacement bien dimensionné réduit souvent les pertes thermiques et améliore le confort."
+      }
+    ],
+    "urgence": false
+  },
+  {
+    "slug": "estimation-immobiliere",
+    "nom": "Estimation immobilière",
+    "nomPluriel": "estimations immobilières",
+    "description": "L'estimation immobilière permet d'obtenir une valeur cohérente d'un bien selon le marché local et ses caractéristiques. Elle aide à vendre, acheter ou arbitrer un projet patrimonial dans de bonnes conditions. L'analyse prend en compte l'emplacement, l'état et les références comparables récentes.",
+    "prestations": [
+      "Estimation maison ou appartement",
+      "Avis de valeur argumenté",
+      "Conseils de valorisation avant vente",
+      "Analyse du marché local",
+      "Préparation de stratégie de mise en vente"
+    ],
+    "fourchettePrix": "Première estimation indicative souvent gratuite, avis de valeur détaillé : 150-450 € selon le bien",
+    "questionsFrequentes": [
+      {
+        "question": "Une estimation en ligne suffit-elle ?",
+        "reponse": "C'est un point de départ, mais une estimation fiable nécessite une analyse terrain et des comparables précis."
+      },
+      {
+        "question": "Combien de temps est valable une estimation ?",
+        "reponse": "Le marché évoluant rapidement, une mise à jour est recommandée après quelques mois."
+      },
+      {
+        "question": "Quels documents préparer ?",
+        "reponse": "Titre de propriété, diagnostics, plans, taxes et informations sur les travaux réalisés."
+      },
+      {
+        "question": "L'estimation engage-t-elle à vendre ?",
+        "reponse": "Non, c'est une démarche d'information sans obligation de mise en vente."
+      }
+    ],
+    "urgence": false
+  },
+  {
+    "slug": "courtier-credit-assurance",
+    "nom": "Courtier crédit assurance",
+    "nomPluriel": "courtiers crédit assurance",
+    "description": "Le courtier crédit assurance accompagne les emprunteurs dans la recherche d'un financement adapté et d'une assurance emprunteur compétitive. Il compare les offres et aide à monter un dossier solide. Son objectif est de sécuriser le projet et d'optimiser le coût global du crédit.",
+    "prestations": [
+      "Comparaison de prêts immobiliers",
+      "Renégociation de crédit",
+      "Délégation d'assurance emprunteur",
+      "Montage et optimisation du dossier",
+      "Accompagnement jusqu'à l'offre finale"
+    ],
+    "fourchettePrix": "Accompagnement souvent rémunéré via partenariat bancaire, frais de courtage possibles : 1 000-2 500 € selon dossier",
+    "questionsFrequentes": [
+      {
+        "question": "Quand consulter un courtier ?",
+        "reponse": "Le plus tôt possible, idéalement avant compromis, pour évaluer la capacité d'emprunt et préparer le dossier."
+      },
+      {
+        "question": "Peut-on changer d'assurance emprunteur ?",
+        "reponse": "Oui, sous conditions d'équivalence de garanties et dans le cadre réglementaire en vigueur."
+      },
+      {
+        "question": "Le courtier est-il utile pour un premier achat ?",
+        "reponse": "Oui, il clarifie les étapes, compare les solutions et aide à éviter les erreurs de montage."
+      },
+      {
+        "question": "Quels éléments influencent le taux obtenu ?",
+        "reponse": "Le profil emprunteur, l'apport, la durée du prêt, le marché du moment et la qualité du dossier."
+      }
+    ],
+    "urgence": false
+  }
+]

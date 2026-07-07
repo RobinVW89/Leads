@@ -1,0 +1,111 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ReassuranceBadges from '../components/ReassuranceBadges.astro';
+import { SITE_CONFIG } from '../config/site';
+import { metiersData, villesData } from '../lib/data';
+
+const title = `${SITE_CONFIG.siteName} | Devis gratuit dans l'Yonne`;
+const description = SITE_CONFIG.tagline;
+
+const organizationSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'Organization',
+	name: SITE_CONFIG.siteName,
+	url: SITE_CONFIG.siteUrl,
+	description: SITE_CONFIG.description,
+	telephone: SITE_CONFIG.telContact,
+	areaServed: 'Yonne'
+};
+---
+
+<Layout title={title} description={description} jsonLd={organizationSchema}>
+	<section class="hero">
+		<div class="hero-grid">
+			<article class="card">
+				<h1>Trouvez un artisan de confiance dans l'Yonne</h1>
+				<p>{SITE_CONFIG.tagline}</p>
+				<ReassuranceBadges />
+			</article>
+			<aside class="card">
+				<h2>Accès rapide</h2>
+				<p class="muted">Choisissez un métier et une ville pour ouvrir la page dédiée.</p>
+				<form id="quick-access-form">
+					<div>
+						<label for="quick-metier">Métier</label>
+						<select id="quick-metier" required>
+							<option value="">Choisir un métier</option>
+							{metiersData.map((metier) => (
+								<option value={metier.slug}>{metier.nom}</option>
+							))}
+						</select>
+					</div>
+					<div>
+						<label for="quick-ville">Ville</label>
+						<select id="quick-ville">
+							<option value="">Voir la page métier générale</option>
+							{villesData.map((ville) => (
+								<option value={ville.slug}>{ville.nom}</option>
+							))}
+						</select>
+					</div>
+					<button type="submit">Accéder à la page</button>
+				</form>
+			</aside>
+		</div>
+	</section>
+
+	<section class="section">
+		<h2>Nos métiers</h2>
+		<div class="grid cols-3">
+			{metiersData.map((metier) => (
+				<article class="card">
+					<h3>
+						<a href={`/${metier.slug}/`}>{metier.nom}</a>
+					</h3>
+					<p>{metier.description}</p>
+					{metier.urgence && <span class="badge">Intervention rapide possible</span>}
+				</article>
+			))}
+		</div>
+	</section>
+
+	<section class="section">
+		<h2>Comment ça fonctionne ?</h2>
+		<div class="grid cols-3">
+			<article class="card">
+				<h3>1. Vous décrivez votre besoin</h3>
+				<p>Un formulaire simple pour préciser votre demande, votre commune et votre délai souhaité.</p>
+			</article>
+			<article class="card">
+				<h3>2. Nous orientons votre demande</h3>
+				<p>Votre demande est transmise au professionnel local concerné selon le métier recherché.</p>
+			</article>
+			<article class="card">
+				<h3>3. Vous êtes recontacté</h3>
+				<p>Un professionnel vous rappelle pour qualifier le besoin et proposer un devis gratuit.</p>
+			</article>
+		</div>
+	</section>
+
+	<script is:inline>
+		const quickAccessForm = document.getElementById('quick-access-form');
+		if (quickAccessForm instanceof HTMLFormElement) {
+			quickAccessForm.addEventListener('submit', (event) => {
+				event.preventDefault();
+				const metier = document.getElementById('quick-metier');
+				const ville = document.getElementById('quick-ville');
+
+				if (!(metier instanceof HTMLSelectElement) || !(ville instanceof HTMLSelectElement)) {
+					return;
+				}
+
+				if (!metier.value) {
+					return;
+				}
+
+				const destination = ville.value ? `/${metier.value}/${ville.value}/` : `/${metier.value}/`;
+				window.location.href = destination;
+			});
+		}
+	</script>
+</Layout>
