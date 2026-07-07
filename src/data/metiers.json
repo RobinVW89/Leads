@@ -34,7 +34,9 @@
         "reponse": "Oui, le diagnostic peut mener à une réparation, un détartrage ou un remplacement selon l'état de l'appareil."
       }
     ],
-    "urgence": true
+    "urgence": true,
+    "saison": "toute-annee",
+    "actif": true
   },
   {
     "slug": "peintre-batiment",
@@ -67,7 +69,9 @@
         "reponse": "Oui, les protections des sols et mobiliers font généralement partie de la prestation."
       }
     ],
-    "urgence": false
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": true
   },
   {
     "slug": "macon-renovation",
@@ -100,7 +104,9 @@
         "reponse": "Oui, de nombreux projets concernent des réparations localisées ou des améliorations ciblées."
       }
     ],
-    "urgence": false
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": true
   },
   {
     "slug": "menuisier-portail-fenetre",
@@ -133,7 +139,9 @@
         "reponse": "Oui, un remplacement bien dimensionné réduit souvent les pertes thermiques et améliore le confort."
       }
     ],
-    "urgence": false
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": true
   },
   {
     "slug": "estimation-immobiliere",
@@ -166,7 +174,9 @@
         "reponse": "Non, c'est une démarche d'information sans obligation de mise en vente."
       }
     ],
-    "urgence": false
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": true
   },
   {
     "slug": "courtier-credit-assurance",
@@ -199,6 +209,165 @@
         "reponse": "Le profil emprunteur, l'apport, la durée du prêt, le marché du moment et la qualité du dossier."
       }
     ],
-    "urgence": false
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": true
+  },
+  {
+    "slug": "electricien",
+    "nom": "Électricien",
+    "nomPluriel": "électriciens",
+    "description": "Vous cherchez un électricien dans l'Yonne pour un dépannage électrique en urgence, une recherche de panne ou une rénovation électrique de maison ancienne ? Nos pages locales expliquent aussi quoi faire en cas de panne de courant, comment planifier une mise à la terre fiable, et à quel niveau de devis électricité maison se situent généralement une mise aux normes électriques, un remplacement de tableau électrique ou l'installation de prises et luminaires. La pose d'une borne de recharge pour voiture électrique est également abordée avec les exigences de qualification IRVE.",
+    "prestations": [
+      "Dépannage et recherche de panne",
+      "Mise en sécurité et mise aux normes (NF C 15-100)",
+      "Remplacement de tableau électrique",
+      "Rénovation électrique complète du bâti ancien",
+      "Installation de prises, éclairages et volets roulants électriques",
+      "Pose de bornes de recharge pour véhicule électrique (IRVE au-delà de 3,7 kW)"
+    ],
+    "fourchettePrix": "Mise aux normes complète : généralement 80 à 120 €/m2 selon l'état du logement ; remplacement de tableau : généralement 900 à 1 800 € posé selon devis ; dépannage ponctuel : selon diagnostic et complexité de la panne.",
+    "questionsFrequentes": [
+      {
+        "question": "Combien coûte une mise aux normes électriques ?",
+        "reponse": "Pour une maison ancienne, comptez généralement 80 à 120 € du m² pour une rénovation complète ; un simple remplacement de tableau se situe souvent entre 900 et 1 800 € posé."
+      },
+      {
+        "question": "Mon installation doit-elle être aux normes pour vendre ?",
+        "reponse": "Un diagnostic électrique est obligatoire à la vente si l'installation a plus de 15 ans ; il n'oblige pas à faire les travaux mais informe l'acheteur des anomalies."
+      },
+      {
+        "question": "Que faire en cas de panne de courant ?",
+        "reponse": "Vérifier le disjoncteur général et les disjoncteurs divisionnaires, débrancher l'appareil suspect ; si le disjoncteur saute à nouveau, ne pas forcer et faire intervenir un professionnel."
+      },
+      {
+        "question": "Qui peut poser une borne de recharge pour voiture électrique ?",
+        "reponse": "Au-delà de 3,7 kW, la pose doit être réalisée par un électricien titulaire de la qualification IRVE, ce qui est aussi requis pour les aides et la garantie constructeur du véhicule."
+      },
+      {
+        "question": "Une installation ancienne est-elle dangereuse ?",
+        "reponse": "Fils en tissu, absence de terre, fusibles en porcelaine : ces signes indiquent une installation d'origine à faire contrôler, cause fréquente d'incendies domestiques."
+      }
+    ],
+    "urgence": true,
+    "saison": "toute-annee",
+    "actif": false
+  },
+  {
+    "slug": "couvreur",
+    "nom": "Couvreur",
+    "nomPluriel": "couvreurs",
+    "description": "Besoin d'un couvreur dans l'Yonne pour une réparation de toiture, une fuite de toiture en urgence ou un remplacement de tuiles cassées ? Les contenus locaux détaillent les réflexes après intempéries (dont le bâchage d'urgence après tempête), les postes d'une réfection toiture au m2 selon devis, ainsi que les travaux de charpente légère, zinguerie de gouttières, pose de fenêtre de toit et isolation de toiture par l'extérieur. Dans le département, l'entretien des toits en tuile plate de Bourgogne, en ardoise ou en zinc reste un enjeu fréquent.",
+    "prestations": [
+      "Réparation de fuites et bâchage d'urgence",
+      "Remplacement de tuiles ou d'ardoises",
+      "Réfection complète de couverture",
+      "Zinguerie (gouttières, noues, abergements)",
+      "Pose de fenêtres de toit",
+      "Écran sous toiture et isolation",
+      "Entretien des toitures anciennes en tuile plate de Bourgogne"
+    ],
+    "fourchettePrix": "Réfection complète : généralement 180 à 280 €/m2 en tuiles selon devis et complexité ; intervention d'urgence : selon accessibilité et sécurisation ; ardoise, bâti ancien ou zone protégée : coûts généralement plus élevés.",
+    "questionsFrequentes": [
+      {
+        "question": "Combien coûte une réfection de toiture ?",
+        "reponse": "Généralement 180 à 280 €/m² pour une réfection complète en tuiles (dépose, écran, liteaux, couverture), davantage en ardoise ou sur bâti classé."
+      },
+      {
+        "question": "Ma toiture fuit, que faire en attendant ?",
+        "reponse": "Placer un récipient, protéger les biens, photographier pour l'assurance et demander un bâchage d'urgence ; ne jamais monter soi-même sur le toit."
+      },
+      {
+        "question": "Quand refaire sa toiture ?",
+        "reponse": "Une couverture en tuiles dure 40 à 80 ans selon le matériau et l'exposition ; tuiles poreuses, mousses épaisses et infiltrations répétées sont les signes d'une fin de vie."
+      },
+      {
+        "question": "La tempête a endommagé mon toit, l'assurance couvre-t-elle ?",
+        "reponse": "Les dégâts de tempête sont couverts par la garantie tempête des contrats habitation ; déclarez sous 5 jours ouvrés avec photos et devis de réparation."
+      },
+      {
+        "question": "Faut-il une autorisation pour refaire sa toiture ?",
+        "reponse": "Oui, une déclaration préalable est nécessaire dès que l'aspect change (matériau, teinte, fenêtres de toit), avec des contraintes renforcées près des monuments historiques, fréquentes dans l'Yonne."
+      }
+    ],
+    "urgence": true,
+    "saison": "toute-annee",
+    "actif": false
+  },
+  {
+    "slug": "terrassement-assainissement",
+    "nom": "Terrassement assainissement",
+    "nomPluriel": "entreprises de terrassement assainissement",
+    "description": "Pour un projet de terrassement dans l'Yonne, de viabilisation de terrain ou de tranchées techniques, il est important d'anticiper l'accès des engins et la nature des sols. Cette page couvre aussi les travaux d'assainissement individuel non collectif, le prix d'une fosse septique selon la filière, les alternatives de micro-station d'épuration, la mise aux normes de fosse existante et le raccordement au tout-à-l'égout lorsque le réseau est disponible. Les besoins de création d'accès, d'enrochement et de terrassement pour piscine y sont également traités.",
+    "prestations": [
+      "Terrassement de terrain et fouilles",
+      "Installation et mise aux normes d'assainissement non collectif (fosse toutes eaux, micro-station)",
+      "Raccordement au réseau collectif",
+      "Viabilisation de terrain à bâtir",
+      "Tranchées techniques",
+      "Création d'accès, cours et enrochements",
+      "Préparation de terrain pour piscine"
+    ],
+    "fourchettePrix": "Assainissement non collectif complet : généralement 8 000 à 15 000 € selon étude de sol et filière ; terrassement : généralement 30 à 60 € du m3 évacué, selon accès et nature du terrain ; prix définitifs sur devis.",
+    "questionsFrequentes": [
+      {
+        "question": "Combien coûte une fosse septique aux normes ?",
+        "reponse": "Une installation complète d'assainissement non collectif se situe généralement entre 8 000 et 15 000 € selon la filière retenue et la nature du sol ; une étude de sol préalable est requise."
+      },
+      {
+        "question": "Qui contrôle mon assainissement individuel ?",
+        "reponse": "Le SPANC de votre communauté de communes contrôle la conformité ; en cas de vente, un diagnostic assainissement de moins de 3 ans est obligatoire et les travaux de mise en conformité incombent en principe à l'acquéreur sous 1 an."
+      },
+      {
+        "question": "Fosse septique ou micro-station ?",
+        "reponse": "La fosse toutes eaux avec épandage convient aux terrains disposant de surface ; la micro-station est plus compacte mais demande une alimentation électrique et un entretien plus suivi."
+      },
+      {
+        "question": "Combien coûte un terrassement ?",
+        "reponse": "Très variable : comptez généralement 30 à 60 € du m³ évacué ; l'accès au terrain et la nature du sol (roche, argile) font varier fortement le devis."
+      }
+    ],
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": false
+  },
+  {
+    "slug": "carreleur-plaquiste",
+    "nom": "Carreleur plaquiste",
+    "nomPluriel": "carreleurs plaquistes",
+    "description": "Un carreleur plaquiste dans l'Yonne intervient souvent sur des rénovations complètes : pose de carrelage sol et faience, douche a l'italienne, chape et carrelage extérieur de terrasse. Côté aménagement intérieur, la partie plaquiste couvre la pose de placo, la création de cloisons et faux plafonds, ainsi que l'isolation intérieure par doublage. Les contenus locaux répondent aussi aux questions de prix de pose au m2 et aux choix techniques entre neuf et rénovation.",
+    "prestations": [
+      "Pose de carrelage sol et mur",
+      "Faïence de salle de bain",
+      "Douche à l'italienne (receveur, étanchéité, carrelage)",
+      "Chapes",
+      "Carrelage de terrasse extérieure",
+      "Cloisons et doublages en plaques de plâtre",
+      "Faux plafonds",
+      "Isolation intérieure",
+      "Bandes et finitions prêtes à peindre"
+    ],
+    "fourchettePrix": "Pose de carrelage : généralement 30 à 60 €/m2 hors fourniture selon format ; douche à l'italienne : généralement 3 000 à 6 000 € selon dimensions et équipements ; placo et cloisons : selon surface, niveau de finition et devis.",
+    "questionsFrequentes": [
+      {
+        "question": "Quel est le prix de pose du carrelage ?",
+        "reponse": "Généralement 30 à 60 €/m² de pose selon le format (les grands formats et la pose en diagonale coûtent plus cher), hors fourniture et préparation du support."
+      },
+      {
+        "question": "Combien coûte une douche à l'italienne ?",
+        "reponse": "Comptez généralement 3 000 à 6 000 € posée (receveur extra-plat ou receveur à carreler, étanchéité, faïence), selon les dimensions et la robinetterie."
+      },
+      {
+        "question": "Placo ou cloison traditionnelle ?",
+        "reponse": "La cloison en plaques de plâtre sur ossature est plus rapide, plus légère et permet d'intégrer l'isolant ; des plaques hydrofuges existent pour les pièces d'eau."
+      },
+      {
+        "question": "Peut-on carreler sur un ancien carrelage ?",
+        "reponse": "Oui si le support est sain, plan et bien adhérent, avec un primaire adapté ; sinon la dépose reste préférable, notamment au sol pour les seuils de porte."
+      }
+    ],
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": false
   }
 ]

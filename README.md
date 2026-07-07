@@ -5,7 +5,7 @@ Portail statique Astro de mise en relation locale entre particuliers et professi
 ## Stack
 
 - Astro (site statique)
-- Données pilotées par JSON (`src/data/metiers.json`, `src/data/villes.json`)
+- Données pilotées par JSON (`src/data/metiers.json`, `src/data/villes.json`, `src/data/parcours.json`)
 - Formulaire JSON envoyé vers webhook n8n
 - Compatible Cloudflare Pages
 
@@ -32,6 +32,7 @@ Le build de production est généré dans `dist/`.
 
 - Métiers : `src/data/metiers.json`
 - Villes : `src/data/villes.json`
+- Parcours : `src/data/parcours.json`
 
 ### Ajouter un métier
 
@@ -42,7 +43,17 @@ Le build de production est généré dans `dist/`.
 	- `fourchettePrix`
 	- `questionsFrequentes` (liste d'objets `question` + `reponse`)
 	- `urgence` (`true`/`false`)
+	- `saison` (ex: `toute-annee`)
+	- `actif` (`true`/`false`)
 2. Relancer `npm run build`.
+
+### Activer un métier "bientot"
+
+1. Mettre `actif: true` dans l'objet du metier dans `src/data/metiers.json`.
+2. Verifier dans votre workflow n8n/Formspree la ligne de routage du slug metier (champ `metier`) pour que les leads de ce metier soient bien traites.
+3. Relancer `npm run build` puis pousser sur `main`.
+
+Quand `actif: false`, le formulaire est remplace par une capture d'email d'intention envoyee avec `type: "intention"`.
 
 ### Ajouter une ville
 

@@ -1,0 +1,138 @@
+[
+  {
+    "metierSlug": "electricien",
+    "etapes": [
+      {
+        "question": "Nature du besoin ?",
+        "options": [
+          "Depannage urgent",
+          "Mise aux normes-securite",
+          "Renovation complete",
+          "Installation ponctuelle",
+          "Borne de recharge"
+        ]
+      },
+      {
+        "question": "Type de logement ?",
+        "options": [
+          "Maison",
+          "Appartement",
+          "Local pro"
+        ]
+      },
+      {
+        "question": "Age approximatif de l'installation ?",
+        "options": [
+          "Moins de 15 ans",
+          "15-40 ans",
+          "Plus de 40 ans",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "couvreur",
+    "etapes": [
+      {
+        "question": "Nature du besoin ?",
+        "options": [
+          "Fuite-urgence",
+          "Reparation ponctuelle",
+          "Refection complete",
+          "Zinguerie-gouttieres",
+          "Fenetre de toit",
+          "Entretien"
+        ]
+      },
+      {
+        "question": "Type de couverture ?",
+        "options": [
+          "Tuiles",
+          "Ardoise",
+          "Zinc-bac acier",
+          "Je ne sais pas"
+        ]
+      },
+      {
+        "question": "Surface approximative de toiture ?",
+        "options": [
+          "Moins de 50 m2",
+          "50-100 m2",
+          "100-200 m2",
+          "Plus de 200 m2",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "terrassement-assainissement",
+    "etapes": [
+      {
+        "question": "Type de projet ?",
+        "options": [
+          "Assainissement individuel-fosse",
+          "Raccordement tout-a-l'egout",
+          "Terrassement-fouilles",
+          "Viabilisation de terrain",
+          "Acces-cour-enrochement",
+          "Autre"
+        ]
+      },
+      {
+        "question": "Etude de sol deja realisee ?",
+        "options": [
+          "Oui",
+          "Non",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      },
+      {
+        "question": "Le terrain est-il facilement accessible aux engins ?",
+        "options": [
+          "Oui",
+          "Difficile",
+          "Je ne sais pas"
+        ]
+      }
+    ]
+  },
+  {
+    "metierSlug": "carreleur-plaquiste",
+    "etapes": [
+      {
+        "question": "Type de travaux ?",
+        "options": [
+          "Carrelage sol",
+          "Faience-salle de bain",
+          "Douche a l'italienne",
+          "Cloisons-placo",
+          "Faux plafond",
+          "Plusieurs de ces travaux"
+        ]
+      },
+      {
+        "question": "Surface approximative ?",
+        "options": [
+          "Moins de 10 m2",
+          "10-30 m2",
+          "30-60 m2",
+          "Plus de 60 m2",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      },
+      {
+        "question": "Neuf ou renovation ?",
+        "options": [
+          "Neuf",
+          "Renovation"
+        ]
+      }
+    ]
+  }
+]

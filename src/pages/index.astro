@@ -68,6 +68,7 @@ const organizationSchema = {
 						<a href={`/${metier.slug}/`}>{metier.nom}</a>
 					</h3>
 					<p>{metier.description}</p>
+					{!metier.actif && <span class="badge" style="background: #fff1e4; color: #8b4a11;">Bientot</span>}
 					{metier.urgence && <span class="badge">Intervention rapide possible</span>}
 				</article>
 			))}

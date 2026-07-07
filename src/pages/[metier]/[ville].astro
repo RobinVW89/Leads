@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import LeadForm from '../../components/LeadForm.astro';
 import ReassuranceBadges from '../../components/ReassuranceBadges.astro';
-import { metiersData, villesData, type Metier, type Ville } from '../../lib/data';
+import { getParcoursByMetierSlug, metiersData, villesData, type Metier, type Ville } from '../../lib/data';
 import { getLocalizedIntro, getSectionOrder } from '../../lib/content';
 import { faqSchema, serviceSchema } from '../../lib/seo';
 
@@ -22,10 +22,15 @@ type Props = {
 
 const { metier, ville } = Astro.props;
 
-const h1 = `${metier.nom} à ${ville.nom} - devis gratuit`;
-const description = `${metier.nom} à ${ville.nom} (${ville.codePostal}). ${ville.phraseLocale} Mise en relation gratuite avec un professionnel local.`;
+const h1 = metier.actif
+  ? `${metier.nom} à ${ville.nom} - devis gratuit`
+  : `${metier.nom} à ${ville.nom} - bientot disponible`;
+const description = metier.actif
+  ? `${metier.nom} à ${ville.nom} (${ville.codePostal}). ${ville.phraseLocale} Mise en relation gratuite avec un professionnel local.`
+  : `${metier.nom} à ${ville.nom} (${ville.codePostal}). ${ville.phraseLocale} Ce service ouvre bientot dans l'Yonne avec inscription prioritaire par email.`;
 const intro = getLocalizedIntro(metier, ville);
 const sectionOrder = getSectionOrder(metier.slug, ville.slug);
+const parcours = getParcoursByMetierSlug(metier.slug);
 const nearby = ville.quartiersOuCommunesProches.join(', ');
 const canonicalPath = `/${metier.slug}/${ville.slug}/`;
 
@@ -103,10 +108,30 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
         )}
         {sectionKey === 'formulaire' && (
           <section class="section" id="devis">
-            <LeadForm metier={metier.slug} ville={ville.nom} />
+            <LeadForm metier={metier.slug} metierNom={metier.nom} ville={ville.nom} actif={metier.actif} />
           </section>
         )}
       </>
     ))
   }
+  {parcours && (
+    <section class="section">
+      <h2>Parcours de qualification prevu</h2>
+      <p class="muted">
+        Pour une demande en {metier.nom.toLowerCase()} a {ville.nom}, nous structurons la prise d'informations en
+        plusieurs etapes simples.
+      </p>
+      <div class="grid cols-3">
+        {parcours.etapes.map((etape, index) => (
+          <article class="card">
+            <h3>
+              Etape {index + 1} : {etape.question}
+            </h3>
+            <p>{etape.options.join(' / ')}</p>
+            {etape.facultatif && <p class="muted">Champ facultatif.</p>}
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
 </Layout>

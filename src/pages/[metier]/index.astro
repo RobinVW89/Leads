@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import LeadForm from '../../components/LeadForm.astro';
 import ReassuranceBadges from '../../components/ReassuranceBadges.astro';
-import { metiersData, villesData, type Metier } from '../../lib/data';
+import { getParcoursByMetierSlug, metiersData, villesData, type Metier } from '../../lib/data';
 
 export async function getStaticPaths() {
   return metiersData.map((metier) => ({
@@ -16,8 +16,13 @@ type Props = {
 };
 
 const { metier } = Astro.props;
-const title = `${metier.nom} dans l'Yonne | Devis gratuit`;
-const description = `${metier.description} Demandez un devis gratuit et soyez recontacté par un professionnel local de l'Yonne.`;
+const title = metier.actif
+  ? `${metier.nom} dans l'Yonne | Devis gratuit`
+  : `${metier.nom} dans l'Yonne | Bientot disponible`;
+const description = metier.actif
+  ? `${metier.description} Demandez un devis gratuit et soyez recontacté par un professionnel local de l'Yonne.`
+  : `${metier.description} Ce service ouvre bientot dans l'Yonne, laissez votre email pour etre prevenu en premier.`;
+const parcours = getParcoursByMetierSlug(metier.slug);
 const breadcrumbs = [
   { label: 'Accueil', href: '/' },
   { label: metier.nom }
@@ -62,8 +67,40 @@ const breadcrumbs = [
   </section>
 
   <section class="section">
-    <LeadForm metier={metier.slug} />
+    <LeadForm metier={metier.slug} metierNom={metier.nom} actif={metier.actif} />
   </section>
+
+  {parcours && (
+    <section class="section">
+      <h2>Parcours de demande</h2>
+      <p class="muted">
+        Voici les informations qui vous seront demandées pour qualifier efficacement votre besoin en {metier.nom.toLowerCase()}.
+      </p>
+      <div class="grid cols-3">
+        {parcours.etapes.map((etape, index) => (
+          <article class="card">
+            <h3>
+              Etape {index + 1} : {etape.question}
+            </h3>
+            <p>{etape.options.join(' / ')}</p>
+            {etape.facultatif && <p class="muted">Champ facultatif.</p>}
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {!metier.actif && (
+    <section class="section">
+      <article class="card" style="border-left: 4px solid #d97a2b;">
+        <h2>Ouverture prochaine</h2>
+        <p>
+          Ce service est en preparation dans l'Yonne. Vous pouvez deja laisser votre email pour etre prevenu en
+          priorite des l'ouverture.
+        </p>
+      </article>
+    </section>
+  )}
 
   <section class="section">
     <h2>Nos pages locales dans l'Yonne</h2>
