@@ -486,33 +486,12 @@ button,
   aspect-ratio: 0.95;
   border-radius: 8px;
   border: 1px solid rgba(106, 115, 120, 0.3);
-  background-image:
-    linear-gradient(160deg, rgba(245, 242, 234, 0.72), rgba(232, 226, 214, 0.72)),
-    url('/images/yonne-reference.png');
-  background-size: cover;
-  background-position: center;
+  background-image: url('/images/yonne-reference.png');
+  background-color: #e8e2d6;
+  background-size: 132% auto;
+  background-position: 20% 55%;
   background-repeat: no-repeat;
-  filter: grayscale(1) contrast(1.08) brightness(0.88) sepia(0.16);
-}
-
-.yonne-map-legend-mask {
-  position: absolute;
-  top: 9%;
-  right: 5.5%;
-  width: 30%;
-  height: 18%;
-  border-radius: 18px;
-  background-image:
-    linear-gradient(180deg, rgba(232, 227, 217, 0.9), rgba(228, 223, 214, 0.9)),
-    url('/images/yonne-reference.png');
-  background-repeat: no-repeat;
-  background-size: auto, 180%;
-  background-position: 0 0, 17% 49%;
-  clip-path: polygon(6% 10%, 94% 2%, 98% 18%, 93% 88%, 9% 96%, 2% 75%, 4% 21%);
-  opacity: 0.99;
-  filter: blur(0.4px);
-  transform: none;
-  pointer-events: none;
+  filter: none;
 }
 
 .map-point-link {
