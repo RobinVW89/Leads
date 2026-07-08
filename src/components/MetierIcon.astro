@@ -1,0 +1,115 @@
+---
+type Props = {
+  slug: string;
+  label?: string;
+};
+
+const { slug, label = '' } = Astro.props;
+---
+
+<span class="metier-icon" aria-hidden="true">
+  {
+    slug === 'plombier-chauffagiste' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14.5 4.8a3.4 3.4 0 0 0-4.8 4.8l-5.8 5.8a1.8 1.8 0 0 0 2.5 2.5l5.8-5.8a3.4 3.4 0 0 0 4.8-4.8l-2 2-3-3z" />
+      </svg>
+    )
+  }
+  {
+    slug === 'peintre-batiment' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.5 7h11.2a2 2 0 0 1 0 4H9.5v4.5a2.5 2.5 0 0 0 5 0V14" />
+        <path d="M16.5 14h3.5" />
+      </svg>
+    )
+  }
+  {
+    slug === 'macon-renovation' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="6" width="8" height="5" rx="1" />
+        <rect x="13" y="6" width="8" height="5" rx="1" />
+        <rect x="8" y="13" width="8" height="5" rx="1" />
+      </svg>
+    )
+  }
+  {
+    slug === 'menuisier-portail-fenetre' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="4" width="16" height="16" rx="1.5" />
+        <path d="M12 4v16M4 12h16" />
+      </svg>
+    )
+  }
+  {
+    slug === 'estimation-immobiliere' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 18h16" />
+        <path d="M7 18V8l5-3 5 3v10" />
+        <path d="M10 13h4" />
+      </svg>
+    )
+  }
+  {
+    slug === 'courtier-credit-assurance' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="5" width="16" height="14" rx="1.6" />
+        <path d="M4 10h16M8 15h2.5" />
+      </svg>
+    )
+  }
+  {
+    slug === 'electricien' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13.5 2.8 7.6 13h4.4l-1.6 8.2L16.4 11h-4.3z" />
+      </svg>
+    )
+  }
+  {
+    slug === 'couvreur' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m3 12 9-7 9 7" />
+        <path d="M6 11.2V19h12v-7.8" />
+      </svg>
+    )
+  }
+  {
+    slug === 'terrassement-assainissement' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 14h13" />
+        <path d="M9 14V9h6l4 5" />
+        <circle cx="7" cy="18" r="2" />
+        <circle cx="17" cy="18" r="2" />
+      </svg>
+    )
+  }
+  {
+    slug === 'carreleur-plaquiste' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="4" width="7" height="7" rx="0.8" />
+        <rect x="13" y="4" width="7" height="7" rx="0.8" />
+        <rect x="4" y="13" width="7" height="7" rx="0.8" />
+        <rect x="13" y="13" width="7" height="7" rx="0.8" />
+      </svg>
+    )
+  }
+  {
+    ![
+      'plombier-chauffagiste',
+      'peintre-batiment',
+      'macon-renovation',
+      'menuisier-portail-fenetre',
+      'estimation-immobiliere',
+      'courtier-credit-assurance',
+      'electricien',
+      'couvreur',
+      'terrassement-assainissement',
+      'carreleur-plaquiste'
+    ].includes(slug) && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 8v8M8 12h8" />
+      </svg>
+    )
+  }
+</span>
+{label && <span class="sr-only">{label}</span>}

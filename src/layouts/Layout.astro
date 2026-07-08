@@ -13,9 +13,21 @@ type Props = {
 	canonicalPath?: string;
 	breadcrumbs?: Crumb[];
 	jsonLd?: object | object[];
+	stickyCta?: {
+		label: string;
+		href: string;
+		badge?: string;
+	};
 };
 
-const { title, description, canonicalPath = Astro.url.pathname, breadcrumbs = [], jsonLd = [] } = Astro.props;
+const {
+	title,
+	description,
+	canonicalPath = Astro.url.pathname,
+	breadcrumbs = [],
+	jsonLd = [],
+	stickyCta
+} = Astro.props;
 const canonicalUrl = new URL(canonicalPath, SITE_CONFIG.siteUrl).toString();
 const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 ---
@@ -25,12 +37,6 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap"
-			rel="stylesheet"
-		/>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
@@ -55,6 +61,7 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 				<nav class="top-nav" aria-label="Navigation principale">
 					<a href="/#metiers">Métiers</a>
 					<a href="/comment-ca-marche">Comment ça marche</a>
+					<a href="/politique-confidentialite">Confidentialité</a>
 					<a href="/mentions-legales">Mentions légales</a>
 				</nav>
 				<a class="tel-link" href={`tel:${SITE_CONFIG.telContactHref}`}>
@@ -87,5 +94,11 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 				</p>
 			</div>
 		</footer>
+		{stickyCta && (
+			<div class="mobile-sticky-cta" role="region" aria-label="Action rapide">
+				{stickyCta.badge && <span>{stickyCta.badge}</span>}
+				<a class="btn" href={stickyCta.href}>{stickyCta.label}</a>
+			</div>
+		)}
 	</body>
 </html>

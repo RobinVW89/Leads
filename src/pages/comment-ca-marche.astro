@@ -11,20 +11,40 @@ const breadcrumbs = [
 
 <Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath="/comment-ca-marche">
   <section class="section">
-    <h1>Comment ça marche</h1>
-    <div class="grid cols-3">
-      <article class="card">
-        <h2>1. Votre demande</h2>
-        <p>Vous remplissez un formulaire selon votre besoin : métier, commune, délai, description.</p>
+    <h1 class="page-title">Comment ca marche</h1>
+    <p class="muted">Un parcours simple, utile et local pour recevoir une reponse claire sur vos travaux.</p>
+    <div class="steps" id="comment-marche-steps">
+      <article class="step reveal-step">
+        <h2>1. Vous decrivez vos travaux</h2>
+        <p>Vous indiquez votre metier, votre commune et le contexte. Le formulaire reste court et lisible.</p>
       </article>
-      <article class="card">
-        <h2>2. Orientation locale</h2>
-        <p>Votre demande est orientée vers le professionnel local concerné selon le métier sélectionné.</p>
+      <article class="step reveal-step">
+        <h2>2. Votre demande est orientee</h2>
+        <p>Nous envoyons les informations au professionnel local adapte, selon votre besoin reel.</p>
       </article>
-      <article class="card">
-        <h2>3. Prise de contact</h2>
-        <p>Le professionnel vous recontacte pour qualifier le besoin et proposer un devis sans engagement.</p>
+      <article class="step reveal-step">
+        <h2>3. Vous etes rappele</h2>
+        <p>Le professionnel vous rappelle pour preciser les travaux et proposer son devis sans engagement.</p>
       </article>
     </div>
   </section>
+
+  <script is:inline>
+    const steps = document.querySelectorAll('#comment-marche-steps .reveal-step');
+    if ('IntersectionObserver' in window && steps.length > 0) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.22 }
+      );
+
+      steps.forEach((step) => observer.observe(step));
+    }
+  </script>
 </Layout>

@@ -2,6 +2,8 @@
 import Layout from '../../layouts/Layout.astro';
 import LeadForm from '../../components/LeadForm.astro';
 import ReassuranceBadges from '../../components/ReassuranceBadges.astro';
+import MetierIcon from '../../components/MetierIcon.astro';
+import YonneMap from '../../components/YonneMap.astro';
 import { getParcoursByMetierSlug, metiersData, villesData, type Metier } from '../../lib/data';
 
 export async function getStaticPaths() {
@@ -29,17 +31,35 @@ const breadcrumbs = [
 ];
 ---
 
-<Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath={`/${metier.slug}/`}>
+<Layout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  canonicalPath={`/${metier.slug}/`}
+  stickyCta={{ label: 'Demarrer ma demande', href: '#devis', badge: 'Reponse sous 24 h' }}
+>
   <section class="section">
-    <h1>{metier.nom} dans l'Yonne</h1>
-    <p>{metier.description}</p>
-    <ReassuranceBadges />
-    {metier.urgence && <p class="badge" style="margin-top: 1rem;">Intervention rapide possible selon disponibilité locale.</p>}
+    <div class="editorial-grid">
+      <article class="hero-main">
+        <span class="eyebrow">Metier local Yonne</span>
+        <h1>{metier.nom} dans l'Yonne</h1>
+        <p>{metier.description}</p>
+        <div class="hero-actions">
+          <a class="btn" href="#devis">Demarrer ma demande</a>
+          <span class="inline-note">Reponse sous 24 h</span>
+        </div>
+        <ReassuranceBadges />
+        {metier.urgence && <p class="badge" style="margin-top: 0.8rem;">Intervention rapide possible selon disponibilite locale.</p>}
+      </article>
+      <aside class="signature-panel">
+        <YonneMap villes={villesData} metierSlug={metier.slug} />
+      </aside>
+    </div>
   </section>
 
   <section class="section">
-    <div class="grid cols-2">
-      <article class="card">
+    <div class="grid cols-2 rule-block">
+      <article>
         <h2>Prestations courantes</h2>
         <ul>
           {metier.prestations.map((prestation) => (
@@ -47,7 +67,7 @@ const breadcrumbs = [
           ))}
         </ul>
       </article>
-      <article class="card">
+      <article>
         <h2>Fourchettes de prix indicatives</h2>
         <p>{metier.fourchettePrix}</p>
       </article>
@@ -55,10 +75,12 @@ const breadcrumbs = [
   </section>
 
   <section class="section">
-    <h2>Questions fréquentes</h2>
+    <div class="rule-block">
+      <h2>Questions frequentes</h2>
+    </div>
     <div class="grid cols-2">
       {metier.questionsFrequentes.map((faq) => (
-        <article class="card">
+        <article class="step">
           <h3>{faq.question}</h3>
           <p>{faq.reponse}</p>
         </article>
@@ -66,19 +88,21 @@ const breadcrumbs = [
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="devis">
     <LeadForm metier={metier.slug} metierNom={metier.nom} actif={metier.actif} />
   </section>
 
   {parcours && (
     <section class="section">
-      <h2>Parcours de demande</h2>
+      <div class="rule-block">
+        <h2>Parcours de demande</h2>
+      </div>
       <p class="muted">
         Voici les informations qui vous seront demandées pour qualifier efficacement votre besoin en {metier.nom.toLowerCase()}.
       </p>
-      <div class="grid cols-3">
+      <div class="steps">
         {parcours.etapes.map((etape, index) => (
-          <article class="card">
+          <article class="step">
             <h3>
               Etape {index + 1} : {etape.question}
             </h3>
@@ -92,7 +116,7 @@ const breadcrumbs = [
 
   {!metier.actif && (
     <section class="section">
-      <article class="card" style="border-left: 4px solid #d97a2b;">
+      <article class="rule-block">
         <h2>Ouverture prochaine</h2>
         <p>
           Ce service est en preparation dans l'Yonne. Vous pouvez deja laisser votre email pour etre prevenu en
@@ -103,15 +127,18 @@ const breadcrumbs = [
   )}
 
   <section class="section">
-    <h2>Nos pages locales dans l'Yonne</h2>
-    <div class="grid cols-3">
+    <div class="rule-block">
+      <h2>Nos pages locales dans l'Yonne</h2>
+    </div>
+    <div class="bento-grid">
       {villesData.map((ville) => (
-        <article class="card">
+        <a href={`/${metier.slug}/${ville.slug}/`} class="metier-tile">
           <h3>
-            <a href={`/${metier.slug}/${ville.slug}/`}>{metier.nom} à {ville.nom}</a>
+            <MetierIcon slug={metier.slug} />
+            <span>{metier.nom} a {ville.nom}</span>
           </h3>
           <p class="muted">{ville.codePostal} • {ville.population}</p>
-        </article>
+        </a>
       ))}
     </div>
   </section>

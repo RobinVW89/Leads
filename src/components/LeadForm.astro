@@ -13,10 +13,10 @@ const formId = `lead-form-${metier}-${ville || 'global'}`;
 ---
 
 <div class="card" id={`${formId}-wrapper`}>
-  {actif ? <h2>Demander un devis gratuit</h2> : <h2>Service bientot disponible</h2>}
+  {actif ? <h2>Demarrer ma demande</h2> : <h2>Service bientot disponible</h2>}
   {
     actif ? (
-      <p class="muted">Décrivez votre besoin en 2 minutes. Un professionnel local vous rappelle sous 24 h.</p>
+      <p class="muted">Decrivez vos travaux en 2 minutes. Un professionnel local vous rappelle sous 24 h.</p>
     ) : (
       <p class="muted">
         Ce service ouvre bientot dans l'Yonne. Laissez votre email pour etre prevenu en premier.
@@ -86,7 +86,10 @@ const formId = `lead-form-${metier}-${ville || 'global'}`;
       <input id={`${formId}-website`} name="website" tabindex="-1" autocomplete="off" />
     </div>
 
-    <button type="submit">{actif ? 'Envoyer ma demande' : 'Me prevenir a l\'ouverture'}</button>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;">
+      <button type="submit">{actif ? 'Demarrer ma demande' : 'Me prevenir a l\'ouverture'}</button>
+      {actif && <span class="inline-note">Reponse sous 24 h</span>}
+    </div>
     <p class="muted" style="margin: 0;">
       En envoyant, vous acceptez la transmission de votre demande au professionnel concerne.
     </p>

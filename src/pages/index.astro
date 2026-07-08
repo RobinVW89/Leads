@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ReassuranceBadges from '../components/ReassuranceBadges.astro';
+import MetierIcon from '../components/MetierIcon.astro';
+import YonneMap from '../components/YonneMap.astro';
 import { SITE_CONFIG } from '../config/site';
 import { metiersData, villesData } from '../lib/data';
 
@@ -8,6 +10,7 @@ const title = `${SITE_CONFIG.siteName} | Devis gratuit dans l'Yonne`;
 const description = SITE_CONFIG.tagline;
 const metiersActifs = metiersData.filter((metier) => metier.actif).length;
 const metiersBientot = metiersData.filter((metier) => !metier.actif).length;
+const defaultMetier = metiersData.find((metier) => metier.actif) ?? metiersData[0];
 
 const organizationSchema = {
 	'@context': 'https://schema.org',
@@ -22,87 +25,119 @@ const organizationSchema = {
 
 <Layout title={title} description={description} jsonLd={organizationSchema}>
 	<section class="hero">
-		<div class="hero-grid">
-			<article class="card hero-main">
-				<span class="eyebrow">Portail local - Yonne (89)</span>
-				<h1>Trouvez un artisan de confiance dans l'Yonne</h1>
+		<div class="editorial-grid">
+			<article class="hero-main">
+				<span class="eyebrow">Portail local Yonne 89</span>
+				<h1>Décrivez vos travaux. On vous rappelle sous 24 h.</h1>
 				<p>
-					Nous mettons en relation les particuliers avec des professionnels locaux, selon votre metier et votre
-					commune. La demande est simple, sans engagement, et traitee rapidement.
+					Partout dans l'Yonne, vous trouvez le bon professionnel local selon votre metier, votre ville et votre
+					delai. Sans engagement, sans promesse marketing exageree.
 				</p>
+				<div class="hero-actions">
+					<a class="btn" href="#quick-access">Demarrer ma demande</a>
+					<span class="inline-note">Reponse sous 24 h</span>
+				</div>
 				<ReassuranceBadges />
 				<div class="pill-list" aria-label="Indicateurs de couverture locale">
 					<span class="pill">{metiersActifs} metiers ouverts</span>
-					<span class="pill">{metiersBientot} metiers bientot</span>
+					<span class="pill">{metiersBientot} metiers en preparation</span>
 					<span class="pill">{villesData.length} villes couvertes</span>
 				</div>
-				<p class="note">Aucun faux avis, aucune promesse irrealiste: uniquement de la mise en relation locale.</p>
 			</article>
-			<aside class="card quick-card">
-				<h2>Accès rapide</h2>
-				<p class="muted">Selectionnez votre besoin pour arriver directement sur la bonne page locale.</p>
-				<form id="quick-access-form">
-					<div>
-						<label for="quick-metier">Métier</label>
-						<select id="quick-metier" required>
-							<option value="">Choisir un métier</option>
-							{metiersData.map((metier) => (
-								<option value={metier.slug}>{metier.nom}</option>
-							))}
-						</select>
-					</div>
-					<div>
-						<label for="quick-ville">Ville</label>
-						<select id="quick-ville">
-							<option value="">Voir la page métier générale</option>
-							{villesData.map((ville) => (
-								<option value={ville.slug}>{ville.nom}</option>
-							))}
-						</select>
-					</div>
-					<button type="submit">Accéder à la page</button>
-				</form>
+
+			<aside class="signature-panel">
+				<YonneMap villes={villesData} metierSlug={defaultMetier.slug} />
 			</aside>
 		</div>
 	</section>
 
+	<section class="section" id="quick-access">
+		<div class="panel">
+			<h2>Acces rapide a votre page locale</h2>
+			<p class="muted">Choisissez votre metier et votre commune pour ouvrir la page utile directement.</p>
+			<form id="quick-access-form" class="grid cols-3">
+				<div>
+					<label for="quick-metier">Metier</label>
+					<select id="quick-metier" required>
+						<option value="">Choisir un metier</option>
+						{metiersData.map((metier) => (
+							<option value={metier.slug}>{metier.nom}</option>
+						))}
+					</select>
+				</div>
+				<div>
+					<label for="quick-ville">Ville</label>
+					<select id="quick-ville">
+						<option value="">Voir la page metier generale</option>
+						{villesData.map((ville) => (
+							<option value={ville.slug}>{ville.nom}</option>
+						))}
+					</select>
+				</div>
+				<div style="display: flex; align-items: flex-end; gap: 0.6rem;">
+					<button type="submit">Demarrer ma demande</button>
+					<span class="inline-note">Reponse sous 24 h</span>
+				</div>
+			</form>
+		</div>
+	</section>
+
 	<section class="section" id="metiers">
-		<h2>Nos métiers</h2>
-		<p class="muted" style="margin-top: -0.2rem;">Chaque page metier explique les prestations, les prix indicatifs et les cas frequents dans l'Yonne.</p>
-		<div class="grid cols-3">
+		<div class="rule-block">
+			<h2>Metiers disponibles dans l'Yonne</h2>
+			<p class="muted">Chaque fiche locale explique les prestations, les prix indicatifs et les delais de rappel.</p>
+		</div>
+		<div class="bento-grid">
 			{metiersData.map((metier) => (
-				<article class="card">
+				<a
+					href={`/${metier.slug}/`}
+					class={`metier-tile ${metier.saison !== 'toute-annee' ? 'is-seasonal' : ''} ${!metier.actif ? 'is-inactive' : ''}`}
+				>
 					<h3>
-						<a href={`/${metier.slug}/`}>{metier.nom}</a>
+						<MetierIcon slug={metier.slug} label={metier.nom} />
+						<span>{metier.nom}</span>
 					</h3>
-					<p>{metier.description}</p>
-					{!metier.actif && <span class="badge" style="background: #fff1e4; color: #8b4a11;">Bientot</span>}
-					{metier.urgence && <span class="badge">Intervention rapide possible</span>}
-				</article>
+					<p class="muted">{metier.description.slice(0, 130)}...</p>
+					<div class="badges">
+						{!metier.actif && <span class="badge">Ouverture prochaine</span>}
+						{metier.urgence && <span class="badge">Intervention rapide possible</span>}
+					</div>
+				</a>
 			))}
 		</div>
 	</section>
 
-	<section class="section">
-		<h2>Comment ça fonctionne ?</h2>
-		<div class="grid cols-3">
-			<article class="card">
-				<h3>1. Vous décrivez votre besoin</h3>
-				<p>Un formulaire simple pour préciser votre demande, votre commune et votre délai souhaité.</p>
+	<section class="section" id="comment-marche-home">
+		<div class="rule-block">
+			<h2>Comment ca marche</h2>
+		</div>
+		<div class="steps">
+			<article class="step reveal-step">
+				<h3>01. Decrivez vos travaux</h3>
+				<p>Vous renseignez votre besoin, votre commune et votre delai en langage simple.</p>
 			</article>
-			<article class="card">
-				<h3>2. Nous orientons votre demande</h3>
-				<p>Votre demande est transmise au professionnel local concerné selon le métier recherché.</p>
+			<article class="step reveal-step">
+				<h3>02. Orientation locale</h3>
+				<p>Nous transmettons votre demande au professionnel local pertinent selon le metier choisi.</p>
 			</article>
-			<article class="card">
-				<h3>3. Vous êtes recontacté</h3>
-				<p>Un professionnel vous rappelle pour qualifier le besoin et proposer un devis gratuit.</p>
+			<article class="step reveal-step">
+				<h3>03. Echange et devis</h3>
+				<p>Le professionnel vous rappelle, confirme les details et vous propose son devis.</p>
 			</article>
 		</div>
 	</section>
 
 	<script is:inline>
 		const quickAccessForm = document.getElementById('quick-access-form');
+		const quickCityField = document.getElementById('quick-ville');
+
+		if (quickCityField instanceof HTMLSelectElement) {
+			const storedCity = window.localStorage.getItem('selectedVilleSlug') || '';
+			if (storedCity) {
+				quickCityField.value = storedCity;
+			}
+		}
+
 		if (quickAccessForm instanceof HTMLFormElement) {
 			quickAccessForm.addEventListener('submit', (event) => {
 				event.preventDefault();
@@ -117,9 +152,30 @@ const organizationSchema = {
 					return;
 				}
 
+				if (ville.value) {
+					window.localStorage.setItem('selectedVilleSlug', ville.value);
+				}
+
 				const destination = ville.value ? `/${metier.value}/${ville.value}/` : `/${metier.value}/`;
 				window.location.href = destination;
 			});
+		}
+
+		const revealItems = document.querySelectorAll('#comment-marche-home .reveal-step');
+		if ('IntersectionObserver' in window && revealItems.length > 0) {
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (entry.isIntersecting) {
+							entry.target.classList.add('is-visible');
+							observer.unobserve(entry.target);
+						}
+					});
+				},
+				{ threshold: 0.28 }
+			);
+
+			revealItems.forEach((item) => observer.observe(item));
 		}
 	</script>
 </Layout>

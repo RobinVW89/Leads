@@ -12,8 +12,9 @@ const breadcrumbs = [
 
 <Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath="/mentions-legales">
   <section class="section">
-    <h1>Mentions légales</h1>
-    <article class="card">
+    <h1 class="page-title">Mentions legales</h1>
+    <div class="legal-stack">
+    <article class="rule-block">
       <h2>Éditeur du site</h2>
       <p>
         {SITE_CONFIG.siteName}<br />
@@ -24,7 +25,7 @@ const breadcrumbs = [
       </p>
     </article>
 
-    <article class="card" style="margin-top: 1rem;">
+    <article class="rule-block">
       <h2>Hébergement</h2>
       <p>
         Site hébergé sur Cloudflare Pages.<br />
@@ -32,7 +33,7 @@ const breadcrumbs = [
       </p>
     </article>
 
-    <article class="card" style="margin-top: 1rem;">
+    <article class="rule-block">
       <h2>Objet du service</h2>
       <p>
         Ce site propose un service de mise en relation entre particuliers et professionnels locaux de l'Yonne dans
@@ -40,7 +41,7 @@ const breadcrumbs = [
       </p>
     </article>
 
-    <article class="card" style="margin-top: 1rem;">
+    <article class="rule-block">
       <h2>Propriété intellectuelle</h2>
       <p>
         L'ensemble des contenus du site (textes, structure, éléments graphiques) est protégé par le droit d'auteur.
@@ -49,12 +50,13 @@ const breadcrumbs = [
       </p>
     </article>
 
-    <article class="card" style="margin-top: 1rem;">
+    <article class="rule-block">
       <h2>Responsabilité</h2>
       <p>
         Les informations publiées sont fournies à titre indicatif. L'éditeur ne peut être tenu responsable d'une
         indisponibilité temporaire du service, ni des suites données par les professionnels après la mise en relation.
       </p>
     </article>
+    </div>
   </section>
 </Layout>

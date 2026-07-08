@@ -1,0 +1,99 @@
+---
+import type { Ville } from '../lib/data';
+
+type MapPoint = {
+  slug: string;
+  xPct: number;
+  yPct: number;
+};
+
+type Props = {
+  villes: Ville[];
+  metierSlug?: string;
+  selectedVilleSlug?: string;
+};
+
+const { villes, metierSlug = 'plombier-chauffagiste', selectedVilleSlug = '' } = Astro.props;
+
+const points: MapPoint[] = [
+  { slug: 'sens', xPct: 66, yPct: 24 },
+  { slug: 'saint-florentin', xPct: 60, yPct: 31 },
+  { slug: 'migennes', xPct: 56, yPct: 34 },
+  { slug: 'joigny', xPct: 52, yPct: 38 },
+  { slug: 'brienon-sur-armancon', xPct: 61, yPct: 36 },
+  { slug: 'chablis', xPct: 60, yPct: 43 },
+  { slug: 'tonnerre', xPct: 67, yPct: 46 },
+  { slug: 'auxerre', xPct: 54, yPct: 56 },
+  { slug: 'appoigny', xPct: 55, yPct: 53 },
+  { slug: 'moneteau', xPct: 57, yPct: 52 },
+  { slug: 'saint-georges-sur-baulche', xPct: 51, yPct: 54 },
+  { slug: 'champs-sur-yonne', xPct: 51, yPct: 59 },
+  { slug: 'vermenton', xPct: 49, yPct: 64 },
+  { slug: 'toucy', xPct: 42, yPct: 46 },
+  { slug: 'avallon', xPct: 60, yPct: 78 }
+];
+
+const cityBySlug = new Map(villes.map((ville) => [ville.slug, ville]));
+const mapPoints = points
+  .map((point) => ({
+    point,
+    ville: cityBySlug.get(point.slug)
+  }))
+  .filter((item): item is { point: MapPoint; ville: Ville } => Boolean(item.ville));
+---
+
+<div class="yonne-map" data-selected-city={selectedVilleSlug}>
+  <p class="map-title">Carte locale de l'Yonne</p>
+  <div
+    class="yonne-map-canvas"
+    role="img"
+    aria-label="Département de l'Yonne et villes couvertes. Chaque point ouvre une page locale."
+  >
+    <img src="/images/yonne-reference.png" alt="" aria-hidden="true" class="yonne-map-base" loading="lazy" />
+    <div class="yonne-map-legend-mask" aria-hidden="true"></div>
+    {mapPoints.map(({ point, ville }) => {
+      const href = `/${metierSlug}/${ville.slug}/`;
+      const isActive = ville.slug === selectedVilleSlug;
+      return (
+        <a
+          href={href}
+          class={`map-point-link ${isActive ? 'is-active' : ''}`}
+          data-city={ville.slug}
+          style={`--x:${point.xPct}%; --y:${point.yPct}%;`}
+          aria-label={`${ville.nom}: voir la page locale`}
+        >
+          <span class="map-point" aria-hidden="true"></span>
+          <span class="map-label">{ville.nom}</span>
+        </a>
+      );
+    })}
+  </div>
+</div>
+
+<script is:inline>
+  document.querySelectorAll('.yonne-map').forEach((mapRoot) => {
+    if (!(mapRoot instanceof HTMLElement)) {
+      return;
+    }
+
+    const selectedFromStorage = window.localStorage.getItem('selectedVilleSlug') || '';
+    const selectedFromData = mapRoot.dataset.selectedCity || '';
+    const selected = selectedFromData || selectedFromStorage;
+
+    if (selected) {
+      const active = mapRoot.querySelector(`.map-point-link[data-city="${selected}"]`);
+      if (active instanceof HTMLElement) {
+        active.classList.add('is-active');
+      }
+    }
+
+    mapRoot.querySelectorAll('.map-point-link').forEach((node) => {
+      node.addEventListener('click', () => {
+        const city = node.getAttribute('data-city');
+        if (city) {
+          window.localStorage.setItem('selectedVilleSlug', city);
+        }
+      });
+    });
+  });
+</script>
