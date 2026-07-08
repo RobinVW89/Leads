@@ -1,5 +1,6 @@
 ---
 import { SITE_CONFIG } from '../config/site';
+import { getParcoursByMetierSlug, type ParcoursEtape } from '../lib/data';
 
 type Props = {
   metier: string;
@@ -10,6 +11,23 @@ type Props = {
 
 const { metier, metierNom = metier, ville = '', actif = true } = Astro.props;
 const formId = `lead-form-${metier}-${ville || 'global'}`;
+const parcours = actif ? getParcoursByMetierSlug(metier) : undefined;
+const fallbackEtapes: ParcoursEtape[] = [
+  {
+    question: 'Quel type de travaux souhaitez-vous realiser ?',
+    options: ['Renovation', 'Depannage', 'Installation', 'Entretien', 'Autre']
+  },
+  {
+    question: 'Ou se situe votre projet ?',
+    options: ['Residence principale', 'Residence secondaire', 'Local professionnel']
+  }
+];
+const qualificationEtapes = actif
+  ? parcours?.etapes && parcours.etapes.length > 0
+    ? parcours.etapes
+    : fallbackEtapes
+  : [];
+const totalWizardSteps = qualificationEtapes.length + 2;
 ---
 
 <div class="card" id={`${formId}-wrapper`}>
@@ -27,39 +45,122 @@ const formId = `lead-form-${metier}-${ville || 'global'}`;
   <form id={formId} novalidate>
     {actif ? (
       <>
-        <div>
-          <label for={`${formId}-prenom`}>Prénom *</label>
-          <input id={`${formId}-prenom`} name="prenom" autocomplete="given-name" required />
+        <div class="lead-progress" role="status" aria-live="polite">
+          <p class="lead-progress-text">Etape 1 sur {totalWizardSteps}</p>
+          <div class="lead-progress-track" aria-hidden="true">
+            <span class="lead-progress-bar" style="--progress: 0.2;"></span>
+          </div>
         </div>
 
-        <div>
-          <label for={`${formId}-telephone`}>Téléphone *</label>
-          <input id={`${formId}-telephone`} name="telephone" autocomplete="tel" inputmode="tel" required />
+        {qualificationEtapes.map((etape, index) => {
+          const stepNumber = index + 1;
+          const fieldName = `q_${stepNumber}`;
+
+          return (
+            <section class={`lead-step ${stepNumber === 1 ? 'is-active' : ''}`} data-step={stepNumber} hidden={stepNumber !== 1}>
+              <fieldset class="lead-options" data-required={etape.facultatif ? 'false' : 'true'} data-field-name={fieldName}>
+                <legend>
+                  {etape.question} {etape.facultatif && <span class="muted">(facultatif)</span>}
+                </legend>
+                <div class="lead-options-grid">
+                  {etape.options.map((option, optionIndex) => (
+                    <label class="lead-option">
+                      <input
+                        type="radio"
+                        name={fieldName}
+                        value={option}
+                        required={!etape.facultatif && optionIndex === 0}
+                        aria-required={!etape.facultatif}
+                      />
+                      <span>{option}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            </section>
+          );
+        })}
+
+        <section class="lead-step" data-step={qualificationEtapes.length + 1} hidden>
+          <div>
+            <label for={`${formId}-description`}>Decrivez votre projet</label>
+            <textarea id={`${formId}-description`} name="description" rows={4} placeholder="Ex: 45 m2 de murs a repeindre, support deja prepare."></textarea>
+          </div>
+
+          <div>
+            <label for={`${formId}-delai`}>Delai souhaite *</label>
+            <select id={`${formId}-delai`} name="delaiSouhaite" required>
+              <option value="">Choisir un delai</option>
+              <option value="des-que-possible">Des que possible</option>
+              <option value="sous-1-mois">Sous 1 mois</option>
+              <option value="sous-3-mois">Sous 3 mois</option>
+              <option value="je-me-renseigne">Je me renseigne</option>
+            </select>
+          </div>
+
+          <div>
+            <label for={`${formId}-budget`}>Budget (facultatif)</label>
+            <select id={`${formId}-budget`} name="budget">
+              <option value="">Je ne sais pas encore</option>
+              <option value="moins-de-2000">Moins de 2 000 EUR</option>
+              <option value="2000-5000">2 000 a 5 000 EUR</option>
+              <option value="5000-10000">5 000 a 10 000 EUR</option>
+              <option value="plus-de-10000">Plus de 10 000 EUR</option>
+            </select>
+          </div>
+        </section>
+
+        <section class="lead-step" data-step={qualificationEtapes.length + 2} hidden>
+          <div class="grid cols-2">
+            <div>
+              <label for={`${formId}-prenom`}>Prenom *</label>
+              <input id={`${formId}-prenom`} name="prenom" autocomplete="given-name" required />
+            </div>
+
+            <div>
+              <label for={`${formId}-nom`}>Nom *</label>
+              <input id={`${formId}-nom`} name="nom" autocomplete="family-name" required />
+            </div>
+          </div>
+
+          <div class="grid cols-2">
+            <div>
+              <label for={`${formId}-telephone`}>Telephone portable *</label>
+              <input id={`${formId}-telephone`} name="telephone" autocomplete="tel" inputmode="tel" required />
+            </div>
+
+            <div>
+              <label for={`${formId}-email`}>Email *</label>
+              <input id={`${formId}-email`} name="email" autocomplete="email" type="email" required />
+            </div>
+          </div>
+
+          <div class="grid cols-2">
+            <div>
+              <label for={`${formId}-commune`}>Ville *</label>
+              <input id={`${formId}-commune`} name="commune" value={ville} required />
+            </div>
+
+            <div>
+              <label for={`${formId}-codePostal`}>Code postal *</label>
+              <input id={`${formId}-codePostal`} name="codePostal" autocomplete="postal-code" inputmode="numeric" required />
+            </div>
+          </div>
+        </section>
+
+        <div class="lead-nav">
+          <button type="button" class="btn-ghost" data-action="prev" disabled>Retour</button>
+          <button type="button" data-action="next">Suivant</button>
+          <button type="submit" data-action="submit" hidden>Envoyer ma demande</button>
         </div>
 
-        <div>
-          <label for={`${formId}-email`}>Email</label>
-          <input id={`${formId}-email`} name="email" autocomplete="email" type="email" />
-        </div>
+        <p class="muted" style="margin: 0;">
+          En envoyant, vous acceptez la transmission de votre demande au professionnel concerne.
+        </p>
 
-        <div>
-          <label for={`${formId}-commune`}>Commune</label>
-          <input id={`${formId}-commune`} name="commune" value={ville} />
-        </div>
+        <span class="inline-note">Reponse sous 24 h</span>
 
-        <div>
-          <label for={`${formId}-description`}>Description du besoin</label>
-          <textarea id={`${formId}-description`} name="description" rows={4}></textarea>
-        </div>
-
-        <div>
-          <label for={`${formId}-delai`}>Délai souhaité</label>
-          <select id={`${formId}-delai`} name="delaiSouhaite">
-            <option value="des-que-possible">Dès que possible</option>
-            <option value="sous-1-mois">Sous 1 mois</option>
-            <option value="je-me-renseigne">Je me renseigne</option>
-          </select>
-        </div>
+        <input type="hidden" name="qualification" />
       </>
     ) : (
       <>
@@ -86,13 +187,18 @@ const formId = `lead-form-${metier}-${ville || 'global'}`;
       <input id={`${formId}-website`} name="website" tabindex="-1" autocomplete="off" />
     </div>
 
-    <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;">
-      <button type="submit">{actif ? 'Demarrer ma demande' : 'Me prevenir a l\'ouverture'}</button>
-      {actif && <span class="inline-note">Reponse sous 24 h</span>}
-    </div>
-    <p class="muted" style="margin: 0;">
-      En envoyant, vous acceptez la transmission de votre demande au professionnel concerne.
-    </p>
+    {
+      !actif && (
+        <>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;">
+            <button type="submit">Me prevenir a l'ouverture</button>
+          </div>
+          <p class="muted" style="margin: 0;">
+            En envoyant, vous acceptez la transmission de votre demande au professionnel concerne.
+          </p>
+        </>
+      )
+    }
   </form>
 
   <div id={`${formId}-message`} aria-live="polite" style="margin-top: 0.8rem;"></div>
@@ -100,7 +206,13 @@ const formId = `lead-form-${metier}-${ville || 'global'}`;
 
 <script
   is:inline
-  define:vars={{ formId, webhookUrl: SITE_CONFIG.n8nWebhookUrl, telContact: SITE_CONFIG.telContact, actif }}
+  define:vars={{
+    formId,
+    webhookUrl: SITE_CONFIG.n8nWebhookUrl,
+    telContact: SITE_CONFIG.telContact,
+    actif,
+    totalWizardSteps
+  }}
 >
   const form = document.getElementById(formId);
   const messageBox = document.getElementById(`${formId}-message`);
@@ -116,13 +228,169 @@ const formId = `lead-form-${metier}-${ville || 'global'}`;
       pageSourceInput.value = window.location.href;
     }
 
+    const wizardSteps = actif ? Array.from(form.querySelectorAll('.lead-step')) : [];
+    const prevButton = form.querySelector('[data-action="prev"]');
+    const nextButton = form.querySelector('[data-action="next"]');
+    const submitButton = form.querySelector('[data-action="submit"]');
+    const progressText = form.querySelector('.lead-progress-text');
+    const progressBar = form.querySelector('.lead-progress-bar');
+    let currentStepIndex = 0;
+
+    const getRequiredRadioGroups = (step) => {
+      if (!(step instanceof HTMLElement)) {
+        return [];
+      }
+
+      return Array.from(step.querySelectorAll('fieldset[data-required="true"]'));
+    };
+
+    const validateCurrentStep = () => {
+      if (!actif || wizardSteps.length === 0) {
+        return true;
+      }
+
+      const step = wizardSteps[currentStepIndex];
+      if (!(step instanceof HTMLElement)) {
+        return true;
+      }
+
+      const requiredFields = Array.from(
+        step.querySelectorAll('input[required]:not([type="radio"]), textarea[required], select[required]')
+      );
+
+      for (const field of requiredFields) {
+        if (
+          (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) &&
+          !field.value.trim()
+        ) {
+          field.focus();
+          field.reportValidity();
+          return false;
+        }
+      }
+
+      const requiredGroups = getRequiredRadioGroups(step);
+      for (const group of requiredGroups) {
+        const fieldName = group.getAttribute('data-field-name');
+        if (!fieldName) {
+          continue;
+        }
+
+        const checked = form.querySelector(`input[name="${fieldName}"]:checked`);
+        if (!checked) {
+          const firstInput = group.querySelector('input[type="radio"]');
+          if (firstInput instanceof HTMLInputElement) {
+            firstInput.focus();
+          }
+          messageBox.className = 'error';
+          messageBox.textContent = 'Veuillez repondre a la question avant de continuer.';
+          return false;
+        }
+      }
+
+      messageBox.className = '';
+      messageBox.textContent = '';
+      return true;
+    };
+
+    const refreshWizardUi = () => {
+      if (!actif || wizardSteps.length === 0) {
+        return;
+      }
+
+      wizardSteps.forEach((step, index) => {
+        const isActive = index === currentStepIndex;
+        if (step instanceof HTMLElement) {
+          step.hidden = !isActive;
+          step.classList.toggle('is-active', isActive);
+        }
+      });
+
+      const currentHumanIndex = currentStepIndex + 1;
+      const progress = currentHumanIndex / Math.max(totalWizardSteps, 1);
+
+      if (progressText instanceof HTMLElement) {
+        progressText.textContent = `Etape ${currentHumanIndex} sur ${totalWizardSteps}`;
+      }
+
+      if (progressBar instanceof HTMLElement) {
+        progressBar.style.setProperty('--progress', String(progress));
+      }
+
+      if (prevButton instanceof HTMLButtonElement) {
+        prevButton.disabled = currentStepIndex === 0;
+      }
+
+      const isLast = currentStepIndex === wizardSteps.length - 1;
+      if (nextButton instanceof HTMLButtonElement) {
+        nextButton.hidden = isLast;
+      }
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.hidden = !isLast;
+      }
+    };
+
+    if (actif && wizardSteps.length > 0) {
+      refreshWizardUi();
+
+      if (prevButton instanceof HTMLButtonElement) {
+        prevButton.addEventListener('click', () => {
+          currentStepIndex = Math.max(0, currentStepIndex - 1);
+          refreshWizardUi();
+        });
+      }
+
+      if (nextButton instanceof HTMLButtonElement) {
+        nextButton.addEventListener('click', () => {
+          if (!validateCurrentStep()) {
+            return;
+          }
+
+          currentStepIndex = Math.min(wizardSteps.length - 1, currentStepIndex + 1);
+          refreshWizardUi();
+        });
+      }
+    }
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
+
+      if (!validateCurrentStep()) {
+        return;
+      }
 
       const data = new FormData(form);
       const startedAt = Number(data.get('startedAt') || Date.now());
       const elapsedSeconds = (Date.now() - startedAt) / 1000;
       const honeypot = String(data.get('website') || '');
+
+      if (actif) {
+        const qualificationInput = form.elements.namedItem('qualification');
+        if (qualificationInput instanceof HTMLInputElement) {
+          const answers = [];
+          const questionSets = form.querySelectorAll('fieldset[data-field-name]');
+
+          questionSets.forEach((fieldset) => {
+            if (!(fieldset instanceof HTMLElement)) {
+              return;
+            }
+
+            const fieldName = fieldset.dataset.fieldName || '';
+            if (!fieldName) {
+              return;
+            }
+
+            const legend = fieldset.querySelector('legend');
+            const checked = form.querySelector(`input[name="${fieldName}"]:checked`);
+            if (legend instanceof HTMLElement && checked instanceof HTMLInputElement && checked.value) {
+              answers.push({ question: legend.textContent || '', reponse: checked.value });
+            }
+          });
+
+          qualificationInput.value = JSON.stringify(answers);
+          data.set('qualification', qualificationInput.value);
+        }
+      }
 
       if (honeypot.trim().length > 0 || elapsedSeconds < 3) {
         messageBox.className = 'error';
@@ -137,11 +405,15 @@ const formId = `lead-form-${metier}-${ville || 'global'}`;
       const payload = {
         type: String(data.get('type') || (actif ? 'lead' : 'intention')),
         prenom: String(data.get('prenom') || ''),
+        nom: String(data.get('nom') || ''),
         telephone: String(data.get('telephone') || ''),
         email: String(data.get('email') || ''),
         commune: String(data.get('commune') || ''),
+        codePostal: String(data.get('codePostal') || ''),
         description: String(data.get('description') || ''),
         delaiSouhaite: String(data.get('delaiSouhaite') || ''),
+        budget: String(data.get('budget') || ''),
+        qualification: String(data.get('qualification') || ''),
         metier: String(data.get('metier') || ''),
         metier_nom: String(data.get('metier_nom') || ''),
         ville: String(data.get('ville') || ''),
@@ -166,6 +438,10 @@ const formId = `lead-form-${metier}-${ville || 'global'}`;
         }
         if (pageSourceInput instanceof HTMLInputElement) {
           pageSourceInput.value = window.location.href;
+        }
+        if (actif && wizardSteps.length > 0) {
+          currentStepIndex = 0;
+          refreshWizardUi();
         }
         messageBox.className = 'success';
         messageBox.textContent = actif
