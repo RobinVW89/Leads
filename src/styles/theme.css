@@ -365,6 +365,10 @@ form {
   gap: 0.8rem;
 }
 
+.lead-step[hidden] {
+  display: none !important;
+}
+
 .lead-options {
   margin: 0;
   border: 0;

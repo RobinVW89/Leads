@@ -30,17 +30,17 @@ const organizationSchema = {
 				<span class="eyebrow">Portail local Yonne 89</span>
 				<h1>Décrivez vos travaux. On vous rappelle sous 24 h.</h1>
 				<p>
-					Partout dans l'Yonne, vous trouvez le bon professionnel local selon votre metier, votre ville et votre
-					delai. Sans engagement, sans promesse marketing exageree.
+					Partout dans l'Yonne, vous trouvez le bon professionnel local selon votre métier, votre ville et votre
+					délai. Sans engagement, sans promesse marketing exagérée.
 				</p>
 				<div class="hero-actions">
-					<a class="btn" href="#quick-access">Demarrer ma demande</a>
-					<span class="inline-note">Reponse sous 24 h</span>
+					<a class="btn" href="#quick-access">Démarrer ma demande</a>
+					<span class="inline-note">Réponse sous 24 h</span>
 				</div>
 				<ReassuranceBadges />
 				<div class="pill-list" aria-label="Indicateurs de couverture locale">
-					<span class="pill">{metiersActifs} metiers ouverts</span>
-					<span class="pill">{metiersBientot} metiers en preparation</span>
+					<span class="pill">{metiersActifs} métiers ouverts</span>
+					<span class="pill">{metiersBientot} métiers en préparation</span>
 					<span class="pill">{villesData.length} villes couvertes</span>
 				</div>
 			</article>
@@ -53,13 +53,13 @@ const organizationSchema = {
 
 	<section class="section" id="quick-access">
 		<div class="panel">
-			<h2>Acces rapide a votre page locale</h2>
-			<p class="muted">Choisissez votre metier et votre commune pour ouvrir la page utile directement.</p>
+			<h2>Accès rapide à votre page locale</h2>
+			<p class="muted">Choisissez votre métier et votre commune pour ouvrir la page utile directement.</p>
 			<form id="quick-access-form" class="grid cols-3">
 				<div>
-					<label for="quick-metier">Metier</label>
+					<label for="quick-metier">Métier</label>
 					<select id="quick-metier" required>
-						<option value="">Choisir un metier</option>
+						<option value="">Choisir un métier</option>
 						{metiersData.map((metier) => (
 							<option value={metier.slug}>{metier.nom}</option>
 						))}
@@ -68,15 +68,15 @@ const organizationSchema = {
 				<div>
 					<label for="quick-ville">Ville</label>
 					<select id="quick-ville">
-						<option value="">Voir la page metier generale</option>
+						<option value="">Voir la page métier générale</option>
 						{villesData.map((ville) => (
 							<option value={ville.slug}>{ville.nom}</option>
 						))}
 					</select>
 				</div>
 				<div style="display: flex; align-items: flex-end; gap: 0.6rem;">
-					<button type="submit">Demarrer ma demande</button>
-					<span class="inline-note">Reponse sous 24 h</span>
+					<button type="submit">Démarrer ma demande</button>
+					<span class="inline-note">Réponse sous 24 h</span>
 				</div>
 			</form>
 		</div>
@@ -84,8 +84,8 @@ const organizationSchema = {
 
 	<section class="section" id="metiers">
 		<div class="rule-block">
-			<h2>Metiers disponibles dans l'Yonne</h2>
-			<p class="muted">Chaque fiche locale explique les prestations, les prix indicatifs et les delais de rappel.</p>
+			<h2>Métiers disponibles dans l'Yonne</h2>
+			<p class="muted">Chaque fiche locale explique les prestations, les prix indicatifs et les délais de rappel.</p>
 		</div>
 		<div class="bento-grid">
 			{metiersData.map((metier) => (
@@ -109,20 +109,20 @@ const organizationSchema = {
 
 	<section class="section" id="comment-marche-home">
 		<div class="rule-block">
-			<h2>Comment ca marche</h2>
+			<h2>Comment ça marche</h2>
 		</div>
 		<div class="steps">
 			<article class="step reveal-step">
-				<h3>01. Decrivez vos travaux</h3>
-				<p>Vous renseignez votre besoin, votre commune et votre delai en langage simple.</p>
+				<h3>01. Décrivez vos travaux</h3>
+				<p>Vous renseignez votre besoin, votre commune et votre délai en langage simple.</p>
 			</article>
 			<article class="step reveal-step">
 				<h3>02. Orientation locale</h3>
-				<p>Nous transmettons votre demande au professionnel local pertinent selon le metier choisi.</p>
+				<p>Nous transmettons votre demande au professionnel local pertinent selon le métier choisi.</p>
 			</article>
 			<article class="step reveal-step">
-				<h3>03. Echange et devis</h3>
-				<p>Le professionnel vous rappelle, confirme les details et vous propose son devis.</p>
+				<h3>03. Échange et devis</h3>
+				<p>Le professionnel vous rappelle, confirme les détails et vous propose son devis.</p>
 			</article>
 		</div>
 	</section>

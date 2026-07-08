@@ -14,12 +14,12 @@ const formId = `lead-form-${metier}-${ville || 'global'}`;
 const parcours = actif ? getParcoursByMetierSlug(metier) : undefined;
 const fallbackEtapes: ParcoursEtape[] = [
   {
-    question: 'Quel type de travaux souhaitez-vous realiser ?',
-    options: ['Renovation', 'Depannage', 'Installation', 'Entretien', 'Autre']
+    question: 'Quel type de travaux souhaitez-vous réaliser ?',
+    options: ['Rénovation', 'Dépannage', 'Installation', 'Entretien', 'Autre']
   },
   {
-    question: 'Ou se situe votre projet ?',
-    options: ['Residence principale', 'Residence secondaire', 'Local professionnel']
+    question: 'Où se situe votre projet ?',
+    options: ['Résidence principale', 'Résidence secondaire', 'Local professionnel']
   }
 ];
 const qualificationEtapes = actif
@@ -31,13 +31,13 @@ const totalWizardSteps = qualificationEtapes.length + 2;
 ---
 
 <div class="card" id={`${formId}-wrapper`}>
-  {actif ? <h2>Demarrer ma demande</h2> : <h2>Service bientot disponible</h2>}
+  {actif ? <h2>Démarrer ma demande</h2> : <h2>Service bientôt disponible</h2>}
   {
     actif ? (
-      <p class="muted">Decrivez vos travaux en 2 minutes. Un professionnel local vous rappelle sous 24 h.</p>
+      <p class="muted">Décrivez vos travaux en 2 minutes. Un professionnel local vous rappelle sous 24 h.</p>
     ) : (
       <p class="muted">
-        Ce service ouvre bientot dans l'Yonne. Laissez votre email pour etre prevenu en premier.
+        Ce service ouvre bientôt dans l'Yonne. Laissez votre email pour être prévenu en premier.
       </p>
     )
   }
@@ -83,15 +83,15 @@ const totalWizardSteps = qualificationEtapes.length + 2;
 
         <section class="lead-step" data-step={qualificationEtapes.length + 1} hidden>
           <div>
-            <label for={`${formId}-description`}>Decrivez votre projet</label>
-            <textarea id={`${formId}-description`} name="description" rows={4} placeholder="Ex: 45 m2 de murs a repeindre, support deja prepare."></textarea>
+            <label for={`${formId}-description`}>Décrivez votre projet</label>
+            <textarea id={`${formId}-description`} name="description" rows={4} placeholder="Ex : 45 m2 de murs à repeindre, support déjà préparé."></textarea>
           </div>
 
           <div>
-            <label for={`${formId}-delai`}>Delai souhaite *</label>
+            <label for={`${formId}-delai`}>Délai souhaité *</label>
             <select id={`${formId}-delai`} name="delaiSouhaite" required>
-              <option value="">Choisir un delai</option>
-              <option value="des-que-possible">Des que possible</option>
+              <option value="">Choisir un délai</option>
+              <option value="des-que-possible">Dès que possible</option>
               <option value="sous-1-mois">Sous 1 mois</option>
               <option value="sous-3-mois">Sous 3 mois</option>
               <option value="je-me-renseigne">Je me renseigne</option>
@@ -103,8 +103,8 @@ const totalWizardSteps = qualificationEtapes.length + 2;
             <select id={`${formId}-budget`} name="budget">
               <option value="">Je ne sais pas encore</option>
               <option value="moins-de-2000">Moins de 2 000 EUR</option>
-              <option value="2000-5000">2 000 a 5 000 EUR</option>
-              <option value="5000-10000">5 000 a 10 000 EUR</option>
+              <option value="2000-5000">2 000 à 5 000 EUR</option>
+              <option value="5000-10000">5 000 à 10 000 EUR</option>
               <option value="plus-de-10000">Plus de 10 000 EUR</option>
             </select>
           </div>
@@ -113,7 +113,7 @@ const totalWizardSteps = qualificationEtapes.length + 2;
         <section class="lead-step" data-step={qualificationEtapes.length + 2} hidden>
           <div class="grid cols-2">
             <div>
-              <label for={`${formId}-prenom`}>Prenom *</label>
+              <label for={`${formId}-prenom`}>Prénom *</label>
               <input id={`${formId}-prenom`} name="prenom" autocomplete="given-name" required />
             </div>
 
@@ -125,7 +125,7 @@ const totalWizardSteps = qualificationEtapes.length + 2;
 
           <div class="grid cols-2">
             <div>
-              <label for={`${formId}-telephone`}>Telephone portable *</label>
+              <label for={`${formId}-telephone`}>Téléphone portable *</label>
               <input id={`${formId}-telephone`} name="telephone" autocomplete="tel" inputmode="tel" required />
             </div>
 
@@ -155,10 +155,10 @@ const totalWizardSteps = qualificationEtapes.length + 2;
         </div>
 
         <p class="muted" style="margin: 0;">
-          En envoyant, vous acceptez la transmission de votre demande au professionnel concerne.
+          En envoyant, vous acceptez la transmission de votre demande au professionnel concerné.
         </p>
 
-        <span class="inline-note">Reponse sous 24 h</span>
+        <span class="inline-note">Réponse sous 24 h</span>
 
         <input type="hidden" name="qualification" />
       </>
@@ -191,10 +191,10 @@ const totalWizardSteps = qualificationEtapes.length + 2;
       !actif && (
         <>
           <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;">
-            <button type="submit">Me prevenir a l'ouverture</button>
+            <button type="submit">Me prévenir à l'ouverture</button>
           </div>
           <p class="muted" style="margin: 0;">
-            En envoyant, vous acceptez la transmission de votre demande au professionnel concerne.
+            En envoyant, vous acceptez la transmission de votre demande au professionnel concerné.
           </p>
         </>
       )
@@ -283,7 +283,7 @@ const totalWizardSteps = qualificationEtapes.length + 2;
             firstInput.focus();
           }
           messageBox.className = 'error';
-          messageBox.textContent = 'Veuillez repondre a la question avant de continuer.';
+          messageBox.textContent = 'Veuillez répondre à la question avant de continuer.';
           return false;
         }
       }
@@ -313,9 +313,9 @@ const totalWizardSteps = qualificationEtapes.length + 2;
 
       if (progressText instanceof HTMLElement) {
         if (isLast) {
-          progressText.textContent = 'Derniere etape: vos coordonnees';
+          progressText.textContent = 'Dernière étape : vos coordonnées';
         } else if (isBeforeLast) {
-          progressText.textContent = 'Presque termine';
+          progressText.textContent = 'Presque terminé';
         } else {
           progressText.textContent = `Question ${currentHumanIndex}`;
         }
@@ -339,6 +339,35 @@ const totalWizardSteps = qualificationEtapes.length + 2;
 
     if (actif && wizardSteps.length > 0) {
       refreshWizardUi();
+
+      wizardSteps.forEach((step, stepIndex) => {
+        if (!(step instanceof HTMLElement)) {
+          return;
+        }
+
+        const radios = step.querySelectorAll('input[type="radio"]');
+        radios.forEach((radio) => {
+          if (!(radio instanceof HTMLInputElement)) {
+            return;
+          }
+
+          radio.addEventListener('change', () => {
+            if (currentStepIndex !== stepIndex) {
+              return;
+            }
+
+            const isLast = currentStepIndex >= wizardSteps.length - 1;
+            if (isLast || !validateCurrentStep()) {
+              return;
+            }
+
+            window.setTimeout(() => {
+              currentStepIndex = Math.min(wizardSteps.length - 1, currentStepIndex + 1);
+              refreshWizardUi();
+            }, 120);
+          });
+        });
+      });
 
       if (prevButton instanceof HTMLButtonElement) {
         prevButton.addEventListener('click', () => {
@@ -453,7 +482,7 @@ const totalWizardSteps = qualificationEtapes.length + 2;
         messageBox.className = 'success';
         messageBox.textContent = actif
           ? 'Un professionnel local vous rappelle sous 24 h.'
-          : 'Merci, vous serez prevenu en priorite lors de l\'ouverture de ce service.';
+          : 'Merci, vous serez prévenu en priorité lors de l\'ouverture de ce service.';
       } catch (error) {
         messageBox.className = 'error';
         messageBox.innerHTML = `Une erreur est survenue. Vous pouvez aussi nous joindre au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;

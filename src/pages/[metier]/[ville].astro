@@ -26,10 +26,10 @@ const { metier, ville } = Astro.props;
 
 const h1 = metier.actif
   ? `${metier.nom} à ${ville.nom} - devis gratuit`
-  : `${metier.nom} à ${ville.nom} - bientot disponible`;
+  : `${metier.nom} à ${ville.nom} - bientôt disponible`;
 const description = metier.actif
   ? `${metier.nom} à ${ville.nom} (${ville.codePostal}). ${ville.phraseLocale} Mise en relation gratuite avec un professionnel local.`
-  : `${metier.nom} à ${ville.nom} (${ville.codePostal}). ${ville.phraseLocale} Ce service ouvre bientot dans l'Yonne avec inscription prioritaire par email.`;
+  : `${metier.nom} à ${ville.nom} (${ville.codePostal}). ${ville.phraseLocale} Ce service ouvre bientôt dans l'Yonne avec inscription prioritaire par email.`;
 const intro = getLocalizedIntro(metier, ville);
 const sectionOrder = getSectionOrder(metier.slug, ville.slug);
 const parcours = getParcoursByMetierSlug(metier.slug);
@@ -51,7 +51,7 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
   canonicalPath={canonicalPath}
   breadcrumbs={breadcrumbs}
   jsonLd={schemas}
-  stickyCta={{ label: 'Demarrer ma demande', href: '#devis', badge: 'Reponse sous 24 h' }}
+  stickyCta={{ label: 'Démarrer ma demande', href: '#devis', badge: 'Réponse sous 24 h' }}
 >
   <section class="section">
     <div class="editorial-grid">
@@ -61,8 +61,8 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
         <p class="muted">{ville.codePostal} • {ville.population}</p>
         <p>{ville.phraseLocale}</p>
         <div class="hero-actions">
-          <a class="btn" href="#devis">Demarrer ma demande</a>
-          <span class="inline-note">Reponse sous 24 h</span>
+          <a class="btn" href="#devis">Démarrer ma demande</a>
+          <span class="inline-note">Réponse sous 24 h</span>
         </div>
       </article>
       <aside class="signature-panel">
@@ -76,7 +76,7 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
         {sectionKey === 'presentation' && (
           <section class="section" id="presentation">
             <div class="rule-block">
-              <h2>{metier.nom} a {ville.nom}</h2>
+              <h2>{metier.nom} à {ville.nom}</h2>
             </div>
             <p>{intro}</p>
             <p class="muted">
@@ -115,7 +115,7 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
         {sectionKey === 'faq' && (
           <section class="section" id="faq">
             <div class="rule-block">
-              <h2>Questions frequentes</h2>
+              <h2>Questions fréquentes</h2>
             </div>
             <div class="grid cols-2">
               {metier.questionsFrequentes.map((faq) => (
@@ -138,17 +138,17 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
   {parcours && (
     <section class="section">
       <div class="rule-block">
-        <h2>Parcours de qualification prevu</h2>
+        <h2>Parcours de qualification prévu</h2>
       </div>
       <p class="muted">
-        Pour une demande en {metier.nom.toLowerCase()} a {ville.nom}, nous structurons la prise d'informations en
-        plusieurs etapes simples.
+        Pour une demande en {metier.nom.toLowerCase()} à {ville.nom}, nous structurons la prise d'informations en
+        plusieurs étapes simples.
       </p>
       <div class="steps">
         {parcours.etapes.map((etape, index) => (
           <article class="step">
             <h3>
-              Etape {index + 1} : {etape.question}
+              Étape {index + 1} : {etape.question}
             </h3>
             <p>{etape.options.join(' / ')}</p>
             {etape.facultatif && <p class="muted">Champ facultatif.</p>}
@@ -170,7 +170,7 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
           <a href={`/${metier.slug}/${item.slug}/`} class="metier-tile">
             <h3>
               <MetierIcon slug={metier.slug} />
-              <span>{metier.nom} a {item.nom}</span>
+              <span>{metier.nom} à {item.nom}</span>
             </h3>
             <p class="muted">{item.codePostal}</p>
           </a>

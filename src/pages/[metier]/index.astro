@@ -20,10 +20,10 @@ type Props = {
 const { metier } = Astro.props;
 const title = metier.actif
   ? `${metier.nom} dans l'Yonne | Devis gratuit`
-  : `${metier.nom} dans l'Yonne | Bientot disponible`;
+  : `${metier.nom} dans l'Yonne | Bientôt disponible`;
 const description = metier.actif
   ? `${metier.description} Demandez un devis gratuit et soyez recontacté par un professionnel local de l'Yonne.`
-  : `${metier.description} Ce service ouvre bientot dans l'Yonne, laissez votre email pour etre prevenu en premier.`;
+  : `${metier.description} Ce service ouvre bientôt dans l'Yonne, laissez votre email pour être prévenu en premier.`;
 const parcours = getParcoursByMetierSlug(metier.slug);
 const breadcrumbs = [
   { label: 'Accueil', href: '/' },
@@ -36,20 +36,20 @@ const breadcrumbs = [
   description={description}
   breadcrumbs={breadcrumbs}
   canonicalPath={`/${metier.slug}/`}
-  stickyCta={{ label: 'Demarrer ma demande', href: '#devis', badge: 'Reponse sous 24 h' }}
+  stickyCta={{ label: 'Démarrer ma demande', href: '#devis', badge: 'Réponse sous 24 h' }}
 >
   <section class="section">
     <div class="editorial-grid">
       <article class="hero-main">
-        <span class="eyebrow">Metier local Yonne</span>
+        <span class="eyebrow">Métier local Yonne</span>
         <h1>{metier.nom} dans l'Yonne</h1>
         <p>{metier.description}</p>
         <div class="hero-actions">
-          <a class="btn" href="#devis">Demarrer ma demande</a>
-          <span class="inline-note">Reponse sous 24 h</span>
+          <a class="btn" href="#devis">Démarrer ma demande</a>
+          <span class="inline-note">Réponse sous 24 h</span>
         </div>
         <ReassuranceBadges />
-        {metier.urgence && <p class="badge" style="margin-top: 0.8rem;">Intervention rapide possible selon disponibilite locale.</p>}
+        {metier.urgence && <p class="badge" style="margin-top: 0.8rem;">Intervention rapide possible selon disponibilité locale.</p>}
       </article>
       <aside class="signature-panel">
         <YonneMap villes={villesData} metierSlug={metier.slug} />
@@ -76,7 +76,7 @@ const breadcrumbs = [
 
   <section class="section">
     <div class="rule-block">
-      <h2>Questions frequentes</h2>
+      <h2>Questions fréquentes</h2>
     </div>
     <div class="grid cols-2">
       {metier.questionsFrequentes.map((faq) => (
@@ -104,7 +104,7 @@ const breadcrumbs = [
         {parcours.etapes.map((etape, index) => (
           <article class="step">
             <h3>
-              Etape {index + 1} : {etape.question}
+              Étape {index + 1} : {etape.question}
             </h3>
             <p>{etape.options.join(' / ')}</p>
             {etape.facultatif && <p class="muted">Champ facultatif.</p>}
@@ -119,8 +119,8 @@ const breadcrumbs = [
       <article class="rule-block">
         <h2>Ouverture prochaine</h2>
         <p>
-          Ce service est en preparation dans l'Yonne. Vous pouvez deja laisser votre email pour etre prevenu en
-          priorite des l'ouverture.
+          Ce service est en préparation dans l'Yonne. Vous pouvez déjà laisser votre email pour être prévenu en
+          priorité dès l'ouverture.
         </p>
       </article>
     </section>
@@ -135,7 +135,7 @@ const breadcrumbs = [
         <a href={`/${metier.slug}/${ville.slug}/`} class="metier-tile">
           <h3>
             <MetierIcon slug={metier.slug} />
-            <span>{metier.nom} a {ville.nom}</span>
+            <span>{metier.nom} à {ville.nom}</span>
           </h3>
           <p class="muted">{ville.codePostal} • {ville.population}</p>
         </a>
