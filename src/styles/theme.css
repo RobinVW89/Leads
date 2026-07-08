@@ -488,8 +488,8 @@ button,
   border: 1px solid rgba(106, 115, 120, 0.3);
   background-image: url('/images/yonne-reference.png');
   background-color: #e8e2d6;
-  background-size: 132% auto;
-  background-position: 20% 55%;
+  background-size: contain;
+  background-position: center;
   background-repeat: no-repeat;
   filter: none;
 }
