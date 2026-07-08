@@ -46,9 +46,9 @@ const totalWizardSteps = qualificationEtapes.length + 2;
     {actif ? (
       <>
         <div class="lead-progress" role="status" aria-live="polite">
-          <p class="lead-progress-text">Etape 1 sur {totalWizardSteps}</p>
+          <p class="lead-progress-text">Question 1</p>
           <div class="lead-progress-track" aria-hidden="true">
-            <span class="lead-progress-bar" style="--progress: 0.2;"></span>
+            <span class="lead-progress-bar" style="--progress: 0.12;"></span>
           </div>
         </div>
 
@@ -308,9 +308,17 @@ const totalWizardSteps = qualificationEtapes.length + 2;
 
       const currentHumanIndex = currentStepIndex + 1;
       const progress = currentHumanIndex / Math.max(totalWizardSteps, 1);
+      const isLast = currentStepIndex === wizardSteps.length - 1;
+      const isBeforeLast = currentStepIndex === wizardSteps.length - 2;
 
       if (progressText instanceof HTMLElement) {
-        progressText.textContent = `Etape ${currentHumanIndex} sur ${totalWizardSteps}`;
+        if (isLast) {
+          progressText.textContent = 'Derniere etape: vos coordonnees';
+        } else if (isBeforeLast) {
+          progressText.textContent = 'Presque termine';
+        } else {
+          progressText.textContent = `Question ${currentHumanIndex}`;
+        }
       }
 
       if (progressBar instanceof HTMLElement) {
@@ -321,7 +329,6 @@ const totalWizardSteps = qualificationEtapes.length + 2;
         prevButton.disabled = currentStepIndex === 0;
       }
 
-      const isLast = currentStepIndex === wizardSteps.length - 1;
       if (nextButton instanceof HTMLButtonElement) {
         nextButton.hidden = isLast;
       }
