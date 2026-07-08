@@ -1,5 +1,5 @@
 export const SITE_CONFIG = {
-  siteUrl: 'https://portail-artisans-yonne.fr',
+  siteUrl: 'https://lesprosdelyonne.com',
   siteName: 'Travaux & Pros de l\'Yonne',
   tagline: 'Trouvez un artisan de confiance dans l\'Yonne, devis gratuit sous 24 h.',
   description:

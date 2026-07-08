@@ -84,7 +84,7 @@ Modifier le fichier unique de configuration : `src/config/site.ts`
   "delaiSouhaite": "des-que-possible",
   "metier": "plombier-chauffagiste",
   "ville": "Joigny",
-  "page_source": "https://portail-artisans-yonne.fr/plombier-chauffagiste/joigny/",
+	"page_source": "https://lesprosdelyonne.com/plombier-chauffagiste/joigny/",
   "submittedAt": "2026-07-07T13:45:00.000Z"
 }
 ```
