@@ -497,13 +497,19 @@ button,
 
 .yonne-map-legend-mask {
   position: absolute;
-  top: 7%;
-  right: 5%;
-  width: 27%;
-  height: 19%;
-  border-radius: 6px;
-  background: rgba(245, 242, 234, 0.7);
-  border: 1px solid rgba(106, 115, 120, 0.25);
+  top: 6%;
+  right: 3%;
+  width: 38%;
+  height: 24%;
+  border-radius: 999px;
+  background: radial-gradient(
+    closest-side,
+    rgba(245, 242, 234, 0.86) 0%,
+    rgba(245, 242, 234, 0.72) 58%,
+    rgba(245, 242, 234, 0.08) 100%
+  );
+  filter: blur(2.5px);
+  transform: rotate(-7deg);
   pointer-events: none;
 }
 
