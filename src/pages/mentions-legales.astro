@@ -12,15 +12,19 @@ const breadcrumbs = [
 
 <Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath="/mentions-legales">
   <section class="section">
-    <h1 class="page-title">Mentions legales</h1>
+    <h1 class="page-title">Mentions légales</h1>
     <div class="legal-stack">
     <article class="rule-block">
       <h2>Éditeur du site</h2>
       <p>
-        {SITE_CONFIG.siteName}<br />
-        Responsable de publication : à compléter<br />
-        Adresse postale : à compléter<br />
-        Contact : <a href={`mailto:${SITE_CONFIG.contactEmail}`}>{SITE_CONFIG.contactEmail}</a><br />
+        Raison sociale : Nexaly<br />
+        Forme juridique : Entreprise individuelle<br />
+        Siège social : 89000 Auxerre<br />
+        SIRET : 993 752 658<br />
+        RCS : Auxerre<br />
+        TVA intracommunautaire : Non communiquée<br />
+        Directeur de publication : Robin Soyer (Exploitant)<br />
+        Contact : <a class="btn secondary" href={`mailto:${SITE_CONFIG.contactEmail}`}>Mail</a><br />
         Téléphone : <a href={`tel:${SITE_CONFIG.telContactHref}`}>{SITE_CONFIG.telContact}</a>
       </p>
     </article>
@@ -36,8 +40,8 @@ const breadcrumbs = [
     <article class="rule-block">
       <h2>Objet du service</h2>
       <p>
-        Ce site propose un service de mise en relation entre particuliers et professionnels locaux de l'Yonne dans
-        le cadre d'une demande de devis.
+        Ce site propose un service de mise en relation entre particuliers et professionnels locaux de l'Yonne dans le
+        cadre d'une demande de devis et d'accompagnement autour de la fiscalité automobile.
       </p>
     </article>
 
@@ -55,6 +59,16 @@ const breadcrumbs = [
       <p>
         Les informations publiées sont fournies à titre indicatif. L'éditeur ne peut être tenu responsable d'une
         indisponibilité temporaire du service, ni des suites données par les professionnels après la mise en relation.
+        L'éditeur décline également toute responsabilité en cas de dommages directs ou indirects liés à l'utilisation
+        du site.
+      </p>
+    </article>
+
+    <article class="rule-block">
+      <h2>Droit applicable</h2>
+      <p>
+        Les présentes mentions légales sont régies par le droit français. En cas de litige, et à défaut d'accord
+        amiable, le litige sera porté devant les tribunaux français conformément aux règles de compétence en vigueur.
       </p>
     </article>
     </div>
