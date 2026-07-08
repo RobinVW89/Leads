@@ -49,7 +49,6 @@ const mapPoints = points
     role="img"
     aria-label="Département de l'Yonne et villes couvertes. Chaque point ouvre une page locale."
   >
-    <img src="/images/yonne-reference.png" alt="" aria-hidden="true" class="yonne-map-base" loading="lazy" />
     <div class="yonne-map-legend-mask" aria-hidden="true"></div>
     {mapPoints.map(({ point, ville }) => {
       const href = `/${metierSlug}/${ville.slug}/`;
