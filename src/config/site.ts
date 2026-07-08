@@ -5,6 +5,7 @@ export const SITE_CONFIG = {
   description:
     'Réseau local de professionnels vérifiés dans l\'Yonne. Décrivez votre besoin et recevez un rappel rapide d\'un professionnel adapté.',
   n8nWebhookUrl: 'https://formspree.io/f/mpqgnvvg',
+  resonanceUrl: 'https://resonnance.pages.dev/',
   telContact: '07 44 96 36 60',
   telContactHref: '+33744963660',
   contactEmail: 'contact@travaux-pros-yonne.fr'

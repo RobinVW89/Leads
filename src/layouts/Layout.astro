@@ -61,6 +61,7 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 				<nav class="top-nav" aria-label="Navigation principale">
 					<a href="/#metiers">Métiers</a>
 					<a href="/comment-ca-marche">Comment ça marche</a>
+					<a href={SITE_CONFIG.resonanceUrl} target="_blank" rel="noopener noreferrer">Espace pros</a>
 					<a href="/politique-confidentialite">Confidentialité</a>
 					<a href="/mentions-legales">Mentions légales</a>
 				</nav>
@@ -90,7 +91,7 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 				</p>
 				<p>
 					<a href="/comment-ca-marche">Comment ça marche</a> • <a href="/mentions-legales">Mentions légales</a>{' '}
-					• <a href="/politique-confidentialite">Politique de confidentialité</a>
+					• <a href="/politique-confidentialite">Politique de confidentialité</a> • <a href={SITE_CONFIG.resonanceUrl} target="_blank" rel="noopener noreferrer">Vous êtes artisan ? Rejoignez Résonance</a>
 				</p>
 			</div>
 		</footer>
