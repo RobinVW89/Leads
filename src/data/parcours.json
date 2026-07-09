@@ -134,5 +134,141 @@
         ]
       }
     ]
+  },
+  {
+    "metierSlug": "menuisier-portail-fenetre",
+    "etapes": [
+      {
+        "question": "Quel élément ?",
+        "options": [
+          "Fenêtre",
+          "Porte d'entrée",
+          "Portail",
+          "Store banne",
+          "Pergola – carport",
+          "Porte de garage sectionnelle",
+          "Clôture",
+          "Autre"
+        ]
+      },
+      {
+        "question": "Type d'intervention ?",
+        "options": [
+          "Remplacement",
+          "Création",
+          "Motorisation",
+          "Je ne sais pas"
+        ]
+      },
+      {
+        "question": "Nombre d'ouvrants ou de mètres linéaires ?",
+        "options": [
+          "1 élément",
+          "2 à 3 éléments",
+          "4 éléments ou plus",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "veranda-pergola-store",
+    "etapes": [
+      {
+        "question": "Type de projet ?",
+        "options": [
+          "Pergola",
+          "Store banne",
+          "Véranda",
+          "Carport"
+        ]
+      },
+      {
+        "question": "Dimensions approximatives ?",
+        "options": [
+          "Moins de 10 m2",
+          "10-20 m2",
+          "20-40 m2",
+          "Plus de 40 m2",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      },
+      {
+        "question": "Terrasse existante ?",
+        "options": [
+          "Oui",
+          "Non",
+          "En projet"
+        ]
+      }
+    ]
+  },
+  {
+    "metierSlug": "isolation",
+    "etapes": [
+      {
+        "question": "Quelle isolation ?",
+        "options": [
+          "Combles",
+          "Murs par l'extérieur",
+          "Murs par l'intérieur",
+          "Je ne sais pas, à conseiller"
+        ]
+      },
+      {
+        "question": "Type de maison ?",
+        "options": [
+          "Récente",
+          "Ancienne – pierre",
+          "Je ne sais pas"
+        ]
+      },
+      {
+        "question": "Surface approximative ?",
+        "options": [
+          "Moins de 50 m2",
+          "50-100 m2",
+          "100-150 m2",
+          "Plus de 150 m2",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "peintre-batiment",
+    "etapes": [
+      {
+        "question": "Quelles surfaces ?",
+        "options": [
+          "Murs intérieurs",
+          "Plafonds",
+          "Pièces d'eau",
+          "Revêtements sols et murs",
+          "Petite vitrerie",
+          "Plusieurs de ces travaux"
+        ]
+      },
+      {
+        "question": "État du support ?",
+        "options": [
+          "Bon état",
+          "À reprendre",
+          "Je ne sais pas"
+        ]
+      },
+      {
+        "question": "Type de chantier ?",
+        "options": [
+          "Rénovation complète",
+          "Rafraîchissement",
+          "Travaux ponctuels",
+          "Je ne sais pas"
+        ]
+      }
+    ]
   }
 ]

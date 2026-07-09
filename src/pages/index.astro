@@ -10,7 +10,12 @@ const title = `${SITE_CONFIG.siteName} | Devis gratuit dans l'Yonne`;
 const description = SITE_CONFIG.tagline;
 const metiersActifs = metiersData.filter((metier) => metier.actif).length;
 const metiersBientot = metiersData.filter((metier) => !metier.actif).length;
-const defaultMetier = metiersData.find((metier) => metier.actif) ?? metiersData[0];
+const getMetierScore = (metier: (typeof metiersData)[number]) =>
+	(metier.slug === 'veranda-pergola-store' ? 300 : 0) + (metier.saison !== 'toute-annee' ? 100 : 0) + (metier.actif ? 10 : 0);
+const metiersEnAvant = [...metiersData].sort((a, b) => {
+	return getMetierScore(b) - getMetierScore(a);
+});
+const defaultMetier = metiersEnAvant.find((metier) => metier.actif) ?? metiersEnAvant[0];
 
 const organizationSchema = {
 	'@context': 'https://schema.org',
@@ -88,7 +93,7 @@ const organizationSchema = {
 			<p class="muted">Chaque fiche locale explique les prestations, les prix indicatifs et les délais de rappel.</p>
 		</div>
 		<div class="bento-grid">
-			{metiersData.map((metier) => (
+			{metiersEnAvant.map((metier) => (
 				<a
 					href={`/${metier.slug}/`}
 					class={`metier-tile ${metier.saison !== 'toute-annee' ? 'is-seasonal' : ''} ${!metier.actif ? 'is-inactive' : ''}`}
@@ -99,6 +104,7 @@ const organizationSchema = {
 					</h3>
 					<p class="muted">{metier.description.slice(0, 130)}...</p>
 					<div class="badges">
+						{metier.saison === 'ete' && <span class="badge">Forte demande estivale</span>}
 						{!metier.actif && <span class="badge">Ouverture prochaine</span>}
 						{metier.urgence && <span class="badge">Intervention rapide possible</span>}
 					</div>

@@ -1,0 +1,26 @@
+---
+import { getRelatedServices } from '../lib/content';
+
+type Props = {
+  metierSlug: string;
+};
+
+const { metierSlug } = Astro.props;
+const relatedServices = getRelatedServices(metierSlug).slice(0, 3);
+---
+
+{relatedServices.length > 0 && (
+  <section class="section related-services">
+    <div class="rule-block">
+      <h2>Vous pourriez aussi avoir besoin</h2>
+    </div>
+    <div class="related-links">
+      {relatedServices.map((item) => (
+        <a href={item.href} class="related-link">
+          <span class="related-link-title">{item.label}</span>
+          <span class="muted">{item.note}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+)}

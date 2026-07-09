@@ -15,6 +15,7 @@ export type Metier = {
   prestations: string[];
   fourchettePrix: string;
   questionsFrequentes: FaqItem[];
+  certifications?: string[];
   urgence: boolean;
   saison: string;
   actif: boolean;

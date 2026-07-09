@@ -42,12 +42,15 @@
     "slug": "peintre-batiment",
     "nom": "Peintre en bâtiment",
     "nomPluriel": "peintres en bâtiment",
-    "description": "Le peintre en bâtiment prépare les supports et applique des finitions durables en intérieur comme en extérieur. Il conseille sur les teintes, les produits et la résistance adaptée à chaque pièce. Son travail valorise le bien tout en améliorant le confort visuel.",
+    "description": "Le peintre en bâtiment accompagne une rénovation intérieure complète : préparation des supports, finitions durables, habillage des murs et des sols, et petits ajustements de vitrerie. Il conseille sur les teintes, les produits et la résistance adaptée à chaque pièce. Son travail valorise le bien tout en renforçant l'harmonie des volumes et des usages.",
     "prestations": [
       "Préparation des murs et plafonds",
       "Peinture intérieure pièces de vie",
       "Ravalement et peinture de façade",
       "Pose de revêtements muraux",
+      "Revêtements de sols et murs (parquets, sols PVC)",
+      "Isolation intérieure en complément des travaux de finition",
+      "Petite vitrerie et remplacements ponctuels",
       "Traitement anti-humidité avant finition"
     ],
     "fourchettePrix": "Peinture murale : 25-45 €/m2, plafond : 30-50 €/m2, façade : 35-80 €/m2 selon état et accès",
@@ -67,6 +70,10 @@
       {
         "question": "Le devis inclut-il les protections ?",
         "reponse": "Oui, les protections des sols et mobiliers font généralement partie de la prestation."
+      },
+      {
+        "question": "Pouvez-vous gérer une rénovation intérieure plus large que la peinture ?",
+        "reponse": "Oui, selon le besoin, la prestation peut intégrer les revêtements de sols et murs, l'isolation intérieure de complément et de petits travaux de vitrerie pour remettre l'ensemble au propre."
       }
     ],
     "urgence": false,
@@ -112,13 +119,17 @@
     "slug": "menuisier-portail-fenetre",
     "nom": "Menuisier portail fenêtre",
     "nomPluriel": "menuisiers portail fenêtre",
-    "description": "Le menuisier installe et remplace les ouvertures qui participent au confort thermique, acoustique et à la sécurité. Il conseille sur les matériaux (PVC, alu, bois) selon le budget et le style du logement. Son intervention améliore la performance énergétique et l'esthétique extérieure.",
+    "description": "Le menuisier installe et remplace les ouvertures qui participent au confort thermique, acoustique et à la sécurité. Nos professionnels partenaires menuiserie sont certifiés RGE Qualibat : côté particulier, cette qualification conditionne l'accès à certaines aides à la rénovation énergétique et à la TVA réduite pour le remplacement de menuiseries isolantes. Ils conseillent sur les matériaux (PVC, alu, bois) selon le budget et le style du logement. Leur intervention améliore la performance énergétique et l'esthétique extérieure.",
     "prestations": [
       "Pose de fenêtres et portes-fenêtres",
       "Remplacement de porte d'entrée",
       "Installation de portail battant ou coulissant",
       "Motorisation de portail",
-      "Réglage et maintenance des fermetures"
+      "Réglage et maintenance des fermetures",
+      "Pose de stores bannes",
+      "Installation de pergolas et carports",
+      "Pose de portes de garage sectionnelles",
+      "Installation de clôtures"
     ],
     "fourchettePrix": "Fenêtre : 450-1 200 € posée, porte d'entrée : 1 200-3 500 €, portail : 1 800-6 000 € selon matériau et motorisation",
     "questionsFrequentes": [
@@ -137,7 +148,97 @@
       {
         "question": "Peut-on gagner en isolation en changeant les menuiseries ?",
         "reponse": "Oui, un remplacement bien dimensionné réduit souvent les pertes thermiques et améliore le confort."
+      },
+      {
+        "question": "Le remplacement de fenêtres donne-t-il droit à des aides ?",
+        "reponse": "Oui, sous conditions de ressources, de gain énergétique et de recours à un professionnel RGE. Les dispositifs en vigueur sont précisés au moment du devis pour éviter toute mauvaise surprise."
+      },
+      {
+        "question": "Pourquoi parle-t-on de RGE Qualibat ?",
+        "reponse": "Parce que cette certification vérifie le cadre technique des travaux et peut ouvrir l'accès à des aides à la rénovation énergétique ainsi qu'à la TVA réduite quand les menuiseries remplacées sont isolantes."
       }
+    ],
+    "certifications": [
+      "RGE Qualibat"
+    ],
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": true
+  },
+  {
+    "slug": "veranda-pergola-store",
+    "nom": "Véranda, pergola et store",
+    "nomPluriel": "spécialistes véranda, pergola et store",
+    "description": "Notre partenaire de menuiserie extérieure conçoit des espaces extérieurs confortables et très saisonniers : pergolas aluminium, stores bannes motorisés, vérandas sur mesure, carports et couvertures de terrasse. Les demandes se concentrent surtout au printemps et en été, avec un vrai besoin de conseil sur l'orientation, l'exposition et la réglementation locale. Nos professionnels partenaires sont certifiés RGE Qualibat sur les projets concernés.",
+    "prestations": [
+      "Pergolas aluminium et bioclimatiques",
+      "Stores bannes motorisés",
+      "Vérandas sur mesure",
+      "Carports",
+      "Couvertures de terrasse"
+    ],
+    "fourchettePrix": "Store banne motorisé posé : 1 500-4 000 €, pergola aluminium : 5 000-15 000 € selon dimensions et lames orientables, véranda : 15 000-40 000 € selon surface et finitions",
+    "questionsFrequentes": [
+      {
+        "question": "Combien coûte un store banne posé ?",
+        "reponse": "Comptez généralement 1 500 à 4 000 € posé pour un store banne motorisé, selon la largeur, la toile, la motorisation et les accessoires de commande."
+      },
+      {
+        "question": "Quel budget prévoir pour une pergola aluminium ?",
+        "reponse": "Une pergola aluminium se situe souvent entre 5 000 et 15 000 € selon les dimensions, le niveau de personnalisation et la présence de lames orientables ou d'options de confort."
+      },
+      {
+        "question": "Une véranda demande-t-elle une autorisation ?",
+        "reponse": "En pratique, une déclaration préalable est généralement nécessaire, et un permis peut être requis au-delà de certaines surfaces pour une véranda. Le professionnel vous précisera le cadre applicable selon votre projet."
+      },
+      {
+        "question": "La véranda compte-t-elle dans la surface taxable ?",
+        "reponse": "Oui, une véranda peut être prise en compte dans la surface taxable selon sa configuration et la réglementation locale. Le point est vérifié lors de l'étude du projet."
+      },
+      {
+        "question": "Comment choisir l'orientation d'une pergola ou d'une véranda ?",
+        "reponse": "L'exposition au soleil, la prise au vent et l'usage réel de la terrasse guident le choix. Un bon dimensionnement évite la surchauffe l'été et améliore le confort au quotidien."
+      }
+    ],
+    "certifications": [
+      "RGE Qualibat"
+    ],
+    "urgence": false,
+    "saison": "ete",
+    "actif": true
+  },
+  {
+    "slug": "isolation",
+    "nom": "Isolation",
+    "nomPluriel": "travaux d'isolation",
+    "description": "L'isolation confiée à nos professionnels partenaires couvre la maison dans son ensemble : combles, murs, enveloppe extérieure et compléments de rénovation énergétique. Ces interventions sont souvent coordonnées avec des travaux de menuiserie pour traiter les ponts thermiques et améliorer le confort en toute saison. Nos partenaires disposent de la certification RGE Qualibat lorsque le chantier ouvre droit à des dispositifs d'aide.",
+    "prestations": [
+      "Isolation de combles perdus et aménagés",
+      "Isolation thermique par l'extérieur (ITE)",
+      "Isolation intérieure des murs",
+      "Remplacement de menuiseries dans le cadre d'une rénovation énergétique globale"
+    ],
+    "fourchettePrix": "Combles perdus : généralement 25-60 €/m2 selon la technique ; ITE et murs intérieurs : devis sur mesure selon support, épaisseur et complexité du bâti",
+    "questionsFrequentes": [
+      {
+        "question": "Combien coûte une isolation de combles ?",
+        "reponse": "Comptez généralement 25 à 60 €/m² selon la technique retenue, par soufflage ou par panneaux, avec des écarts selon l'accès au comble et l'état du support."
+      },
+      {
+        "question": "L'isolation extérieure convient-elle à une maison en pierre de Bourgogne ?",
+        "reponse": "C'est possible, mais il faut vérifier que le bâti ancien puisse respirer correctement. Sur une maison en pierre, le professionnel doit analyser les points de vigilance avant de proposer une ITE."
+      },
+      {
+        "question": "Quelles aides peut-on demander pour des travaux d'isolation ?",
+        "reponse": "Les dispositifs évoluent et dépendent du logement, des ressources et des performances attendues. Le professionnel RGE vous précise les aides en vigueur au moment du devis."
+      },
+      {
+        "question": "Faut-il un professionnel RGE pour bénéficier d'aides ?",
+        "reponse": "Oui, dans la plupart des dispositifs liés à la rénovation énergétique, le recours à un professionnel RGE est une condition importante pour ouvrir les droits."
+      }
+    ],
+    "certifications": [
+      "RGE Qualibat"
     ],
     "urgence": false,
     "saison": "toute-annee",

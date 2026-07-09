@@ -41,6 +41,24 @@ const { slug, label = '' } = Astro.props;
     )
   }
   {
+    slug === 'veranda-pergola-store' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3.5 11.5 12 5l8.5 6.5" />
+        <path d="M5 10.6V19h14v-8.4" />
+        <path d="M7.5 19v-5.2M12 19v-6M16.5 19v-5.2" />
+      </svg>
+    )
+  }
+  {
+    slug === 'isolation' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7h16" />
+        <path d="M6 7v10h12V7" />
+        <path d="M8 10h8M8 13h8M8 16h8" />
+      </svg>
+    )
+  }
+  {
     slug === 'estimation-immobiliere' && (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 18h16" />
@@ -98,6 +116,8 @@ const { slug, label = '' } = Astro.props;
       'peintre-batiment',
       'macon-renovation',
       'menuisier-portail-fenetre',
+      'veranda-pergola-store',
+      'isolation',
       'estimation-immobiliere',
       'courtier-credit-assurance',
       'electricien',

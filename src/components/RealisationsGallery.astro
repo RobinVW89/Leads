@@ -1,0 +1,36 @@
+---
+import { getRealisationCaptions } from '../lib/content';
+
+type Props = {
+  metierSlug: string;
+  metierNom: string;
+  villeNom?: string;
+};
+
+const { metierSlug, metierNom, villeNom } = Astro.props;
+const locationLabel = villeNom ? `à ${villeNom}` : "dans l'Yonne";
+const captions = getRealisationCaptions(metierSlug, metierNom).slice(0, 3);
+const images = captions.map((caption, index) => ({
+  src: `/images/realisations/placeholder-${index + 1}.svg`,
+  alt: `${caption} ${locationLabel}`
+}));
+---
+
+<section class="section">
+  <div class="rule-block">
+    <h2>Réalisations dans l'Yonne</h2>
+  </div>
+  <p class="muted">
+    {villeNom ? `Exemples de chantiers proches de ${villeNom}.` : "Exemples de chantiers réalisés dans l'Yonne. Les visuels sont provisoires en attente des photos partenaires."}
+  </p>
+  <div class="realisations-grid">
+    {images.map((image, index) => (
+      <figure class="realisations-card">
+        <img src={image.src} alt={image.alt} loading="lazy" decoding="async" />
+        <figcaption>
+          {captions[index]}
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</section>

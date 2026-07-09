@@ -1,9 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import LeadForm from '../../components/LeadForm.astro';
+import CertificationBadge from '../../components/CertificationBadge.astro';
 import ReassuranceBadges from '../../components/ReassuranceBadges.astro';
 import MetierIcon from '../../components/MetierIcon.astro';
+import RealisationsGallery from '../../components/RealisationsGallery.astro';
 import YonneMap from '../../components/YonneMap.astro';
+import RelatedServices from '../../components/RelatedServices.astro';
 import { getParcoursByMetierSlug, metiersData, villesData, type Metier, type Ville } from '../../lib/data';
 import { getLocalizedIntro, getSectionOrder } from '../../lib/content';
 import { faqSchema, serviceSchema } from '../../lib/seo';
@@ -82,6 +85,8 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
             <p class="muted">
               Zone couverte autour de {ville.nom} : {nearby}.
             </p>
+            <CertificationBadge certifications={metier.certifications} />
+            {metier.saison === 'ete' && <p class="badge">Forte demande pendant la saison estivale.</p>}
             {metier.urgence && <p class="badge">Intervention rapide possible pour les demandes urgentes.</p>}
             <div style="margin-top: 1rem;">
               <ReassuranceBadges />
@@ -127,6 +132,9 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
             </div>
           </section>
         )}
+        {sectionKey === 'realisations' && (
+          <RealisationsGallery metierSlug={metier.slug} metierNom={metier.nom} villeNom={ville.nom} />
+        )}
         {sectionKey === 'formulaire' && (
           <section class="section" id="devis">
             <LeadForm metier={metier.slug} metierNom={metier.nom} ville={ville.nom} actif={metier.actif} />
@@ -157,6 +165,8 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier)]
       </div>
     </section>
   )}
+
+  <RelatedServices metierSlug={metier.slug} />
 
   <section class="section">
     <div class="rule-block">

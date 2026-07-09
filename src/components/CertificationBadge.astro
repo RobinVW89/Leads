@@ -1,0 +1,17 @@
+---
+type Props = {
+  certifications?: string[];
+};
+
+const { certifications = [] } = Astro.props;
+const showRgeBadge = certifications.includes('RGE Qualibat');
+---
+
+{showRgeBadge && (
+  <div class="certification-block" aria-label="Certification partenaire">
+    <span class="badge">Professionnels partenaires certifiés RGE Qualibat</span>
+    <p class="muted">
+      Cette certification vérifiée peut conditionner l'accès à certaines aides à la rénovation énergétique et, pour le remplacement de menuiseries isolantes, à la TVA réduite.
+    </p>
+  </div>
+)}

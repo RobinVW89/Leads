@@ -1,9 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import LeadForm from '../../components/LeadForm.astro';
+import CertificationBadge from '../../components/CertificationBadge.astro';
 import ReassuranceBadges from '../../components/ReassuranceBadges.astro';
 import MetierIcon from '../../components/MetierIcon.astro';
+import RealisationsGallery from '../../components/RealisationsGallery.astro';
 import YonneMap from '../../components/YonneMap.astro';
+import RelatedServices from '../../components/RelatedServices.astro';
 import { getParcoursByMetierSlug, metiersData, villesData, type Metier } from '../../lib/data';
 
 export async function getStaticPaths() {
@@ -49,6 +52,8 @@ const breadcrumbs = [
           <span class="inline-note">Réponse sous 24 h</span>
         </div>
         <ReassuranceBadges />
+        <CertificationBadge certifications={metier.certifications} />
+        {metier.saison === 'ete' && <p class="badge" style="margin-top: 0.8rem;">Forte demande pendant la saison estivale.</p>}
         {metier.urgence && <p class="badge" style="margin-top: 0.8rem;">Intervention rapide possible selon disponibilité locale.</p>}
       </article>
       <aside class="signature-panel">
@@ -88,6 +93,8 @@ const breadcrumbs = [
     </div>
   </section>
 
+  <RealisationsGallery metierSlug={metier.slug} metierNom={metier.nom} />
+
   <section class="section" id="devis">
     <LeadForm metier={metier.slug} metierNom={metier.nom} actif={metier.actif} />
   </section>
@@ -113,6 +120,8 @@ const breadcrumbs = [
       </div>
     </section>
   )}
+
+  <RelatedServices metierSlug={metier.slug} />
 
   {!metier.actif && (
     <section class="section">
