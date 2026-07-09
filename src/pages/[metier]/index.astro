@@ -7,7 +7,7 @@ import MetierIcon from '../../components/MetierIcon.astro';
 import RealisationsGallery from '../../components/RealisationsGallery.astro';
 import YonneMap from '../../components/YonneMap.astro';
 import RelatedServices from '../../components/RelatedServices.astro';
-import { getParcoursByMetierSlug, metiersData, villesData, type Metier } from '../../lib/data';
+import { getParcoursByMetierSlug, getPriorityCities, metiersData, villesData, type Metier } from '../../lib/data';
 
 export async function getStaticPaths() {
   return metiersData.map((metier) => ({
@@ -28,6 +28,7 @@ const description = metier.actif
   ? `${metier.description} Demandez un devis gratuit et soyez recontacté par un professionnel local de l'Yonne.`
   : `${metier.description} Ce service ouvre bientôt dans l'Yonne, laissez votre email pour être prévenu en premier.`;
 const parcours = getParcoursByMetierSlug(metier.slug);
+const orderedCities = getPriorityCities();
 const breadcrumbs = [
   { label: 'Accueil', href: '/' },
   { label: metier.nom }
@@ -140,8 +141,8 @@ const breadcrumbs = [
       <h2>Nos pages locales dans l'Yonne</h2>
     </div>
     <div class="bento-grid">
-      {villesData.map((ville) => (
-        <a href={`/${metier.slug}/${ville.slug}/`} class="metier-tile">
+      {orderedCities.map((ville) => (
+        <a href={`/${metier.slug}/${ville.slug}/`} class={`metier-tile ${ville.prioritaire ? 'is-priority-city' : ''}`}>
           <h3>
             <MetierIcon slug={metier.slug} />
             <span>{metier.nom} à {ville.nom}</span>

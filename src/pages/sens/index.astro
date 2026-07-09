@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CityHub from '../../components/CityHub.astro';
+import { breadcrumbSchema, collectionPageSchema } from '../../lib/seo';
+
+const title = 'Artisan Sens — devis gratuit | Les Pros de l\'Yonne';
+const description = 'Trouvez un artisan à Sens pour vos travaux, votre rénovation et vos besoins locaux en un seul point d\'entrée.';
+const intro = `À Sens, le tissu urbain combine cœur de ville ancien, immeubles plus récents et maisons individuelles réparties entre centre et quartiers résidentiels. Les besoins portent autant sur l'entretien courant que sur des rénovations plus structurées : isolation, chauffage, ouvertures, façades ou réaménagement intérieur. Ce hub donne une vue d'ensemble claire pour repérer un artisan Sens, lancer des travaux Sens ou comparer une entreprise de rénovation Sens sans repartir de zéro. Les fiches métier×ville complètes restent accessibles en un clic quand il faut préciser le besoin ou demander un devis.`;
+const schemas = [
+  collectionPageSchema('Artisan Sens', description, '/sens/'),
+  breadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Sens' }
+  ])
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalPath="/sens/"
+  breadcrumbs={[{ label: 'Accueil', href: '/' }, { label: 'Sens' }]}
+  jsonLd={schemas}
+>
+  <CityHub villeNom="Sens" villeSlug="sens" intro={intro} h1="Tous nos professionnels à Sens — devis gratuit" />
+</Layout>

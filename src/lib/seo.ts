@@ -39,3 +39,31 @@ export function faqSchema(metier: Metier) {
     }))
   };
 }
+
+export function breadcrumbSchema(items: Array<{ name: string; url?: string }>) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      ...(item.url ? { item: new URL(item.url, SITE_CONFIG.siteUrl).toString() } : {})
+    }))
+  };
+}
+
+export function collectionPageSchema(name: string, description: string, url: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name,
+    description,
+    url: new URL(url, SITE_CONFIG.siteUrl).toString(),
+    isPartOf: {
+      '@type': 'WebSite',
+      name: SITE_CONFIG.siteName,
+      url: SITE_CONFIG.siteUrl
+    }
+  };
+}

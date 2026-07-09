@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CityHub from '../../components/CityHub.astro';
+import { breadcrumbSchema, collectionPageSchema } from '../../lib/seo';
+
+const title = 'Artisan Auxerre — devis gratuit | Les Pros de l\'Yonne';
+const description = 'Trouvez un artisan à Auxerre pour vos travaux, votre rénovation ou une entreprise locale adaptée à votre projet.';
+const intro = `À Auxerre, les projets de rénovation se mêlent à des besoins très concrets du quotidien : remettre un logement au propre, améliorer le confort thermique, sécuriser une toiture ou préparer une vente. Le parc immobilier alterne maisons de ville anciennes, appartements du centre, pavillonnaire des hauteurs et logements plus récents en périphérie. Les chantiers gagnent donc à être orientés par un interlocuteur qui connaît les contraintes locales, les rythmes de chantier et les points sensibles du bâti. Ce hub rassemble nos professionnels partenaires pour faciliter votre recherche d'artisan Auxerre, de travaux Auxerre ou d'entreprise de rénovation Auxerre, avec un accès direct aux pages métier×ville les plus utiles.`;
+const schemas = [
+  collectionPageSchema('Artisan Auxerre', description, '/auxerre/'),
+  breadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Auxerre' }
+  ])
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalPath="/auxerre/"
+  breadcrumbs={[{ label: 'Accueil', href: '/' }, { label: 'Auxerre' }]}
+  jsonLd={schemas}
+>
+  <CityHub villeNom="Auxerre" villeSlug="auxerre" intro={intro} h1="Tous nos professionnels à Auxerre — devis gratuit" />
+</Layout>

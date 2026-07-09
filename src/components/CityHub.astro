@@ -1,0 +1,61 @@
+---
+import { metiersData, getSeoMetierName } from '../lib/data';
+
+type Props = {
+  villeNom: string;
+  villeSlug: string;
+  intro: string;
+  h1: string;
+};
+
+const { villeNom, villeSlug, intro, h1 } = Astro.props;
+const metiersActifs = metiersData.filter((metier) => metier.actif);
+---
+
+<section class="section">
+  <div class="editorial-grid">
+    <article class="hero-main">
+      <span class="eyebrow">Hub ville</span>
+      <h1>{h1}</h1>
+      <p>{intro}</p>
+      <p class="muted">
+        Vous cherchez un artisan à {villeNom}, des travaux à {villeNom} ou une entreprise de rénovation à {villeNom} ? Ce hub rassemble les points d'entrée utiles pour comparer rapidement les bons profils.
+      </p>
+    </article>
+    <aside class="signature-panel">
+      <div class="panel">
+        <h2>Accès rapide</h2>
+        <p class="muted">Ouvrez la page métier complète pour détailler votre besoin, puis faites votre demande en quelques minutes.</p>
+        <a class="btn" href={`/${villeSlug}/#metiers-${villeSlug}`}>Voir les métiers à {villeNom}</a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="section" id={`metiers-${villeSlug}`}>
+  <div class="rule-block">
+    <h2>Professionnels à {villeNom}</h2>
+  </div>
+  <div class="hub-metiers">
+    {metiersActifs.map((metier) => {
+      const seoName = getSeoMetierName(metier);
+      const cityPath = `/${metier.slug}/${villeSlug}/`;
+
+      return (
+        <article class="hub-metier-card">
+          <h2>{seoName} à {villeNom}</h2>
+          <p>
+            À {villeNom}, ce métier est particulièrement utile pour les logements à moderniser, les projets de rénovation et les interventions où il faut avancer vite sans perdre le fil du chantier.
+          </p>
+          <p class="muted">
+            Selon le cas, les demandes portent sur la mise en sécurité, l'amélioration du confort, la remise en état ou la préparation d'un bien avant vente.
+          </p>
+          <div class="hub-metier-actions">
+            <a class="btn" href={cityPath}>Faire ma demande</a>
+            <a href={cityPath}>Voir la page complète</a>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>

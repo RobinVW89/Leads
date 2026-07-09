@@ -2,6 +2,7 @@
   {
     "slug": "plombier-chauffagiste",
     "nom": "Plombier chauffagiste",
+    "nomSeo": "Plombier",
     "nomPluriel": "plombiers chauffagistes",
     "description": "Le plombier chauffagiste intervient pour les dépannages urgents, les installations et l'entretien des équipements sanitaires et thermiques. Dans l'Yonne, il accompagne aussi les projets de rénovation énergétique des maisons anciennes. Son expertise couvre les réseaux d'eau, de chauffage et de production d'eau chaude.",
     "prestations": [
@@ -41,6 +42,7 @@
   {
     "slug": "peintre-batiment",
     "nom": "Peintre en bâtiment",
+    "nomSeo": "Peintre",
     "nomPluriel": "peintres en bâtiment",
     "description": "Le peintre en bâtiment accompagne une rénovation intérieure complète : préparation des supports, finitions durables, habillage des murs et des sols, et petits ajustements de vitrerie. Il conseille sur les teintes, les produits et la résistance adaptée à chaque pièce. Son travail valorise le bien tout en renforçant l'harmonie des volumes et des usages.",
     "prestations": [
@@ -83,6 +85,7 @@
   {
     "slug": "macon-renovation",
     "nom": "Maçon rénovation",
+    "nomSeo": "Maçon",
     "nomPluriel": "maçons rénovation",
     "description": "Le maçon rénovation intervient sur la structure et l'aménagement des bâtiments : ouvertures, reprises, dallages et murs. Dans l'ancien, il adapte les techniques pour conserver le caractère du bâti tout en améliorant sa solidité. Il coordonne souvent son travail avec d'autres corps de métier.",
     "prestations": [
@@ -118,6 +121,7 @@
   {
     "slug": "menuisier-portail-fenetre",
     "nom": "Menuisier portail fenêtre",
+    "nomSeo": "Menuisier",
     "nomPluriel": "menuisiers portail fenêtre",
     "description": "Le menuisier installe et remplace les ouvertures qui participent au confort thermique, acoustique et à la sécurité. Nos professionnels partenaires menuiserie sont certifiés RGE Qualibat : côté particulier, cette qualification conditionne l'accès à certaines aides à la rénovation énergétique et à la TVA réduite pour le remplacement de menuiseries isolantes. Ils conseillent sur les matériaux (PVC, alu, bois) selon le budget et le style du logement. Leur intervention améliore la performance énergétique et l'esthétique extérieure.",
     "prestations": [
@@ -168,6 +172,7 @@
   {
     "slug": "veranda-pergola-store",
     "nom": "Véranda, pergola et store",
+    "nomSeo": "Véranda",
     "nomPluriel": "spécialistes véranda, pergola et store",
     "description": "Notre partenaire de menuiserie extérieure conçoit des espaces extérieurs confortables et très saisonniers : pergolas aluminium, stores bannes motorisés, vérandas sur mesure, carports et couvertures de terrasse. Les demandes se concentrent surtout au printemps et en été, avec un vrai besoin de conseil sur l'orientation, l'exposition et la réglementation locale. Nos professionnels partenaires sont certifiés RGE Qualibat sur les projets concernés.",
     "prestations": [
@@ -208,8 +213,45 @@
     "actif": true
   },
   {
+    "slug": "climatisation-pompe-a-chaleur",
+    "nom": "Climatisation et pompe à chaleur",
+    "nomSeo": "Climatisation",
+    "nomPluriel": "spécialistes climatisation et pompe à chaleur",
+    "description": "Nos professionnels partenaires interviennent sur la climatisation réversible, les pompes à chaleur air-air et les solutions de confort d'été dans l'Yonne. Ils conseillent sur le dimensionnement, l'exposition du logement, l'usage réel des pièces et la cohérence avec l'isolation existante. Leur approche vise un confort mesuré, sans suréquipement inutile.",
+    "prestations": [
+      "Pose de climatisation réversible",
+      "Installation de pompe à chaleur air-air",
+      "Mise en service et réglages",
+      "Remplacement d'équipements existants",
+      "Conseil sur le dimensionnement et l'implantation"
+    ],
+    "fourchettePrix": "Climatisation réversible : généralement 1 800-4 500 € selon les unités et la configuration ; pompe à chaleur air-air : devis sur mesure selon surface et niveau d'équipement",
+    "questionsFrequentes": [
+      {
+        "question": "La climatisation suffit-elle à elle seule pour un logement ?",
+        "reponse": "Elle apporte un vrai confort d'été, mais son intérêt dépend de l'isolation, de l'exposition et des besoins réels du logement."
+      },
+      {
+        "question": "Peut-on installer une climatisation dans une maison ancienne ?",
+        "reponse": "Oui, sous réserve d'un diagnostic technique pour vérifier le passage des liaisons, l'emplacement des unités et la cohérence avec le bâti."
+      },
+      {
+        "question": "Quel entretien prévoir ?",
+        "reponse": "Un entretien régulier est recommandé pour conserver de bonnes performances et limiter l'encrassement des filtres et échangeurs."
+      },
+      {
+        "question": "Faut-il un dimensionnement précis ?",
+        "reponse": "Oui, un appareil surdimensionné consomme inutilement et un modèle sous-dimensionné manque de confort ; l'étude technique reste essentielle."
+      }
+    ],
+    "urgence": false,
+    "saison": "ete",
+    "actif": true
+  },
+  {
     "slug": "isolation",
     "nom": "Isolation",
+    "nomSeo": "Isolation",
     "nomPluriel": "travaux d'isolation",
     "description": "L'isolation confiée à nos professionnels partenaires couvre la maison dans son ensemble : combles, murs, enveloppe extérieure et compléments de rénovation énergétique. Ces interventions sont souvent coordonnées avec des travaux de menuiserie pour traiter les ponts thermiques et améliorer le confort en toute saison. Nos partenaires disposent de la certification RGE Qualibat lorsque le chantier ouvre droit à des dispositifs d'aide.",
     "prestations": [
@@ -247,6 +289,7 @@
   {
     "slug": "estimation-immobiliere",
     "nom": "Estimation immobilière",
+    "nomSeo": "Estimation",
     "nomPluriel": "estimations immobilières",
     "description": "L'estimation immobilière permet d'obtenir une valeur cohérente d'un bien selon le marché local et ses caractéristiques. Elle aide à vendre, acheter ou arbitrer un projet patrimonial dans de bonnes conditions. L'analyse prend en compte l'emplacement, l'état et les références comparables récentes.",
     "prestations": [
@@ -282,6 +325,7 @@
   {
     "slug": "courtier-credit-assurance",
     "nom": "Courtier crédit assurance",
+    "nomSeo": "Courtier",
     "nomPluriel": "courtiers crédit assurance",
     "description": "Le courtier crédit assurance accompagne les emprunteurs dans la recherche d'un financement adapté et d'une assurance emprunteur compétitive. Il compare les offres et aide à monter un dossier solide. Son objectif est de sécuriser le projet et d'optimiser le coût global du crédit.",
     "prestations": [
@@ -317,6 +361,7 @@
   {
     "slug": "electricien",
     "nom": "Électricien",
+    "nomSeo": "Électricien",
     "nomPluriel": "électriciens",
     "description": "Vous cherchez un électricien dans l'Yonne pour un dépannage électrique en urgence, une recherche de panne ou une rénovation électrique de maison ancienne ? Nos pages locales expliquent aussi quoi faire en cas de panne de courant, comment planifier une mise à la terre fiable, et à quel niveau de devis électricité maison se situent généralement une mise aux normes électriques, un remplacement de tableau électrique ou l'installation de prises et luminaires. La pose d'une borne de recharge pour voiture électrique est également abordée avec les exigences de qualification IRVE.",
     "prestations": [
@@ -357,6 +402,7 @@
   {
     "slug": "couvreur",
     "nom": "Couvreur",
+    "nomSeo": "Couvreur",
     "nomPluriel": "couvreurs",
     "description": "Besoin d'un couvreur dans l'Yonne pour une réparation de toiture, une fuite de toiture en urgence ou un remplacement de tuiles cassées ? Les contenus locaux détaillent les réflexes après intempéries (dont le bâchage d'urgence après tempête), les postes d'une réfection toiture au m2 selon devis, ainsi que les travaux de charpente légère, zinguerie de gouttières, pose de fenêtre de toit et isolation de toiture par l'extérieur. Dans le département, l'entretien des toits en tuile plate de Bourgogne, en ardoise ou en zinc reste un enjeu fréquent.",
     "prestations": [
@@ -398,6 +444,7 @@
   {
     "slug": "terrassement-assainissement",
     "nom": "Terrassement assainissement",
+    "nomSeo": "Terrassement",
     "nomPluriel": "entreprises de terrassement assainissement",
     "description": "Pour un projet de terrassement dans l'Yonne, de viabilisation de terrain ou de tranchées techniques, il est important d'anticiper l'accès des engins et la nature des sols. Cette page couvre aussi les travaux d'assainissement individuel non collectif, le prix d'une fosse septique selon la filière, les alternatives de micro-station d'épuration, la mise aux normes de fosse existante et le raccordement au tout-à-l'égout lorsque le réseau est disponible. Les besoins de création d'accès, d'enrochement et de terrassement pour piscine y sont également traités.",
     "prestations": [
@@ -435,6 +482,7 @@
   {
     "slug": "carreleur-plaquiste",
     "nom": "Carreleur plaquiste",
+    "nomSeo": "Carreleur",
     "nomPluriel": "carreleurs plaquistes",
     "description": "Un carreleur plaquiste dans l'Yonne intervient souvent sur des rénovations complètes : pose de carrelage sol et faience, douche a l'italienne, chape et carrelage extérieur de terrasse. Côté aménagement intérieur, la partie plaquiste couvre la pose de placo, la création de cloisons et faux plafonds, ainsi que l'isolation intérieure par doublage. Les contenus locaux répondent aussi aux questions de prix de pose au m2 et aux choix techniques entre neuf et rénovation.",
     "prestations": [

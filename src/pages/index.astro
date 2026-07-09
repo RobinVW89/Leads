@@ -94,21 +94,23 @@ const organizationSchema = {
 		</div>
 		<div class="bento-grid">
 			{metiersEnAvant.map((metier) => (
-				<a
-					href={`/${metier.slug}/`}
+				<article
 					class={`metier-tile ${metier.saison !== 'toute-annee' ? 'is-seasonal' : ''} ${!metier.actif ? 'is-inactive' : ''}`}
 				>
-					<h3>
-						<MetierIcon slug={metier.slug} label={metier.nom} />
-						<span>{metier.nom}</span>
-					</h3>
+					<a class="tile-main-link" href={`/${metier.slug}/`}>
+						<h3>
+							<MetierIcon slug={metier.slug} label={metier.nom} />
+							<span>{metier.nom}</span>
+						</h3>
+					</a>
 					<p class="muted">{metier.description.slice(0, 130)}...</p>
+					<p class="tile-secondary-link"><a href={`/${metier.slug}/auxerre/`}>Voir aussi à Auxerre</a></p>
 					<div class="badges">
 						{metier.saison === 'ete' && <span class="badge">Forte demande estivale</span>}
 						{!metier.actif && <span class="badge">Ouverture prochaine</span>}
 						{metier.urgence && <span class="badge">Intervention rapide possible</span>}
 					</div>
-				</a>
+				</article>
 			))}
 		</div>
 	</section>

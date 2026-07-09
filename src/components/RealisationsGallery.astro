@@ -14,6 +14,13 @@ const images = captions.map((caption, index) => ({
   src: `/images/realisations/placeholder-${index + 1}.svg`,
   alt: `${caption} ${locationLabel}`
 }));
+
+if (villeNom === 'Auxerre' && images.length > 0) {
+  images[0] = {
+    ...images[0],
+    alt: `Réalisation à Auxerre : ${captions[0]}`
+  };
+}
 ---
 
 <section class="section">

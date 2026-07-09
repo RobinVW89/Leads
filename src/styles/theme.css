@@ -349,6 +349,22 @@ button,
   font-weight: 600;
 }
 
+.footer-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.footer-column-title {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+  color: var(--ardoise-seche);
+}
+
+.footer-links {
+  display: grid;
+  gap: 0.35rem;
+}
+
 form {
   display: grid;
   gap: 0.8rem;
@@ -568,7 +584,6 @@ button,
 
 .metier-tile {
   border: 1px solid var(--line);
-  text-decoration: none;
   background: rgba(255, 255, 255, 0.45);
   padding: 0.95rem;
   min-height: 135px;
@@ -576,6 +591,32 @@ button,
   align-content: start;
   gap: 0.6rem;
   transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.tile-main-link,
+.tile-secondary-link a {
+  text-decoration: none;
+}
+
+.tile-main-link h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.tile-secondary-link {
+  margin: 0;
+  font-size: 0.93rem;
+}
+
+.tile-secondary-link a {
+  color: var(--zinc-brosse);
+  font-weight: 600;
+}
+
+.tile-secondary-link a:hover,
+.tile-secondary-link a:focus-visible {
+  color: var(--ocre-tuilier);
 }
 
 .metier-tile:hover,
@@ -588,6 +629,15 @@ button,
 .metier-tile.is-inactive {
   grid-column: span 2;
   min-height: 155px;
+}
+
+.metier-tile.is-priority-city {
+  border-color: rgba(122, 74, 50, 0.35);
+  background: rgba(255, 255, 255, 0.56);
+}
+
+.metier-tile.is-priority-city h3 {
+  font-weight: 700;
 }
 
 .metier-tile h3 {
@@ -647,6 +697,40 @@ button,
   display: block;
   border-radius: 8px;
   border: 1px solid rgba(106, 115, 120, 0.22);
+}
+
+.hub-metiers {
+  display: grid;
+  gap: 1rem;
+}
+
+.hub-metier-card {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.5);
+  padding: 1rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.hub-metier-card h2 {
+  font-size: clamp(1.18rem, 2.2vw, 1.65rem);
+}
+
+.hub-metier-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.hub-metier-actions a:last-child {
+  color: var(--zinc-brosse);
+  font-weight: 600;
+}
+
+.hub-metier-actions a:last-child:hover,
+.hub-metier-actions a:last-child:focus-visible {
+  color: var(--ocre-tuilier);
 }
 
 .related-services {
@@ -851,10 +935,19 @@ button,
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
+  .footer-grid {
+    grid-template-columns: 1.4fr 1fr 0.8fr;
+    align-items: start;
+  }
+
   .metier-tile.is-seasonal,
   .metier-tile.is-inactive {
     grid-column: span 2;
     min-height: 185px;
+  }
+
+  .hub-metiers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .grid.cols-3 {

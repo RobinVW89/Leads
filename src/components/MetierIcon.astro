@@ -50,6 +50,15 @@ const { slug, label = '' } = Astro.props;
     )
   }
   {
+    slug === 'climatisation-pompe-a-chaleur' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="6" width="16" height="12" rx="2" />
+        <path d="M7 10h10M7 13h10" />
+        <path d="M8.5 18v2M15.5 18v2" />
+      </svg>
+    )
+  }
+  {
     slug === 'isolation' && (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 7h16" />
@@ -117,6 +126,7 @@ const { slug, label = '' } = Astro.props;
       'macon-renovation',
       'menuisier-portail-fenetre',
       'veranda-pergola-store',
+      'climatisation-pompe-a-chaleur',
       'isolation',
       'estimation-immobiliere',
       'courtier-credit-assurance',

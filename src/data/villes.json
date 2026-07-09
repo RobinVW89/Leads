@@ -4,6 +4,7 @@
     "nom": "Auxerre",
     "codePostal": "89000",
     "population": "environ 35 000 habitants",
+    "prioritaire": true,
     "quartiersOuCommunesProches": ["Les Brichères", "Saint-Gervais", "Perrigny", "Monéteau"],
     "phraseLocale": "Entre centre ancien et quartiers résidentiels plus récents, les besoins mêlent rénovation de l'ancien et amélioration du confort énergétique."
   },
@@ -36,6 +37,7 @@
     "nom": "Joigny",
     "codePostal": "89300",
     "population": "environ 9 300 habitants",
+    "prioritaire": true,
     "quartiersOuCommunesProches": ["Saint-André", "La Madeleine", "Migennes", "Chamvres"],
     "phraseLocale": "Le bâti jovinien alterne habitat ancien en cœur de ville et secteurs plus récents, ce qui implique des besoins techniques variés."
   },
@@ -116,6 +118,7 @@
     "nom": "Sens",
     "codePostal": "89100",
     "population": "environ 26 000 habitants",
+    "prioritaire": true,
     "quartiersOuCommunesProches": ["Les Champs Plaisants", "Sainte-Béate", "Paron", "Maillot"],
     "phraseLocale": "À Sens, la diversité du parc immobilier génère des demandes allant du dépannage rapide aux projets de rénovation plus structurés."
   }

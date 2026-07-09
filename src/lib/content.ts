@@ -43,11 +43,17 @@ const relatedServices: Record<string, RelatedLink[]> = {
     { href: '/carreleur-plaquiste/', label: 'Carreleur plaquiste', note: 'enchaîner sur les finitions intérieures' }
   ],
   'plombier-chauffagiste': [
+    { href: '/climatisation-pompe-a-chaleur/', label: 'Climatisation et pompe à chaleur', note: "préparer les équipements de confort d'été" },
     { href: '/electricien/', label: 'Électricien', note: 'sécuriser l’alimentation des équipements' },
     { href: '/isolation/', label: 'Isolation', note: 'améliorer le rendement du chauffage' }
   ],
+  'climatisation-pompe-a-chaleur': [
+    { href: '/plombier-chauffagiste/', label: 'Plombier chauffagiste', note: 'coordonner chauffage et eau chaude' },
+    { href: '/electricien/', label: 'Électricien', note: 'prévoir l’alimentation et les protections' }
+  ],
   electricien: [
     { href: '/plombier-chauffagiste/', label: 'Plombier chauffagiste', note: 'coordonner les équipements techniques' },
+    { href: '/climatisation-pompe-a-chaleur/', label: 'Climatisation et pompe à chaleur', note: 'gérer la puissance et les raccordements' },
     { href: '/isolation/', label: 'Isolation', note: 'accompagner une rénovation énergétique' }
   ],
   couvreur: [
@@ -108,6 +114,11 @@ const realizationCaptions: Record<string, string[]> = {
     'Installation d’une pompe à chaleur',
     'Rénovation d’une salle de bain',
     'Remplacement d’un chauffe-eau'
+  ],
+  'climatisation-pompe-a-chaleur': [
+    'Climatisation réversible en séjour',
+    'Pompe à chaleur air-air',
+    'Rafraîchissement des pièces de vie'
   ],
   electricien: [
     'Mise en sécurité d’un tableau électrique',

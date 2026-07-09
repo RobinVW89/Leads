@@ -85,14 +85,38 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 		</main>
 		<footer class="footer">
 			<div class="container">
-				<p>
-					{SITE_CONFIG.siteName} • Mise en relation gratuite avec des professionnels locaux vérifiés dans
-					l'Yonne.
-				</p>
-				<p>
-					<a href="/comment-ca-marche">Comment ça marche</a> • <a href="/mentions-legales">Mentions légales</a>{' '}
-					• <a href="/politique-confidentialite">Politique de confidentialité</a> • <a href={SITE_CONFIG.resonanceUrl} target="_blank" rel="noopener noreferrer">Vous êtes artisan ? Rejoignez Résonance</a>
-				</p>
+				<div class="footer-grid">
+					<div>
+						<p>
+							{SITE_CONFIG.siteName} • Mise en relation gratuite avec des professionnels locaux vérifiés dans
+							l'Yonne.
+						</p>
+						<p>
+							<a href="/comment-ca-marche">Comment ça marche</a> • <a href="/mentions-legales">Mentions légales</a>{' '}
+							• <a href="/politique-confidentialite">Politique de confidentialité</a>
+						</p>
+					</div>
+					<div>
+						<p class="footer-column-title">Nos pros à Auxerre</p>
+						<p class="footer-links">
+							<a href="/auxerre/">Hub Auxerre</a>
+							<a href="/plombier-chauffagiste/auxerre/">Plombier</a>
+							<a href="/climatisation-pompe-a-chaleur/auxerre/">Climatisation</a>
+							<a href="/electricien/auxerre/">Électricien</a>
+							<a href="/couvreur/auxerre/">Couvreur</a>
+							<a href="/menuisier-portail-fenetre/auxerre/">Menuisier</a>
+							<a href="/isolation/auxerre/">Isolation</a>
+							<a href="/estimation-immobiliere/auxerre/">Estimation</a>
+							<a href="/courtier-credit-assurance/auxerre/">Courtier</a>
+						</p>
+					</div>
+					<div>
+						<p class="footer-column-title">Espace pros</p>
+						<p>
+							<a href={SITE_CONFIG.resonanceUrl} target="_blank" rel="noopener noreferrer">Vous êtes artisan ? Rejoignez Résonance</a>
+						</p>
+					</div>
+				</div>
 			</div>
 		</footer>
 		{stickyCta && (

@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CityHub from '../../components/CityHub.astro';
+import { breadcrumbSchema, collectionPageSchema } from '../../lib/seo';
+
+const title = 'Artisan Joigny — devis gratuit | Les Pros de l\'Yonne';
+const description = 'Trouvez un artisan à Joigny pour vos travaux, votre rénovation et vos besoins de mise en relation locale.';
+const intro = `À Joigny, les projets mêlent souvent patrimoine de centre-ville, maisons de bourg et secteurs résidentiels plus récents. Cela crée des demandes variées, du dépannage simple à la rénovation plus technique, avec un besoin fréquent de coordination entre plusieurs corps de métier. Ce hub vous aide à trouver un artisan Joigny, à organiser des travaux Joigny ou à identifier une entreprise de rénovation Joigny sans perdre de temps. Les pages métier×ville complètes permettent ensuite de détailler précisément votre demande et de demander un devis adapté.`;
+const schemas = [
+  collectionPageSchema('Artisan Joigny', description, '/joigny/'),
+  breadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: 'Joigny' }
+  ])
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalPath="/joigny/"
+  breadcrumbs={[{ label: 'Accueil', href: '/' }, { label: 'Joigny' }]}
+  jsonLd={schemas}
+>
+  <CityHub villeNom="Joigny" villeSlug="joigny" intro={intro} h1="Tous nos professionnels à Joigny — devis gratuit" />
+</Layout>
