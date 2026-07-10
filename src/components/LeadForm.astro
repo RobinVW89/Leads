@@ -154,6 +154,16 @@ const totalWizardSteps = qualificationEtapes.length + 2;
           <button type="submit" data-action="submit" hidden>Envoyer ma demande</button>
         </div>
 
+        <div>
+          <label style="display: flex; gap: 0.65rem; align-items: flex-start;">
+            <input type="checkbox" name="consentementDonnees" required style="margin-top: 0.2rem;" />
+            <span>
+              J'accepte la <a href="/politique-confidentialite">politique de gestion des données lesprosdelyonne</a>
+              pour le traitement de ma demande.
+            </span>
+          </label>
+        </div>
+
         <p class="muted" style="margin: 0;">
           En envoyant, vous acceptez la transmission de votre demande au professionnel concerné.
         </p>
@@ -171,6 +181,15 @@ const totalWizardSteps = qualificationEtapes.length + 2;
         <div>
           <label for={`${formId}-commune`}>Commune (facultatif)</label>
           <input id={`${formId}-commune`} name="commune" value={ville} />
+        </div>
+        <div>
+          <label style="display: flex; gap: 0.65rem; align-items: flex-start;">
+            <input type="checkbox" name="consentementDonnees" required style="margin-top: 0.2rem;" />
+            <span>
+              J'accepte la <a href="/politique-confidentialite">politique de gestion des données lesprosdelyonne</a>
+              pour le traitement de ma demande.
+            </span>
+          </label>
         </div>
       </>
     )}

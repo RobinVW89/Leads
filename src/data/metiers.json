@@ -359,6 +359,55 @@
     "actif": true
   },
   {
+    "slug": "constructeur-maison",
+    "nom": "Constructeur de maison",
+    "nomSeo": "Constructeur de maison",
+    "nomPluriel": "constructeurs de maison",
+    "description": "Le constructeur de maison accompagne les projets de maison individuelle neuve dans l'Yonne, depuis la définition du besoin jusqu'au lancement du chantier. Il aide à cadrer le budget, la surface, le type de maison, l'adaptation au terrain et les premières étapes administratives, avec une lecture concrète du projet avant consultation détaillée.",
+    "prestations": [
+      "Étude du projet de maison individuelle",
+      "Aide au cadrage budget-surface-prestations",
+      "Avant-projet et plans de principe",
+      "Accompagnement sur terrain et implantation",
+      "Montage du dossier administratif et permis",
+      "Construction en CCMI ou projet encadré selon le besoin"
+    ],
+    "fourchettePrix": "Construction de maison individuelle : généralement 1 400 à 2 400 EUR/m2 hors terrain selon niveau de finition, complexité du projet et adaptation au terrain ; chiffrage précis sur étude.",
+    "questionsFrequentes": [
+      {
+        "question": "Quel budget prévoir pour une maison neuve ?",
+        "reponse": "Le budget dépend surtout de la surface, du niveau de finition, du terrain et des contraintes techniques. Une première étude permet de distinguer le coût de construction, les frais annexes et les options à arbitrer." 
+      },
+      {
+        "question": "Faut-il déjà avoir un terrain pour démarrer ?",
+        "reponse": "Non, mais l'avancement est plus rapide si le terrain est déjà identifié. Sans terrain, le projet peut quand même être cadré sur la surface, le budget et le type de maison recherché."
+      },
+      {
+        "question": "Qu'est-ce qu'un CCMI ?",
+        "reponse": "Le CCMI, ou contrat de construction de maison individuelle, encadre le projet avec un prix convenu, des délais et des garanties spécifiques. Il est souvent choisi quand le particulier veut un cadre contractuel plus lisible pour sa construction."
+      },
+      {
+        "question": "Le permis de construire est-il géré dans le projet ?",
+        "reponse": "Oui, selon l'organisation retenue, le dossier de permis peut être préparé avec les plans et les pièces nécessaires. Le point important est surtout d'anticiper les contraintes du terrain et du règlement local avant le dépôt."
+      },
+      {
+        "question": "Comment préparer le financement d'une maison neuve ?",
+        "reponse": "Le financement se prépare en parallèle du projet avec une estimation réaliste du coût global : construction, terrain, frais annexes, raccordements et marge de sécurité. Plus ce cadrage est précis tôt, plus les échanges avec la banque ou le courtier sont efficaces."
+      },
+      {
+        "question": "Quelle différence entre un constructeur et un maître d'oeuvre ?",
+        "reponse": "Le constructeur intervient dans un cadre contractuel plus standardisé, souvent en CCMI, tandis que le maître d'oeuvre coordonne plus librement plusieurs entreprises. Le bon choix dépend du niveau d'encadrement attendu et du type de projet."
+      },
+      {
+        "question": "Peut-on faire évoluer le projet après un premier échange ?",
+        "reponse": "Oui, le premier cadrage sert justement à ajuster la surface, la distribution, les options techniques et le budget avant d'aller plus loin."
+      }
+    ],
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": true
+  },
+  {
     "slug": "electricien",
     "nom": "Électricien",
     "nomSeo": "Électricien",

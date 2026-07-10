@@ -219,5 +219,22 @@
         "reponse": "Oui si l'étude de départ tient compte de l'isolation, des volumes et des habitudes d'usage pour éviter un appareil mal dimensionné."
       }
     ]
+  },
+  {
+    "slug": "constructeur-maison",
+    "title": "Constructeur de maison à Auxerre",
+    "intro": "À Auxerre, un projet de maison neuve se décide rarement sur un simple plan type. Le choix du terrain, la surface visée, le niveau de finition et les contraintes locales influencent vite le budget et la faisabilité. Nos professionnels partenaires aident à cadrer le projet dès le départ pour éviter les écarts entre envie, enveloppe financière et réalité du terrain.",
+    "localTitle": "Votre projet à Auxerre",
+    "localParagraphs": [
+      "Autour d'Auxerre, entre Monéteau, Appoigny, Perrigny, Venoy, Augy ou Saint-Georges-sur-Baulche, les projets de maison individuelle se heurtent souvent à des différences fortes de terrain, d'accès, de pente ou de règlement local. Un premier cadrage sérieux permet d'éviter de partir sur une maison mal adaptée à la parcelle visée.",
+      "Dans ce type de projet, le sujet n'est pas seulement le prix au mètre carré. Il faut aussi intégrer les raccordements, l'adaptation au sol, la distribution intérieure, le garage éventuel, les prestations techniques et le niveau de finition réellement attendu. C'est souvent là que le projet se joue avant même le permis.",
+      "À Auxerre et dans son agglomération, beaucoup de demandes commencent par une comparaison entre budget disponible, maison souhaitée et calendrier de lancement. Plus ce cadrage est clair en amont, plus les échanges suivants gagnent en précision sur les plans, les options et les délais."
+    ],
+    "localFaqs": [
+      {
+        "question": "Peut-on lancer un projet de maison à Auxerre sans terrain définitivement acheté ?",
+        "reponse": "Oui, un premier échange peut déjà servir à cadrer le budget, la surface et le type de maison visés avant la sécurisation définitive du terrain."
+      }
+    ]
   }
 ]

@@ -239,6 +239,69 @@
     ]
   },
   {
+    "metierSlug": "constructeur-maison",
+    "etapes": [
+      {
+        "question": "Type de projet ?",
+        "options": [
+          "Maison plain-pied",
+          "Maison à étage",
+          "Projet sur mesure",
+          "Je ne sais pas encore"
+        ]
+      },
+      {
+        "question": "Usage du projet ?",
+        "options": [
+          "Résidence principale",
+          "Résidence secondaire",
+          "Investissement locatif",
+          "Je me renseigne d'abord"
+        ]
+      },
+      {
+        "question": "Où en est votre terrain ?",
+        "options": [
+          "Terrain déjà signé",
+          "Terrain identifié",
+          "Recherche en cours",
+          "Je veux d'abord cadrer le budget"
+        ]
+      },
+      {
+        "question": "Surface souhaitée ?",
+        "options": [
+          "Moins de 90 m2",
+          "90-120 m2",
+          "120-160 m2",
+          "Plus de 160 m2",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      },
+      {
+        "question": "Budget global du projet ?",
+        "options": [
+          "Moins de 180 000 EUR",
+          "180 000 à 250 000 EUR",
+          "250 000 à 350 000 EUR",
+          "Plus de 350 000 EUR",
+          "À définir"
+        ],
+        "facultatif": true
+      },
+      {
+        "question": "Avancement du projet ?",
+        "options": [
+          "Premiers renseignements",
+          "Budget à cadrer",
+          "Plans ou permis à lancer",
+          "Prêt à comparer des propositions"
+        ]
+      }
+    ]
+  },
+  {
     "metierSlug": "peintre-batiment",
     "etapes": [
       {

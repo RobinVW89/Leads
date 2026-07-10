@@ -120,6 +120,16 @@ const { slug, label = '' } = Astro.props;
     )
   }
   {
+    slug === 'constructeur-maison' && (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m3 12 9-7 9 7" />
+        <path d="M5.5 10.8V20h13v-9.2" />
+        <path d="M9.5 20v-4.8h5V20" />
+        <path d="M12 5.2v2.1" />
+      </svg>
+    )
+  }
+  {
     ![
       'plombier-chauffagiste',
       'peintre-batiment',
@@ -133,7 +143,8 @@ const { slug, label = '' } = Astro.props;
       'electricien',
       'couvreur',
       'terrassement-assainissement',
-      'carreleur-plaquiste'
+      'carreleur-plaquiste',
+      'constructeur-maison'
     ].includes(slug) && (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="8" />
