@@ -487,21 +487,16 @@ const totalWizardSteps = qualificationEtapes.length + 2;
           throw new Error('Webhook error');
         }
 
-        form.reset();
-        if (startedAtInput instanceof HTMLInputElement) {
-          startedAtInput.value = String(Date.now());
+        const thankYouUrl = new URL('/merci', window.location.origin);
+        thankYouUrl.searchParams.set('type', actif ? 'lead' : 'intention');
+        if (payload.metier) {
+          thankYouUrl.searchParams.set('metier', payload.metier);
         }
-        if (pageSourceInput instanceof HTMLInputElement) {
-          pageSourceInput.value = window.location.href;
+        if (payload.ville) {
+          thankYouUrl.searchParams.set('ville', payload.ville);
         }
-        if (actif && wizardSteps.length > 0) {
-          currentStepIndex = 0;
-          refreshWizardUi();
-        }
-        messageBox.className = 'success';
-        messageBox.textContent = actif
-          ? 'Un professionnel local vous rappelle sous 24 h.'
-          : 'Merci, vous serez prévenu en priorité lors de l\'ouverture de ce service.';
+        window.location.href = thankYouUrl.toString();
+        return;
       } catch (error) {
         messageBox.className = 'error';
         messageBox.innerHTML = `Une erreur est survenue. Vous pouvez aussi nous joindre au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;

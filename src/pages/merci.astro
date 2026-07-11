@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = 'Merci pour votre demande | Travaux & Pros de l\'Yonne';
+const description = 'Votre demande a bien été envoyée. Un professionnel local vous recontacte rapidement.';
+const breadcrumbs = [
+  { label: 'Accueil', href: '/' },
+  { label: 'Merci' }
+];
+
+const type = Astro.url.searchParams.get('type') || 'lead';
+const metier = Astro.url.searchParams.get('metier') || '';
+const ville = Astro.url.searchParams.get('ville') || '';
+
+const isIntention = type === 'intention';
+const heading = isIntention ? 'Merci, vous êtes inscrit' : 'Merci, votre demande est envoyée';
+const message = isIntention
+  ? 'Nous vous préviendrons en priorité dès que ce service sera ouvert dans votre secteur.'
+  : 'Un professionnel local vous rappelle sous 24 h pour échanger sur votre projet.';
+
+const context = [metier, ville].filter(Boolean).join(' - ');
+---
+
+<Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath="/merci">
+  <section class="section">
+    <h1 class="page-title">{heading}</h1>
+    <p class="muted">{message}</p>
+
+    {context && <p class="inline-note">Demande concernée : {context}</p>}
+
+    <div class="card" style="margin-top: 1rem;">
+      <h2>Et maintenant ?</h2>
+      <p>
+        Vérifiez que votre téléphone est joignable. Si besoin, vous pouvez aussi revenir à l'accueil pour faire une
+        nouvelle demande.
+      </p>
+      <p style="margin-top: 1rem;">
+        <a class="btn" href="/">Retour à l'accueil</a>
+      </p>
+    </div>
+  </section>
+</Layout>
