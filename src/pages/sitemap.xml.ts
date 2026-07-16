@@ -15,7 +15,7 @@ export const GET: APIRoute = () => {
   const metierPaths = metiersData.map((metier) => `/${metier.slug}/`);
   const localPaths = metiersData.flatMap((metier) => villesData.map((ville) => `/${metier.slug}/${ville.slug}/`));
 
-  const allPaths = [
+  const allPaths: Array<{ path: string; priority?: string }> = [
     ...staticPaths.map((path) => ({ path })),
     ...hubPaths,
     ...metierPaths.map((path) => ({ path })),
