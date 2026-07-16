@@ -233,7 +233,9 @@ const totalWizardSteps = qualificationEtapes.length + 2;
     totalWizardSteps
   }}
 >
+  // @ts-ignore - Variables injected by define:vars
   const form = document.getElementById(formId);
+  // @ts-ignore - Variables injected by define:vars
   const messageBox = document.getElementById(`${formId}-message`);
 
   if (form instanceof HTMLFormElement && messageBox) {

@@ -50,7 +50,7 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 		<meta property="og:url" content={canonicalUrl} />
 		<meta property="og:site_name" content={SITE_CONFIG.siteName} />
 		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Y7CDBF3X"></script>
+		<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-D2Y7CDBF3X"></script>
 		<script is:inline>
 			window.dataLayer = window.dataLayer || [];
 			function gtag() {
@@ -61,7 +61,7 @@ const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 			gtag('config', 'G-D2Y7CDBF3X');
 		</script>
 		{jsonLdList.map((entry) => (
-			<script type="application/ld+json" set:html={JSON.stringify(entry)} />
+			<script is:inline type="application/ld+json" set:html={JSON.stringify(entry)} />
 		))}
 	</head>
 	<body>
