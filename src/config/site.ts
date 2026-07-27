@@ -8,5 +8,5 @@ export const SITE_CONFIG = {
   resonanceUrl: 'https://resonnance.pages.dev/',
   telContact: '07 44 96 36 60',
   telContactHref: '+33744963660',
-  contactEmail: 'contact@travaux-pros-yonne.fr'
+  contactEmail: 'contact@lesprosdelyonne.com'
 } as const;
