@@ -13,6 +13,10 @@
     }
   ],
 
+  // Aucune URL publique : ce Worker ne doit être déclenché que par son cron.
+  // Sans cela, workers.dev exposerait un endpoint de purge non authentifié.
+  "workers_dev": false,
+
   // Tous les jours à 3 h 30 UTC
   "triggers": {
     "crons": ["30 3 * * *"]

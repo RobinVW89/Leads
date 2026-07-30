@@ -27,26 +27,17 @@ export default {
     console.log(`Purge ${CONSERVATION_MOIS} mois : ${supprimees} demande(s) supprimée(s).`);
   },
 
-  // Exécution manuelle pour vérifier le comportement sans attendre le cron.
-  async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url);
-
-    if (url.pathname === '/purge' && request.method === 'POST') {
-      const { supprimees } = await purger(env);
-      return Response.json({ ok: true, supprimees, conservation_mois: CONSERVATION_MOIS });
-    }
-
-    const aPurger = await env.DB.prepare(
-      `SELECT COUNT(*) AS n FROM leads WHERE created_at < datetime('now', ?)`
-    )
-      .bind(`-${CONSERVATION_MOIS} months`)
-      .first<{ n: number }>();
-
-    return Response.json({
-      role: 'purge des demandes au-delà de la durée de conservation',
-      conservation_mois: CONSERVATION_MOIS,
-      a_purger_maintenant: aPurger?.n ?? 0,
-      declencheur: 'cron quotidien 03:30 UTC'
+  /**
+   * Aucune purge déclenchable par requête : ce serait un endpoint destructif
+   * sans authentification. Le Worker n'a pas d'URL publique (workers_dev
+   * désactivé) et ne s'exécute que sur son déclencheur cron.
+   * Pour une purge manuelle : npx wrangler dev --test-scheduled, ou
+   * wrangler d1 execute avec la requête DELETE correspondante.
+   */
+  async fetch(): Promise<Response> {
+    return new Response('Ce Worker ne répond qu’à son déclencheur planifié.', {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' }
     });
   }
 };
