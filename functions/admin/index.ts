@@ -7,20 +7,13 @@
  * la requête ne peut pas arriver ici sans avoir passé Access.
  */
 
+import { estAdmin, identifierViaAccess } from '../_lib/access';
+
 type Env = {
   DB: D1Database;
   /** Liste blanche des identités autorisées, séparées par des virgules. */
   ADMIN_EMAILS?: string;
 };
-
-/** Défense en profondeur : Access filtre déjà, mais on revérifie ici. */
-const ADMINS_PAR_DEFAUT = ['contact@lesprosdelyonne.com', 'rbn.soyer@gmail.com'];
-
-function estAutorise(email: string | null, liste: string | undefined): boolean {
-  if (!email) return false;
-  const autorises = (liste ? liste.split(',') : ADMINS_PAR_DEFAUT).map((e) => e.trim().toLowerCase()).filter(Boolean);
-  return autorises.includes(email.trim().toLowerCase());
-}
 
 type LigneLead = {
   id: number;
@@ -127,24 +120,26 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
   const url = new URL(request.url);
 
-  // Identité fournie par Cloudflare Access (en-tête posé par le proxy).
-  const emailAccess = request.headers.get('Cf-Access-Authenticated-User-Email');
   const estLocal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+  let identite = 'session locale de développement';
 
-  // Access ne protège que lesprosdelyonne.com/admin. Sur une URL de
-  // prévisualisation *.pages.dev, l'en-tête d'identité est absent : on refuse,
-  // sinon les demandes seraient consultables publiquement.
-  if (!estLocal && !estAutorise(emailAccess, env.ADMIN_EMAILS)) {
-    const motif = emailAccess
-      ? `L'identité ${emailAccess} n'est pas autorisée sur cet espace.`
-      : 'Cet espace est réservé aux comptes autorisés, via Cloudflare Access.';
-    return new Response(`Accès refusé. ${motif}`, {
-      status: 403,
-      headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
-    });
+  if (!estLocal) {
+    // Preuve d'identité : JWT signé par Cloudflare, vérifié cryptographiquement.
+    const acces = await identifierViaAccess(request);
+    if (!acces.ok) {
+      return new Response(
+        `Accès refusé. Authentification Cloudflare Access requise (${acces.motif}).`,
+        { status: 403, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } }
+      );
+    }
+    if (!estAdmin(acces.email, env.ADMIN_EMAILS)) {
+      return new Response(`Accès refusé. L'identité ${acces.email} n'est pas habilitée sur cet espace.`, {
+        status: 403,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
+      });
+    }
+    identite = acces.email;
   }
-
-  const identite = emailAccess || 'session locale de développement';
 
   // --- Actions -----------------------------------------------------------
   if (request.method === 'POST') {

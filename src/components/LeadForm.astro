@@ -525,13 +525,25 @@ const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
           body: JSON.stringify(payload)
         });
 
-        if (!response.ok) {
-          let detail = '';
+        // Un statut 200 ne suffit pas : pendant la propagation d'un déploiement,
+        // certains nœuds servent le HTML du site à la place de la Function.
+        // On n'accepte un succès que si la réponse est le JSON attendu.
+        let corps = null;
+        const typeContenu = response.headers.get('Content-Type') || '';
+        if (typeContenu.includes('application/json')) {
           try {
-            const corps = await response.json();
-            detail = corps && corps.erreur ? corps.erreur : '';
+            corps = await response.json();
           } catch (e) {
-            detail = '';
+            corps = null;
+          }
+        }
+
+        const succes = response.ok && corps && corps.ok === true;
+
+        if (!succes) {
+          let detail = corps && corps.erreur ? corps.erreur : '';
+          if (!detail && response.ok) {
+            detail = 'Le service d\'envoi n\'a pas répondu correctement.';
           }
 
           // Un jeton anti-robot ne sert qu'une fois : on en redemande un
