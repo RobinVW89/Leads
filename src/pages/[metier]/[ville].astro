@@ -120,6 +120,7 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema({ ...met
             </p>
             <CertificationBadge certifications={metier.certifications} />
             {metier.saison === 'ete' && <p class="badge">Forte demande pendant la saison estivale.</p>}
+            {metier.saison === 'hiver' && <p class="badge">Forte demande à l'approche de la saison de chauffe.</p>}
             {metier.urgence && <p class="badge">Intervention rapide possible pour les demandes urgentes.</p>}
             <div style="margin-top: 1rem;">
               <ReassuranceBadges />

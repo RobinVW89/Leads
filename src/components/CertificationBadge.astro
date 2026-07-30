@@ -4,14 +4,17 @@ type Props = {
 };
 
 const { certifications = [] } = Astro.props;
-const showRgeBadge = certifications.includes('RGE Qualibat');
+const rgeCertifications = certifications.filter((certification) => certification.startsWith('RGE'));
 ---
 
-{showRgeBadge && (
+{rgeCertifications.length > 0 && (
   <div class="certification-block" aria-label="Certification partenaire">
-    <span class="badge">Professionnels partenaires certifiés RGE Qualibat</span>
+    {rgeCertifications.map((certification) => (
+      <span class="badge">Professionnels partenaires certifiés {certification}</span>
+    ))}
     <p class="muted">
-      Cette certification vérifiée peut conditionner l'accès à certaines aides à la rénovation énergétique et, pour le remplacement de menuiseries isolantes, à la TVA réduite.
+      Cette certification vérifiée conditionne l'accès à plusieurs aides à la rénovation énergétique, comme
+      MaPrimeRénov' et les certificats d'économies d'énergie, ainsi qu'à la TVA réduite sur les travaux éligibles.
     </p>
   </div>
 )}

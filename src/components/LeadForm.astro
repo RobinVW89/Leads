@@ -1,6 +1,6 @@
 ---
 import { SITE_CONFIG } from '../config/site';
-import { getParcoursByMetierSlug, type ParcoursEtape } from '../lib/data';
+import { getFormulaireConfig, getParcoursByMetierSlug, type ParcoursEtape } from '../lib/data';
 
 type Props = {
   metier: string;
@@ -28,13 +28,14 @@ const qualificationEtapes = actif
     : fallbackEtapes
   : [];
 const totalWizardSteps = qualificationEtapes.length + 2;
+const champs = getFormulaireConfig(metier);
 ---
 
 <div class="card" id={`${formId}-wrapper`}>
   {actif ? <h2>Démarrer ma demande</h2> : <h2>Service bientôt disponible</h2>}
   {
     actif ? (
-      <p class="muted">Décrivez vos travaux en 2 minutes. Un professionnel local vous rappelle sous 24 h.</p>
+      <p class="muted">{champs.intro}</p>
     ) : (
       <p class="muted">
         Ce service ouvre bientôt dans l'Yonne. Laissez votre email pour être prévenu en premier.
@@ -83,31 +84,31 @@ const totalWizardSteps = qualificationEtapes.length + 2;
 
         <section class="lead-step" data-step={qualificationEtapes.length + 1} hidden>
           <div>
-            <label for={`${formId}-description`}>Décrivez votre projet</label>
-            <textarea id={`${formId}-description`} name="description" rows={4} placeholder="Ex : 45 m2 de murs à repeindre, support déjà préparé."></textarea>
+            <label for={`${formId}-description`}>{champs.descriptionLabel}</label>
+            <textarea id={`${formId}-description`} name="description" rows={4} placeholder={champs.descriptionPlaceholder}></textarea>
           </div>
 
           <div>
-            <label for={`${formId}-delai`}>Délai souhaité *</label>
+            <label for={`${formId}-delai`}>{champs.delaiLabel} *</label>
             <select id={`${formId}-delai`} name="delaiSouhaite" required>
-              <option value="">Choisir un délai</option>
-              <option value="des-que-possible">Dès que possible</option>
-              <option value="sous-1-mois">Sous 1 mois</option>
-              <option value="sous-3-mois">Sous 3 mois</option>
-              <option value="je-me-renseigne">Je me renseigne</option>
+              <option value="">{champs.delaiPlaceholder}</option>
+              {champs.delaiOptions.map((option) => (
+                <option value={option.value}>{option.label}</option>
+              ))}
             </select>
           </div>
 
-          <div>
-            <label for={`${formId}-budget`}>Budget (facultatif)</label>
-            <select id={`${formId}-budget`} name="budget">
-              <option value="">Je ne sais pas encore</option>
-              <option value="moins-de-2000">Moins de 2 000 EUR</option>
-              <option value="2000-5000">2 000 à 5 000 EUR</option>
-              <option value="5000-10000">5 000 à 10 000 EUR</option>
-              <option value="plus-de-10000">Plus de 10 000 EUR</option>
-            </select>
-          </div>
+          {champs.budget && (
+            <div>
+              <label for={`${formId}-budget`}>{champs.budgetLabel}</label>
+              <select id={`${formId}-budget`} name="budget">
+                <option value="">Je ne sais pas encore</option>
+                {champs.budgetOptions.map((option) => (
+                  <option value={option.value}>{option.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </section>
 
         <section class="lead-step" data-step={qualificationEtapes.length + 2} hidden>

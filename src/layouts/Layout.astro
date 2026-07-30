@@ -14,6 +14,7 @@ type Props = {
 	canonicalPath?: string;
 	breadcrumbs?: Crumb[];
 	jsonLd?: object | object[];
+	noindex?: boolean;
 	stickyCta?: {
 		label: string;
 		href: string;
@@ -27,9 +28,13 @@ const {
 	canonicalPath = Astro.url.pathname,
 	breadcrumbs = [],
 	jsonLd = [],
+	noindex = false,
 	stickyCta
 } = Astro.props;
-const canonicalUrl = new URL(canonicalPath, SITE_CONFIG.siteUrl).toString();
+// Le serveur redirige toute URL sans slash final (308) : la canonique doit pointer
+// directement sur l'URL finale, sinon le signal passe par une redirection.
+const normalizedPath = canonicalPath.endsWith('/') ? canonicalPath : `${canonicalPath}/`;
+const canonicalUrl = new URL(normalizedPath, SITE_CONFIG.siteUrl).toString();
 const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 const ogImageUrl = new URL('/images/og-lesprosdelyonne.jpg', SITE_CONFIG.siteUrl).toString();
 ---
@@ -45,6 +50,7 @@ const ogImageUrl = new URL('/images/og-lesprosdelyonne.jpg', SITE_CONFIG.siteUrl
 		<title>{title}</title>
 		<meta name="description" content={description} />
 		<link rel="canonical" href={canonicalUrl} />
+		{noindex && <meta name="robots" content="noindex, follow" />}
 		<meta property="og:type" content="website" />
 		<meta property="og:locale" content="fr_FR" />
 		<meta property="og:title" content={title} />

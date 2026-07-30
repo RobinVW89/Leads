@@ -8,6 +8,7 @@ import RealisationsGallery from '../../components/RealisationsGallery.astro';
 import YonneMap from '../../components/YonneMap.astro';
 import RelatedServices from '../../components/RelatedServices.astro';
 import { getParcoursByMetierSlug, getPriorityCities, metiersData, villesData, type Metier } from '../../lib/data';
+import { breadcrumbSchema, faqSchema, metierServiceSchema } from '../../lib/seo';
 
 export async function getStaticPaths() {
   return metiersData.map((metier) => ({
@@ -33,13 +34,23 @@ const breadcrumbs = [
   { label: 'Accueil', href: '/' },
   { label: metier.nom }
 ];
+const canonicalPath = `/${metier.slug}/`;
+const schemas = [
+  metierServiceSchema(metier, canonicalPath),
+  faqSchema(metier),
+  breadcrumbSchema([
+    { name: 'Accueil', url: '/' },
+    { name: metier.nom }
+  ])
+];
 ---
 
 <Layout
   title={title}
   description={description}
   breadcrumbs={breadcrumbs}
-  canonicalPath={`/${metier.slug}/`}
+  canonicalPath={canonicalPath}
+  jsonLd={schemas}
   stickyCta={{ label: 'Démarrer ma demande', href: '#devis', badge: 'Réponse sous 24 h' }}
 >
   <section class="section">
@@ -55,6 +66,7 @@ const breadcrumbs = [
         <ReassuranceBadges />
         <CertificationBadge certifications={metier.certifications} />
         {metier.saison === 'ete' && <p class="badge" style="margin-top: 0.8rem;">Forte demande pendant la saison estivale.</p>}
+        {metier.saison === 'hiver' && <p class="badge" style="margin-top: 0.8rem;">Forte demande à l'approche de la saison de chauffe.</p>}
         {metier.urgence && <p class="badge" style="margin-top: 0.8rem;">Intervention rapide possible selon disponibilité locale.</p>}
       </article>
       <aside class="signature-panel">
