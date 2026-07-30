@@ -9,7 +9,18 @@
 
 type Env = {
   DB: D1Database;
+  /** Liste blanche des identités autorisées, séparées par des virgules. */
+  ADMIN_EMAILS?: string;
 };
+
+/** Défense en profondeur : Access filtre déjà, mais on revérifie ici. */
+const ADMINS_PAR_DEFAUT = ['contact@lesprosdelyonne.com', 'rbn.soyer@gmail.com'];
+
+function estAutorise(email: string | null, liste: string | undefined): boolean {
+  if (!email) return false;
+  const autorises = (liste ? liste.split(',') : ADMINS_PAR_DEFAUT).map((e) => e.trim().toLowerCase()).filter(Boolean);
+  return autorises.includes(email.trim().toLowerCase());
+}
 
 type LigneLead = {
   id: number;
@@ -123,11 +134,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   // Access ne protège que lesprosdelyonne.com/admin. Sur une URL de
   // prévisualisation *.pages.dev, l'en-tête d'identité est absent : on refuse,
   // sinon les demandes seraient consultables publiquement.
-  if (!emailAccess && !estLocal) {
-    return new Response(
-      'Accès refusé. Cet espace n\'est accessible que via https://lesprosdelyonne.com/admin, protégé par Cloudflare Access.',
-      { status: 403, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } }
-    );
+  if (!estLocal && !estAutorise(emailAccess, env.ADMIN_EMAILS)) {
+    const motif = emailAccess
+      ? `L'identité ${emailAccess} n'est pas autorisée sur cet espace.`
+      : 'Cet espace est réservé aux comptes autorisés, via Cloudflare Access.';
+    return new Response(`Accès refusé. ${motif}`, {
+      status: 403,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
+    });
   }
 
   const identite = emailAccess || 'session locale de développement';
