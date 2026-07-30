@@ -376,7 +376,7 @@
     "questionsFrequentes": [
       {
         "question": "Quel budget prévoir pour une maison neuve ?",
-        "reponse": "Le budget dépend surtout de la surface, du niveau de finition, du terrain et des contraintes techniques. Une première étude permet de distinguer le coût de construction, les frais annexes et les options à arbitrer." 
+        "reponse": "Le budget dépend surtout de la surface, du niveau de finition, du terrain et des contraintes techniques. Une première étude permet de distinguer le coût de construction, les frais annexes et les options à arbitrer."
       },
       {
         "question": "Faut-il déjà avoir un terrain pour démarrer ?",
@@ -446,7 +446,7 @@
     ],
     "urgence": true,
     "saison": "toute-annee",
-    "actif": false
+    "actif": true
   },
   {
     "slug": "couvreur",
@@ -488,7 +488,7 @@
     ],
     "urgence": true,
     "saison": "toute-annee",
-    "actif": false
+    "actif": true
   },
   {
     "slug": "terrassement-assainissement",
@@ -567,5 +567,154 @@
     "urgence": false,
     "saison": "toute-annee",
     "actif": false
+  },
+  {
+    "slug": "photovoltaique-solaire",
+    "nom": "Photovoltaïque et solaire",
+    "nomSeo": "Installateur photovoltaïque",
+    "nomPluriel": "installations photovoltaïques",
+    "description": "L'installation de panneaux photovoltaïques permet de produire votre propre électricité et de réduire durablement votre facture. Nos professionnels partenaires étudient l'orientation et l'état de votre toiture, dimensionnent la puissance selon votre consommation réelle, puis prennent en charge la pose et les démarches de raccordement. Dans l'Yonne, ces projets concernent aussi bien les maisons individuelles que les bâtiments agricoles ou professionnels, avec ou sans batterie de stockage.",
+    "prestations": [
+      "Étude de faisabilité et dimensionnement selon votre consommation",
+      "Pose de panneaux en surimposition ou en intégration toiture",
+      "Installation en autoconsommation, avec ou sans revente de surplus",
+      "Ajout d'une batterie de stockage et pilotage de la production",
+      "Démarches administratives et raccordement au réseau",
+      "Maintenance, contrôle de production et nettoyage des modules"
+    ],
+    "fourchettePrix": "Ordres de grandeur constatés, pose et démarches comprises : environ 7 000 à 10 000 € pour 3 kWc, 11 000 à 16 000 € pour 6 kWc et 16 000 à 22 000 € pour 9 kWc. La prime à l'autoconsommation et la TVA réduite s'appliquent selon l'éligibilité du projet et le recours à un installateur certifié.",
+    "questionsFrequentes": [
+      {
+        "question": "Au bout de combien de temps une installation photovoltaïque est-elle rentabilisée ?",
+        "reponse": "Le retour sur investissement se situe le plus souvent entre 8 et 14 ans, selon la puissance installée, votre taux d'autoconsommation et l'évolution du prix de l'électricité. Consommer sa production directement, plutôt que de la revendre, reste le levier le plus efficace."
+      },
+      {
+        "question": "Faut-il un installateur certifié pour obtenir les aides ?",
+        "reponse": "Oui. La prime à l'autoconsommation et la TVA réduite sont conditionnées au recours à un professionnel disposant de la qualification RGE adaptée au photovoltaïque. Nos partenaires concernés sont certifiés."
+      },
+      {
+        "question": "Ma toiture est-elle adaptée ?",
+        "reponse": "Une orientation sud reste idéale, mais l'est et l'ouest donnent aujourd'hui de bons résultats. Ce qui compte surtout, c'est l'absence d'ombrage important, l'inclinaison et l'état de la couverture : une toiture à refaire se traite avant la pose."
+      },
+      {
+        "question": "Qui s'occupe des démarches administratives ?",
+        "reponse": "Le professionnel prend en charge la déclaration préalable en mairie, la demande de raccordement au gestionnaire de réseau et la mise en service. Vous n'avez pas à gérer ces étapes vous-même."
+      }
+    ],
+    "certifications": [
+      "RGE QualiPV"
+    ],
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": true,
+    "formulaire": {
+      "descriptionPlaceholder": "Ex : maison de 110 m², toiture plein sud, facture d'électricité de 180 € par mois."
+    }
+  },
+  {
+    "slug": "chaudiere-granules-bois",
+    "nom": "Chaudière à granulés et bois",
+    "nomSeo": "Chauffage bois et granulés",
+    "nomPluriel": "installations de chauffage au bois",
+    "description": "Le chauffage au bois et aux granulés offre une alternative renouvelable au fioul et au gaz, avec un coût de combustible plus stable. Nos professionnels partenaires dimensionnent la chaudière ou le poêle selon la surface, l'isolation et les émetteurs existants, puis gèrent le silo, l'évacuation des fumées et la mise en service. Dans l'Yonne, ces installations remplacent fréquemment une ancienne chaudière fioul dans des maisons anciennes.",
+    "prestations": [
+      "Remplacement d'une chaudière fioul ou gaz par une chaudière à granulés",
+      "Installation de poêle à granulés ou à bûches",
+      "Mise en place du silo de stockage, textile ou maçonné",
+      "Adaptation du conduit de fumée et de l'évacuation",
+      "Régulation, programmation et mise en service",
+      "Entretien annuel obligatoire et ramonage"
+    ],
+    "fourchettePrix": "Ordres de grandeur constatés, pose comprise : 15 000 à 25 000 € pour une chaudière à granulés avec silo, 3 500 à 7 000 € pour un poêle à granulés. MaPrimeRénov' et les CEE viennent en déduction selon vos revenus et l'équipement remplacé.",
+    "questionsFrequentes": [
+      {
+        "question": "Quelles aides pour remplacer une chaudière fioul par une chaudière à granulés ?",
+        "reponse": "Le remplacement d'une chaudière fioul fait partie des gestes les mieux accompagnés : MaPrimeRénov', les certificats d'économies d'énergie et, selon les cas, une TVA à 5,5 %. Le montant dépend de vos revenus et l'installateur doit être certifié RGE."
+      },
+      {
+        "question": "Quelle place faut-il prévoir pour le stockage des granulés ?",
+        "reponse": "Comptez environ 3 à 5 m² pour un silo alimentant une maison de 100 à 150 m², soit une autonomie d'une saison de chauffe. Un silo textile s'installe dans un garage ou une cave accessible au camion souffleur."
+      },
+      {
+        "question": "Une chaudière à granulés fonctionne-t-elle avec mes radiateurs actuels ?",
+        "reponse": "Dans la grande majorité des cas oui, y compris avec des radiateurs en fonte. Le professionnel vérifie le dimensionnement et propose si besoin un désembouage du réseau avant la mise en service."
+      },
+      {
+        "question": "Quel entretien faut-il prévoir ?",
+        "reponse": "Un entretien annuel par un professionnel est obligatoire, complété par le ramonage du conduit. Le décendrage courant reste simple et se fait quelques fois par saison selon le modèle."
+      }
+    ],
+    "certifications": [
+      "RGE Qualibois"
+    ],
+    "urgence": false,
+    "saison": "hiver",
+    "actif": true,
+    "formulaire": {
+      "descriptionPlaceholder": "Ex : remplacement d'une chaudière fioul dans une maison de 130 m² avec radiateurs fonte."
+    }
+  },
+  {
+    "slug": "gestion-de-patrimoine",
+    "nom": "Gestion de patrimoine",
+    "nomSeo": "Conseiller en gestion de patrimoine",
+    "nomPluriel": "conseils en gestion de patrimoine",
+    "description": "Le conseil en gestion de patrimoine consiste à faire le point sur votre situation personnelle et professionnelle, puis à construire une stratégie adaptée à vos objectifs : préparer la retraite, protéger vos proches, alléger la fiscalité ou organiser une transmission. Nos partenaires accompagnent aussi bien les particuliers que les chefs d'entreprise et les indépendants, avec un bilan préalable avant toute recommandation.",
+    "prestations": [
+      "Bilan patrimonial complet, personnel et professionnel",
+      "Préparation et optimisation de la retraite",
+      "Prévoyance et protection de la famille",
+      "Optimisation fiscale et choix des enveloppes d'épargne",
+      "Organisation de la transmission et de la succession",
+      "Épargne salariale et placement de trésorerie d'entreprise"
+    ],
+    "fourchettePrix": "Le premier rendez-vous et le bilan patrimonial sont généralement offerts et sans engagement. La rémunération prend ensuite la forme d'honoraires de conseil, souvent de 300 à 2 000 € selon la complexité du dossier, et de commissions sur les contrats souscrits. Ces modalités vous sont communiquées par écrit avant tout engagement.",
+    "questionsFrequentes": [
+      {
+        "question": "Le premier rendez-vous est-il payant ?",
+        "reponse": "Non. Le premier échange et le bilan de votre situation sont réalisés sans frais et sans engagement. Ils servent à vérifier que l'accompagnement a du sens pour vous avant d'aller plus loin."
+      },
+      {
+        "question": "Faut-il un patrimoine important pour être accompagné ?",
+        "reponse": "Non. Une part importante des demandes concerne la préparation de la retraite, la prévoyance ou un premier projet d'épargne. L'intérêt d'un bilan tient à la situation et aux objectifs, pas à un montant minimum."
+      },
+      {
+        "question": "Comment le conseiller est-il rémunéré ?",
+        "reponse": "Par des honoraires de conseil et par des commissions versées par les établissements dont les contrats sont souscrits. Ces éléments sont détaillés par écrit avant toute décision, conformément à la réglementation."
+      },
+      {
+        "question": "Peut-on être accompagné en tant que chef d'entreprise ou indépendant ?",
+        "reponse": "Oui. Statut, rémunération, prévoyance, retraite, épargne salariale et placement de la trésorerie d'entreprise font partie des sujets traités, en articulation avec votre patrimoine personnel."
+      }
+    ],
+    "urgence": false,
+    "saison": "toute-annee",
+    "actif": true,
+    "formulaire": {
+      "descriptionLabel": "Décrivez votre situation et votre objectif",
+      "descriptionPlaceholder": "Ex : préparer ma retraite dans 8 ans et protéger ma conjointe.",
+      "delaiLabel": "À quelle échéance souhaitez-vous avancer ?",
+      "delaiOptions": [
+        {
+          "value": "des-que-possible",
+          "label": "Dès que possible"
+        },
+        {
+          "value": "sous-3-mois",
+          "label": "Dans les 3 mois"
+        },
+        {
+          "value": "cette-annee",
+          "label": "Cette année"
+        },
+        {
+          "value": "je-me-renseigne",
+          "label": "Je me renseigne"
+        }
+      ],
+      "budget": false,
+      "delaiPlaceholder": "Choisir une échéance",
+      "intro": "Décrivez votre situation en 2 minutes. Un conseiller local vous rappelle sous 24 h pour un premier échange sans engagement."
+    }
   }
 ]

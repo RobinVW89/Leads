@@ -5,6 +5,7 @@ import MetierIcon from '../components/MetierIcon.astro';
 import YonneMap from '../components/YonneMap.astro';
 import { SITE_CONFIG } from '../config/site';
 import { metiersData, villesData } from '../lib/data';
+import { localBusinessSchema } from '../lib/seo';
 
 const title = `${SITE_CONFIG.siteName} | Devis gratuit dans l'Yonne`;
 const description = SITE_CONFIG.tagline;
@@ -47,15 +48,7 @@ const atouts = [
 	}
 ];
 
-const organizationSchema = {
-	'@context': 'https://schema.org',
-	'@type': 'Organization',
-	name: SITE_CONFIG.siteName,
-	url: SITE_CONFIG.siteUrl,
-	description: SITE_CONFIG.description,
-	telephone: SITE_CONFIG.telContact,
-	areaServed: 'Yonne'
-};
+const organizationSchema = localBusinessSchema();
 ---
 
 <Layout
@@ -217,6 +210,7 @@ const organizationSchema = {
 					</p>
 					<div class="badges">
 						{metier.saison === 'ete' && <span class="badge">Forte demande estivale</span>}
+						{metier.saison === 'hiver' && <span class="badge">Forte demande avant l'hiver</span>}
 						{!metier.actif && <span class="badge">Ouverture prochaine</span>}
 						{metier.urgence && <span class="badge">Intervention rapide possible</span>}
 					</div>

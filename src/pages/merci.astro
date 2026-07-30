@@ -27,7 +27,7 @@ const context = [metier, ville].filter(Boolean).join(' - ');
 const metierNoms = Object.fromEntries(metiersData.map((item) => [item.slug, item.nom]));
 ---
 
-<Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath="/merci">
+<Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath="/merci/" noindex>
   <section class="section">
     <h1 class="page-title" id="merci-titre">{heading}</h1>
     <p class="muted" id="merci-message">{message}</p>

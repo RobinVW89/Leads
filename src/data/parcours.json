@@ -333,5 +333,270 @@
         ]
       }
     ]
+  },
+  {
+    "metierSlug": "photovoltaique-solaire",
+    "etapes": [
+      {
+        "question": "Quel est votre projet solaire ?",
+        "options": [
+          "Autoconsommation",
+          "Autoconsommation avec revente du surplus",
+          "Ajout d'une batterie",
+          "Je ne sais pas encore"
+        ]
+      },
+      {
+        "question": "Quel type de bâtiment ?",
+        "options": [
+          "Maison individuelle",
+          "Bâtiment agricole",
+          "Local professionnel",
+          "Autre"
+        ]
+      },
+      {
+        "question": "État de la toiture ?",
+        "options": [
+          "Bon état",
+          "À vérifier",
+          "À refaire avant la pose",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "chaudiere-granules-bois",
+    "etapes": [
+      {
+        "question": "Quel équipement souhaitez-vous ?",
+        "options": [
+          "Chaudière à granulés",
+          "Poêle à granulés",
+          "Poêle à bûches",
+          "Je ne sais pas encore"
+        ]
+      },
+      {
+        "question": "Quel chauffage remplacez-vous ?",
+        "options": [
+          "Fioul",
+          "Gaz",
+          "Électrique",
+          "Bois ancien",
+          "Aucun, c'est un complément"
+        ]
+      },
+      {
+        "question": "Où pourrait être stocké le combustible ?",
+        "options": [
+          "Garage ou cave accessible",
+          "Local dédié",
+          "Extérieur",
+          "À définir avec le professionnel"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "gestion-de-patrimoine",
+    "etapes": [
+      {
+        "question": "Vous êtes ?",
+        "options": [
+          "Particulier",
+          "Chef d'entreprise",
+          "Indépendant ou profession libérale",
+          "Retraité"
+        ]
+      },
+      {
+        "question": "Quel est votre objectif principal ?",
+        "options": [
+          "Préparer ma retraite",
+          "Protéger ma famille",
+          "Réduire ma fiscalité",
+          "Organiser une transmission",
+          "Faire fructifier une épargne",
+          "Placer la trésorerie de mon entreprise"
+        ]
+      },
+      {
+        "question": "Avez-vous déjà un conseiller ?",
+        "options": [
+          "Non",
+          "Oui, je souhaite un second avis",
+          "Oui, je souhaite en changer"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "plombier-chauffagiste",
+    "etapes": [
+      {
+        "question": "Quelle est la nature de votre besoin ?",
+        "options": [
+          "Dépannage urgent",
+          "Remplacement de chaudière ou chauffe-eau",
+          "Rénovation de salle de bain",
+          "Création ou modification de réseau",
+          "Entretien"
+        ]
+      },
+      {
+        "question": "Où se situe l'intervention ?",
+        "options": [
+          "Maison",
+          "Appartement",
+          "Local professionnel"
+        ]
+      },
+      {
+        "question": "Y a-t-il une fuite ou une coupure en cours ?",
+        "options": [
+          "Oui, c'est urgent",
+          "Non",
+          "Je ne sais pas"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "macon-renovation",
+    "etapes": [
+      {
+        "question": "Quel type de travaux de maçonnerie ?",
+        "options": [
+          "Création d'ouverture",
+          "Reprise de murs ou de joints",
+          "Dalle ou terrasse béton",
+          "Extension ou agrandissement",
+          "Autre"
+        ]
+      },
+      {
+        "question": "Quel est l'âge du bâti ?",
+        "options": [
+          "Moins de 30 ans",
+          "30 à 80 ans",
+          "Bâti ancien en pierre",
+          "Je ne sais pas"
+        ]
+      },
+      {
+        "question": "Le chantier est-il déjà accessible ?",
+        "options": [
+          "Oui",
+          "Non, accès à préparer",
+          "À voir sur place"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "climatisation-pompe-a-chaleur",
+    "etapes": [
+      {
+        "question": "Quel équipement recherchez-vous ?",
+        "options": [
+          "Climatisation réversible",
+          "Pompe à chaleur air-air",
+          "Pompe à chaleur air-eau",
+          "Entretien ou dépannage",
+          "Je ne sais pas encore"
+        ]
+      },
+      {
+        "question": "Quelle surface à traiter ?",
+        "options": [
+          "Moins de 50 m²",
+          "50 à 100 m²",
+          "100 à 150 m²",
+          "Plus de 150 m²"
+        ]
+      },
+      {
+        "question": "Quel chauffage actuel ?",
+        "options": [
+          "Électrique",
+          "Fioul",
+          "Gaz",
+          "Bois",
+          "Aucun"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "estimation-immobiliere",
+    "etapes": [
+      {
+        "question": "Quel type de bien ?",
+        "options": [
+          "Maison",
+          "Appartement",
+          "Terrain",
+          "Local professionnel"
+        ]
+      },
+      {
+        "question": "Quel est votre projet ?",
+        "options": [
+          "Vendre à court terme",
+          "Vendre plus tard",
+          "Connaître la valeur du bien",
+          "Succession ou partage"
+        ]
+      },
+      {
+        "question": "Le bien est-il occupé ?",
+        "options": [
+          "Occupé par le propriétaire",
+          "Loué",
+          "Vacant"
+        ],
+        "facultatif": true
+      }
+    ]
+  },
+  {
+    "metierSlug": "courtier-credit-assurance",
+    "etapes": [
+      {
+        "question": "Quel est votre besoin ?",
+        "options": [
+          "Prêt immobilier",
+          "Rachat de crédit",
+          "Assurance emprunteur",
+          "Financement de travaux"
+        ]
+      },
+      {
+        "question": "Où en êtes-vous ?",
+        "options": [
+          "Recherche de bien en cours",
+          "Offre acceptée",
+          "Compromis signé",
+          "Simple étude de faisabilité"
+        ]
+      },
+      {
+        "question": "Êtes-vous déjà propriétaire ?",
+        "options": [
+          "Premier achat",
+          "Déjà propriétaire",
+          "Investissement locatif"
+        ],
+        "facultatif": true
+      }
+    ]
   }
 ]
