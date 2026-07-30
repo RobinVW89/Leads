@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { SITE_CONFIG } from '../config/site';
+import { metiersData } from '../lib/data';
 
 const title = 'Merci pour votre demande | Travaux & Pros de l\'Yonne';
 const description = 'Votre demande a bien été envoyée. Un professionnel local vous recontacte rapidement.';
@@ -19,24 +21,71 @@ const message = isIntention
   : 'Un professionnel local vous rappelle sous 24 h pour échanger sur votre projet.';
 
 const context = [metier, ville].filter(Boolean).join(' - ');
+
+// La page est prérendue : les paramètres d'URL ne sont pas connus au build.
+// Le script ci-dessous réaligne le texte sur l'URL réelle côté navigateur.
+const metierNoms = Object.fromEntries(metiersData.map((item) => [item.slug, item.nom]));
 ---
 
 <Layout title={title} description={description} breadcrumbs={breadcrumbs} canonicalPath="/merci">
   <section class="section">
-    <h1 class="page-title">{heading}</h1>
-    <p class="muted">{message}</p>
+    <h1 class="page-title" id="merci-titre">{heading}</h1>
+    <p class="muted" id="merci-message">{message}</p>
 
-    {context && <p class="inline-note">Demande concernée : {context}</p>}
+    <p class="inline-note" id="merci-contexte" hidden={!context}>
+      Demande concernée : <span id="merci-contexte-valeur">{context}</span>
+    </p>
 
-    <div class="card" style="margin-top: 1rem;">
+    <div class="card" style="margin-top: 1.4rem;">
       <h2>Et maintenant ?</h2>
       <p>
         Vérifiez que votre téléphone est joignable. Si besoin, vous pouvez aussi revenir à l'accueil pour faire une
         nouvelle demande.
       </p>
-      <p style="margin-top: 1rem;">
+      <div class="hero-actions">
         <a class="btn" href="/">Retour à l'accueil</a>
-      </p>
+        <a class="tel-link" href={`tel:${SITE_CONFIG.telContactHref}`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6.2 3.5h3l1.4 3.6-2 1.4a11 11 0 0 0 5 5l1.4-2 3.6 1.4v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.7a2 2 0 0 1 2-2.2Z" />
+          </svg>
+          <span>{SITE_CONFIG.telContact}</span>
+        </a>
+      </div>
     </div>
   </section>
+
+  <script is:inline define:vars={{ metierNoms }}>
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get('type') || 'lead';
+    const metierSlug = params.get('metier') || '';
+    const ville = params.get('ville') || '';
+    const isIntention = type === 'intention';
+
+    const titre = document.getElementById('merci-titre');
+    const message = document.getElementById('merci-message');
+    const contexte = document.getElementById('merci-contexte');
+    const contexteValeur = document.getElementById('merci-contexte-valeur');
+
+    if (titre) {
+      titre.textContent = isIntention ? 'Merci, vous êtes inscrit' : 'Merci, votre demande est envoyée';
+    }
+
+    if (message) {
+      message.textContent = isIntention
+        ? 'Nous vous préviendrons en priorité dès que ce service sera ouvert dans votre secteur.'
+        : 'Un professionnel local vous rappelle sous 24 h pour échanger sur votre projet.';
+    }
+
+    const metierNom = metierNoms[metierSlug] || metierSlug;
+    const parts = [metierNom, ville].filter(Boolean);
+
+    if (contexte && contexteValeur) {
+      if (parts.length > 0) {
+        contexteValeur.textContent = parts.join(' • ');
+        contexte.hidden = false;
+      } else {
+        contexte.hidden = true;
+      }
+    }
+  </script>
 </Layout>

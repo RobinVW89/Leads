@@ -1,5 +1,6 @@
 ---
 import type { Ville } from '../lib/data';
+import yonneGeo from '../data/yonne-geo.json';
 
 type Props = {
   villes: Ville[];
@@ -7,14 +8,59 @@ type Props = {
   selectedVilleSlug?: string;
 };
 
-const { villes: _villes, metierSlug: _metierSlug = 'plombier-chauffagiste', selectedVilleSlug: _selectedVilleSlug = '' } = Astro.props;
+const { villes = [], metierSlug: _metierSlug = 'plombier-chauffagiste', selectedVilleSlug = '' } = Astro.props;
+
+const prioritaires = new Set(villes.filter((ville) => ville.prioritaire).map((ville) => ville.slug));
+
+// Points projetés depuis les coordonnées réelles des communes (voir src/data/yonne-geo.json)
+const points = yonneGeo.villes.map((point) => ({
+  ...point,
+  estPrioritaire: prioritaires.has(point.slug),
+  estSelectionnee: point.slug === selectedVilleSlug
+}));
+
+const villeSelectionnee = points.find((point) => point.estSelectionnee);
+const nomsPrioritaires = points.filter((point) => point.estPrioritaire).map((point) => point.nom);
+const ariaLabel = villeSelectionnee
+  ? `Carte du département de l'Yonne (89) situant ${villeSelectionnee.nom} parmi les ${points.length} communes couvertes.`
+  : `Carte du département de l'Yonne (89) et des ${points.length} communes couvertes, dont ${nomsPrioritaires.join(', ')}.`;
 ---
 
 <div class="yonne-map">
-  <p class="map-title">Carte locale de l'Yonne</p>
-  <div
-    class="yonne-map-canvas"
-    role="img"
-    aria-label="Département de l'Yonne"
-  ></div>
+  <p class="map-title">Notre territoire : l'Yonne</p>
+  <div class="yonne-map-canvas" role="img" aria-label={ariaLabel}>
+    <svg viewBox={yonneGeo.viewBox} class="yonne-svg" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="yonne-fill" x1="0" y1="0" x2="0.35" y2="1">
+          <stop offset="0%" stop-color="#f0f6f1" />
+          <stop offset="100%" stop-color="#dbe9de" />
+        </linearGradient>
+      </defs>
+      <path class="yonne-outline" d={yonneGeo.outline} />
+      {points.map((point) => (
+        <circle
+          class={`yonne-point ${point.estPrioritaire ? 'is-priority' : ''} ${point.estSelectionnee ? 'is-selected' : ''}`}
+          cx={point.x}
+          cy={point.y}
+          r={point.estSelectionnee ? 7 : point.estPrioritaire ? 5.4 : 3.5}
+        />
+      ))}
+      {/* Libellés rendus après tous les points pour rester lisibles au-dessus d'eux */}
+      {points
+        .filter((point) => point.estPrioritaire || point.estSelectionnee)
+        .map((point) => (
+          <text
+            class={`yonne-label ${point.estSelectionnee ? 'is-selected' : ''}`}
+            x={point.x + 9.5}
+            y={point.y + 4.2}
+          >
+            {point.nom}
+          </text>
+        ))}
+    </svg>
+  </div>
+  <p class="map-legend">
+    <span class="map-legend-item"><span class="map-dot is-priority" aria-hidden="true"></span> Villes principales</span>
+    <span class="map-legend-item"><span class="map-dot" aria-hidden="true"></span> Communes couvertes</span>
+  </p>
 </div>
