@@ -1,5 +1,21 @@
-<div class="badges" aria-label="Éléments de réassurance">
-  <span class="badge">Artisans locaux vérifiés dans l'Yonne</span>
-  <span class="badge">Décrivez vos travaux en 2 minutes</span>
-  <span class="badge">Réponse sous 24 h</span>
-</div>
+---
+const points = [
+  "Artisans locaux vérifiés dans l'Yonne",
+  'Décrivez vos travaux en 2 minutes',
+  'Réponse sous 24 h',
+  'Gratuit et sans engagement'
+];
+---
+
+<ul class="reassurance-list" aria-label="Éléments de réassurance">
+  {points.map((point) => (
+    <li>
+      <span class="check-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12.5l4.5 4.5L19 7" />
+        </svg>
+      </span>
+      <span>{point}</span>
+    </li>
+  ))}
+</ul>
