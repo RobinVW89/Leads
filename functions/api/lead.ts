@@ -48,23 +48,69 @@ function json(data: unknown, status = 200): Response {
   });
 }
 
-async function verifierTurnstile(token: string, secret: string, ip: string | null): Promise<boolean> {
+const ACTION_ATTENDUE = 'lead-form';
+
+type ResultatSiteverify = {
+  success?: boolean;
+  hostname?: string;
+  action?: string;
+  'error-codes'?: string[];
+};
+
+/**
+ * Vérification Turnstile en mode fermé : tout ce qui n'est pas explicitement
+ * valide est refusé, y compris une panne du service de vérification.
+ */
+async function verifierTurnstile(
+  token: string,
+  secret: string,
+  ip: string | null,
+  hoteAttendu: string | null
+): Promise<{ ok: true } | { ok: false; motif: string }> {
   const corps = new FormData();
   corps.append('secret', secret);
   corps.append('response', token);
   if (ip) corps.append('remoteip', ip);
 
+  let resultat: ResultatSiteverify;
   try {
     const reponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
       body: corps
     });
-    const resultat = (await reponse.json()) as { success?: boolean };
-    return resultat.success === true;
+    if (!reponse.ok) {
+      return { ok: false, motif: 'service de vérification indisponible' };
+    }
+    resultat = (await reponse.json()) as ResultatSiteverify;
   } catch {
-    // Turnstile injoignable : on ne bloque pas une demande légitime pour autant.
-    return true;
+    // Mode fermé : une panne ne doit pas ouvrir une porte.
+    return { ok: false, motif: 'service de vérification injoignable' };
   }
+
+  if (resultat.success !== true) {
+    const codes = resultat['error-codes'] || [];
+    // timeout-or-duplicate = jeton expiré ou déjà consommé.
+    const motif = codes.includes('timeout-or-duplicate')
+      ? 'jeton expiré ou déjà utilisé'
+      : codes.length > 0
+        ? `jeton refusé (${codes.join(', ')})`
+        : 'jeton refusé';
+    return { ok: false, motif };
+  }
+
+  // L'action doit être celle du formulaire : un jeton obtenu ailleurs est rejeté.
+  if (resultat.action && resultat.action !== ACTION_ATTENDUE) {
+    return { ok: false, motif: 'action inattendue' };
+  }
+
+  // Le jeton doit avoir été résolu sur le domaine qui reçoit la demande.
+  // hoteAttendu vaut null en développement local, où les clés de test
+  // officielles répondent toujours « example.com ».
+  if (hoteAttendu && resultat.hostname && resultat.hostname !== hoteAttendu) {
+    return { ok: false, motif: 'domaine inattendu' };
+  }
+
+  return { ok: true };
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -92,14 +138,31 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return json({ ok: false, erreur: 'Envoi trop rapide.' }, 429);
   }
 
-  if (env.TURNSTILE_SECRET_KEY) {
-    const token = typeof charge.turnstileToken === 'string' ? charge.turnstileToken : '';
-    if (!token) {
-      return json({ ok: false, erreur: 'Vérification anti-robot manquante.' }, 400);
+  // Mode fermé : hors développement local, l'absence de clé secrète bloque
+  // l'endpoint. Aucune demande ne passe sans vérification anti-robot.
+  const hote = new URL(request.url).hostname;
+  const enLocal = hote === 'localhost' || hote === '127.0.0.1';
+
+  if (!env.TURNSTILE_SECRET_KEY) {
+    if (!enLocal) {
+      return json(
+        { ok: false, erreur: 'Le formulaire est momentanément indisponible. Merci de nous appeler.' },
+        503
+      );
     }
-    const valide = await verifierTurnstile(token, env.TURNSTILE_SECRET_KEY, request.headers.get('CF-Connecting-IP'));
-    if (!valide) {
-      return json({ ok: false, erreur: 'Vérification anti-robot échouée.' }, 403);
+  } else {
+    const token = typeof charge.turnstileToken === 'string' ? charge.turnstileToken.trim() : '';
+    if (!token) {
+      return json({ ok: false, erreur: 'Vérification anti-robot manquante. Rechargez la page et réessayez.' }, 400);
+    }
+    const verification = await verifierTurnstile(
+      token,
+      env.TURNSTILE_SECRET_KEY,
+      request.headers.get('CF-Connecting-IP'),
+      enLocal ? null : hote
+    );
+    if (!verification.ok) {
+      return json({ ok: false, erreur: `Vérification anti-robot échouée : ${verification.motif}.` }, 403);
     }
   }
 

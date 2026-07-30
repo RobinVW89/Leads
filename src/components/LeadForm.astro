@@ -177,7 +177,15 @@ const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
 
         {/* Turnstile invisible : pose un champ caché cf-turnstile-response.
             Le script n'est chargé que si la clé publique est configurée. */}
-        {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-size="invisible" data-appearance="interaction-only"></div>}
+        {turnstileSiteKey && (
+          <div
+            class="cf-turnstile"
+            data-sitekey={turnstileSiteKey}
+            data-action="lead-form"
+            data-size="invisible"
+            data-appearance="interaction-only"
+          />
+        )}
       </>
     ) : (
       <>
@@ -239,7 +247,6 @@ const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
   define:vars={{
     formId,
     endpointUrl: '/api/lead',
-    webhookUrl: SITE_CONFIG.n8nWebhookUrl,
     telContact: SITE_CONFIG.telContact,
     actif,
     totalWizardSteps
@@ -498,30 +505,45 @@ const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
       payload.startedAt = startedAt;
       payload.website = honeypot;
 
-      const envoyer = async (url, corps) =>
-        fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(corps)
-        });
+      // Chemin unique : /api/lead. Aucun contournement de D1 ni de Turnstile.
+      const reactiverEnvoi = () => {
+        if (submitButton instanceof HTMLButtonElement) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Envoyer ma demande';
+        }
+      };
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Envoi en cours…';
+      }
 
       try {
-        let response;
-        try {
-          // 1. Endpoint interne : enregistre en base puis relaie vers le webhook.
-          response = await envoyer(endpointUrl, payload);
-        } catch (erreurReseau) {
-          response = undefined;
-        }
-
-        if (!response || !response.ok) {
-          // 2. Repli : envoi direct au webhook, pour ne jamais perdre une demande.
-          const { turnstileToken, startedAt: _s, website: _w, ...chargeWebhook } = payload;
-          response = await envoyer(webhookUrl, chargeWebhook);
-        }
+        const response = await fetch(endpointUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
         if (!response.ok) {
-          throw new Error('Envoi impossible');
+          let detail = '';
+          try {
+            const corps = await response.json();
+            detail = corps && corps.erreur ? corps.erreur : '';
+          } catch (e) {
+            detail = '';
+          }
+
+          // Un jeton anti-robot ne sert qu'une fois : on en redemande un
+          // avant de laisser l'utilisateur réessayer.
+          if (window.turnstile && typeof window.turnstile.reset === 'function') {
+            try { window.turnstile.reset(); } catch (e) {}
+          }
+
+          reactiverEnvoi();
+          messageBox.className = 'error';
+          messageBox.innerHTML = `${detail || 'Votre demande n\'a pas pu être envoyée.'} Vous pouvez réessayer, ou nous joindre au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;
+          return;
         }
 
         const thankYouUrl = new URL('/merci', window.location.origin);
@@ -535,8 +557,12 @@ const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
         window.location.href = thankYouUrl.toString();
         return;
       } catch (error) {
+        if (window.turnstile && typeof window.turnstile.reset === 'function') {
+          try { window.turnstile.reset(); } catch (e) {}
+        }
+        reactiverEnvoi();
         messageBox.className = 'error';
-        messageBox.innerHTML = `Une erreur est survenue. Vous pouvez aussi nous joindre au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;
+        messageBox.innerHTML = `Votre demande n'a pas pu être envoyée. Vérifiez votre connexion et réessayez, ou joignez-nous au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;
       }
     });
   }
