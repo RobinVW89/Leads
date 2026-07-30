@@ -17,6 +17,36 @@ const metiersEnAvant = [...metiersData].sort((a, b) => {
 });
 const defaultMetier = metiersEnAvant.find((metier) => metier.actif) ?? metiersEnAvant[0];
 
+const hubVilles = ['auxerre', 'sens', 'joigny']
+	.map((slug) => villesData.find((ville) => ville.slug === slug))
+	.filter((ville): ville is (typeof villesData)[number] => Boolean(ville));
+const autresVilles = villesData
+	.filter((ville) => !hubVilles.some((hub) => hub.slug === ville.slug))
+	.sort((left, right) => left.nom.localeCompare(right.nom, 'fr'));
+
+const atouts = [
+	{
+		titre: 'Rappel sous 24 h',
+		texte: 'Un professionnel local vous rappelle pour préciser vos travaux.',
+		icone: 'clock'
+	},
+	{
+		titre: 'Gratuit et sans engagement',
+		texte: 'La mise en relation et le devis ne vous coûtent rien.',
+		icone: 'gift'
+	},
+	{
+		titre: 'Professionnels vérifiés',
+		texte: 'Des artisans du réseau Résonance, contrôlés avant intégration.',
+		icone: 'shield'
+	},
+	{
+		titre: 'Uniquement dans l\'Yonne',
+		texte: 'Des pros du 89 qui connaissent le bâti et les délais locaux.',
+		icone: 'pin'
+	}
+];
+
 const organizationSchema = {
 	'@context': 'https://schema.org',
 	'@type': 'Organization',
@@ -28,62 +58,135 @@ const organizationSchema = {
 };
 ---
 
-<Layout title={title} description={description} jsonLd={organizationSchema}>
+<Layout
+	title={title}
+	description={description}
+	jsonLd={organizationSchema}
+	stickyCta={{ label: 'Trouver mon professionnel', href: '#quick-access', badge: 'Gratuit · 24 h' }}
+>
 	<section class="hero">
-		<div class="editorial-grid">
+		<div class="hero-grid">
 			<article class="hero-main">
-				<span class="eyebrow">Portail local Yonne 89</span>
-				<h1>Décrivez vos travaux. On vous rappelle sous 24 h.</h1>
-				<p>
-					Partout dans l'Yonne, vous trouvez le bon professionnel local selon votre métier, votre ville et votre
-					délai. Sans engagement, sans promesse marketing exagérée.
+				<span class="eyebrow">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 0.95rem; height: 0.95rem;" aria-hidden="true">
+						<path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" />
+						<circle cx="12" cy="10" r="2.4" />
+					</svg>
+					Yonne 89 · Mise en relation gratuite
+				</span>
+				<h1>Vos travaux, <span class="accent">les bons pros</span> près de chez vous.</h1>
+				<p class="hero-lede">
+					Décrivez votre projet en 2 minutes. Nous vous mettons en relation avec un professionnel local de
+					l'Yonne adapté à votre besoin.
 				</p>
-				<div class="hero-actions">
-					<a class="btn" href="#quick-access">Démarrer ma demande</a>
-					<span class="inline-note">Réponse sous 24 h</span>
+			</article>
+
+			<aside class="signature-panel">
+				<div class="search-panel" id="quick-access">
+					<h2>Trouvez votre professionnel</h2>
+					<p class="search-intro">Choisissez votre métier et votre commune dans l'Yonne.</p>
+					<form id="quick-access-form">
+						<div class="search-fields">
+							<div>
+								<label for="quick-metier">Métier</label>
+								<select id="quick-metier" required>
+									<option value="">Choisir un métier</option>
+									{metiersData.map((metier) => (
+										<option value={metier.slug}>{metier.nom}</option>
+									))}
+								</select>
+							</div>
+							<div>
+								<label for="quick-ville">Ville</label>
+								<select id="quick-ville">
+									<option value="">Voir la page métier générale</option>
+									{villesData.map((ville) => (
+										<option value={ville.slug}>{ville.nom}</option>
+									))}
+								</select>
+							</div>
+						</div>
+						<div class="search-submit">
+							<button type="submit" class="btn-lg">
+								Trouver mon professionnel
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.1rem; height: 1.1rem;" aria-hidden="true">
+									<path d="M5 12h14M13 6l6 6-6 6" />
+								</svg>
+							</button>
+						</div>
+					</form>
+					<p class="search-foot">
+						<span>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<circle cx="12" cy="12" r="9" />
+								<path d="M12 7.5V12l3 2" />
+							</svg>
+							Rappel sous 24 h
+						</span>
+						<span>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M5 12.5l4.5 4.5L19 7" />
+							</svg>
+							Gratuit, sans engagement
+						</span>
+						<span>
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M12 3.5l7 3v5.2c0 4-2.9 7.4-7 8.8-4.1-1.4-7-4.8-7-8.8V6.5l7-3Z" />
+							</svg>
+							Pros locaux vérifiés
+						</span>
+					</p>
 				</div>
+			</aside>
+
+			<div class="hero-proof">
 				<ReassuranceBadges />
 				<div class="pill-list" aria-label="Indicateurs de couverture locale">
 					<span class="pill">{metiersActifs} métiers ouverts</span>
 					<span class="pill">{metiersBientot} métiers en préparation</span>
 					<span class="pill">{villesData.length} villes couvertes</span>
 				</div>
-			</article>
-
-			<aside class="signature-panel">
-				<YonneMap villes={villesData} metierSlug={defaultMetier.slug} />
-			</aside>
+			</div>
 		</div>
 	</section>
 
-	<section class="section" id="quick-access">
-		<div class="panel">
-			<h2>Accès rapide à votre page locale</h2>
-			<p class="muted">Choisissez votre métier et votre commune pour ouvrir la page utile directement.</p>
-			<form id="quick-access-form" class="grid cols-3">
-				<div>
-					<label for="quick-metier">Métier</label>
-					<select id="quick-metier" required>
-						<option value="">Choisir un métier</option>
-						{metiersData.map((metier) => (
-							<option value={metier.slug}>{metier.nom}</option>
-						))}
-					</select>
-				</div>
-				<div>
-					<label for="quick-ville">Ville</label>
-					<select id="quick-ville">
-						<option value="">Voir la page métier générale</option>
-						{villesData.map((ville) => (
-							<option value={ville.slug}>{ville.nom}</option>
-						))}
-					</select>
-				</div>
-				<div style="display: flex; align-items: flex-end; gap: 0.6rem;">
-					<button type="submit">Démarrer ma demande</button>
-					<span class="inline-note">Réponse sous 24 h</span>
-				</div>
-			</form>
+	<section class="section">
+		<div class="band">
+			<div class="trust-strip">
+				{atouts.map((atout) => (
+					<article class="trust-item">
+						<span class="trust-icon" aria-hidden="true">
+							{atout.icone === 'clock' && (
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="12" cy="12" r="9" />
+									<path d="M12 7.2V12l3.4 2.2" />
+								</svg>
+							)}
+							{atout.icone === 'gift' && (
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<rect x="3.5" y="8.5" width="17" height="11.5" rx="1.6" />
+									<path d="M3.5 12.5h17M12 8.5V20" />
+									<path d="M8.6 8.5a2.3 2.3 0 1 1 0-4.6c1.8 0 3.4 2 3.4 4.6M15.4 8.5a2.3 2.3 0 1 0 0-4.6c-1.8 0-3.4 2-3.4 4.6" />
+								</svg>
+							)}
+							{atout.icone === 'shield' && (
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M12 3.2l7.2 3v5.4c0 4.2-3 7.7-7.2 9.2-4.2-1.5-7.2-5-7.2-9.2V6.2l7.2-3Z" />
+									<path d="M8.9 12.1l2.2 2.2 4-4.2" />
+								</svg>
+							)}
+							{atout.icone === 'pin' && (
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M12 21.2s7.2-5.9 7.2-11.4a7.2 7.2 0 1 0-14.4 0C4.8 15.3 12 21.2 12 21.2Z" />
+									<circle cx="12" cy="9.8" r="2.6" />
+								</svg>
+							)}
+						</span>
+						<strong>{atout.titre}</strong>
+						<span>{atout.texte}</span>
+					</article>
+				))}
+			</div>
 		</div>
 	</section>
 
@@ -104,7 +207,14 @@ const organizationSchema = {
 						</h3>
 					</a>
 					<p class="muted">{metier.description.slice(0, 130)}...</p>
-					<p class="tile-secondary-link"><a href={`/${metier.slug}/auxerre/`}>Voir aussi à Auxerre</a></p>
+					<p class="tile-secondary-link">
+						<a href={`/${metier.slug}/auxerre/`}>
+							Voir aussi à Auxerre
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 0.85rem; height: 0.85rem;" aria-hidden="true">
+								<path d="M5 12h14M13 6l6 6-6 6" />
+							</svg>
+						</a>
+					</p>
 					<div class="badges">
 						{metier.saison === 'ete' && <span class="badge">Forte demande estivale</span>}
 						{!metier.actif && <span class="badge">Ouverture prochaine</span>}
@@ -115,35 +225,103 @@ const organizationSchema = {
 		</div>
 	</section>
 
+	<section class="section" id="villes">
+		<div class="rule-block">
+			<h2>Les villes couvertes dans l'Yonne</h2>
+			<p class="muted">
+				Nos professionnels partenaires interviennent à Auxerre, Sens, Joigny et dans les communes voisines du
+				département.
+			</p>
+		</div>
+		<div class="city-cards">
+			{hubVilles.map((ville) => (
+				<a class="city-card" href={`/${ville.slug}/`}>
+					<strong>{ville.nom}</strong>
+					<span class="city-meta">{ville.codePostal} • {ville.population}</span>
+					<span class="city-go">
+						Voir les pros à {ville.nom}
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 0.85rem; height: 0.85rem;" aria-hidden="true">
+							<path d="M5 12h14M13 6l6 6-6 6" />
+						</svg>
+					</span>
+				</a>
+			))}
+		</div>
+
+		<div class="editorial-grid" style="margin-top: clamp(1.4rem, 3vw, 2.2rem);">
+			<div>
+				<h3>Également disponibles autour de chez vous</h3>
+				<p class="muted">
+					Sélectionnez votre commune : elle est reportée automatiquement dans le formulaire de recherche.
+				</p>
+				<div class="city-chips">
+					{autresVilles.map((ville) => (
+						<button type="button" class="city-chip" data-ville={ville.slug}>
+							{ville.nom}
+						</button>
+					))}
+				</div>
+			</div>
+			<aside class="signature-panel">
+				<YonneMap villes={villesData} metierSlug={defaultMetier.slug} />
+			</aside>
+		</div>
+	</section>
+
 	<section class="section" id="comment-marche-home">
 		<div class="rule-block">
 			<h2>Comment ça marche</h2>
+			<p class="muted">Trois étapes simples, sans jargon et sans engagement.</p>
 		</div>
 		<div class="steps">
 			<article class="step reveal-step">
-				<h3>01. Décrivez vos travaux</h3>
+				<span class="step-num" aria-hidden="true">1</span>
+				<h3>Décrivez vos travaux</h3>
 				<p>Vous renseignez votre besoin, votre commune et votre délai en langage simple.</p>
 			</article>
 			<article class="step reveal-step">
-				<h3>02. Orientation locale</h3>
+				<span class="step-num" aria-hidden="true">2</span>
+				<h3>Orientation locale</h3>
 				<p>Nous transmettons votre demande au professionnel local pertinent selon le métier choisi.</p>
 			</article>
 			<article class="step reveal-step">
-				<h3>03. Échange et devis</h3>
+				<span class="step-num" aria-hidden="true">3</span>
+				<h3>Échange et devis</h3>
 				<p>Le professionnel vous rappelle, confirme les détails et vous propose son devis.</p>
 			</article>
+		</div>
+		<p style="margin-top: 1.3rem;">
+			<a href="/comment-ca-marche" class="btn-ghost btn">Voir le détail du fonctionnement</a>
+		</p>
+	</section>
+
+	<section class="section">
+		<div class="band band-green phone-band">
+			<div>
+				<h2>Vous préférez en parler de vive voix ?</h2>
+				<p class="muted" style="margin-bottom: 0;">
+					Appelez-nous : nous qualifions votre besoin et transmettons votre demande au bon professionnel de
+					l'Yonne.
+				</p>
+			</div>
+			<a class="phone-number" href={`tel:${SITE_CONFIG.telContactHref}`}>
+				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+					<path d="M6.2 3.5h3l1.4 3.6-2 1.4a11 11 0 0 0 5 5l1.4-2 3.6 1.4v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.7a2 2 0 0 1 2-2.2Z" />
+				</svg>
+				{SITE_CONFIG.telContact}
+			</a>
 		</div>
 	</section>
 
 	<section class="section" id="espace-pros">
-		<div class="panel pro-network-panel">
+		<div class="pro-network-panel">
 			<h2>Vous êtes artisan dans l'Yonne ?</h2>
 			<p class="muted">
 				Les professionnels présents sur ce site sont issus de notre réseau partenaire Résonance.
 				Rejoignez le club pour intégrer les Pros de l'Yonne.
 			</p>
-			<div class="hero-actions" style="margin-top: 0.2rem;">
-				<a class="btn secondary" href={SITE_CONFIG.resonanceUrl} target="_blank" rel="noopener noreferrer">
+			<div class="hero-actions">
+				<a class="btn on-green" href={SITE_CONFIG.resonanceUrl} target="_blank" rel="noopener noreferrer">
 					Rejoindre Résonance
 				</a>
 				<span class="inline-note">Ouvert aux pros sérieux du 89</span>
@@ -185,6 +363,29 @@ const organizationSchema = {
 			});
 		}
 
+		const cityChips = document.querySelectorAll('.city-chip[data-ville]');
+		cityChips.forEach((chip) => {
+			chip.addEventListener('click', () => {
+				const villeSlug = chip.getAttribute('data-ville') || '';
+				const villeField = document.getElementById('quick-ville');
+				const metierField = document.getElementById('quick-metier');
+				const searchPanel = document.getElementById('quick-access');
+
+				if (villeField instanceof HTMLSelectElement && villeSlug) {
+					villeField.value = villeSlug;
+					window.localStorage.setItem('selectedVilleSlug', villeSlug);
+				}
+
+				if (searchPanel) {
+					searchPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+
+				if (metierField instanceof HTMLSelectElement) {
+					window.setTimeout(() => metierField.focus(), 320);
+				}
+			});
+		});
+
 		const revealItems = document.querySelectorAll('#comment-marche-home .reveal-step');
 		if ('IntersectionObserver' in window && revealItems.length > 0) {
 			const observer = new IntersectionObserver(
@@ -200,6 +401,8 @@ const organizationSchema = {
 			);
 
 			revealItems.forEach((item) => observer.observe(item));
+		} else {
+			revealItems.forEach((item) => item.classList.add('is-visible'));
 		}
 	</script>
 </Layout>
