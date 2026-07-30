@@ -29,6 +29,8 @@ const qualificationEtapes = actif
   : [];
 const totalWizardSteps = qualificationEtapes.length + 2;
 const champs = getFormulaireConfig(metier);
+// Clé publique du widget anti-robot (destinée au HTML, ce n'est pas un secret).
+const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
 ---
 
 <div class="card" id={`${formId}-wrapper`}>
@@ -172,6 +174,18 @@ const champs = getFormulaireConfig(metier);
         <span class="inline-note">Réponse sous 24 h</span>
 
         <input type="hidden" name="qualification" />
+
+        {/* Turnstile invisible : pose un champ caché cf-turnstile-response.
+            Le script n'est chargé que si la clé publique est configurée. */}
+        {turnstileSiteKey && (
+          <div
+            class="cf-turnstile"
+            data-sitekey={turnstileSiteKey}
+            data-action="lead-form"
+            data-size="invisible"
+            data-appearance="interaction-only"
+          />
+        )}
       </>
     ) : (
       <>
@@ -224,11 +238,15 @@ const champs = getFormulaireConfig(metier);
   <div id={`${formId}-message`} aria-live="polite" style="margin-top: 0.8rem;"></div>
 </div>
 
+{turnstileSiteKey && (
+  <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+)}
+
 <script
   is:inline
   define:vars={{
     formId,
-    webhookUrl: SITE_CONFIG.n8nWebhookUrl,
+    endpointUrl: '/api/lead',
     telContact: SITE_CONFIG.telContact,
     actif,
     totalWizardSteps
@@ -479,15 +497,53 @@ const champs = getFormulaireConfig(metier);
         submittedAt: new Date().toISOString()
       };
 
+      // Le jeton Turnstile n'existe que si le widget a pu se charger.
+      const turnstileField = form.elements.namedItem('cf-turnstile-response');
+      if (turnstileField instanceof HTMLInputElement && turnstileField.value) {
+        payload.turnstileToken = turnstileField.value;
+      }
+      payload.startedAt = startedAt;
+      payload.website = honeypot;
+
+      // Chemin unique : /api/lead. Aucun contournement de D1 ni de Turnstile.
+      const reactiverEnvoi = () => {
+        if (submitButton instanceof HTMLButtonElement) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Envoyer ma demande';
+        }
+      };
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Envoi en cours…';
+      }
+
       try {
-        const response = await fetch(webhookUrl, {
+        const response = await fetch(endpointUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
-          throw new Error('Webhook error');
+          let detail = '';
+          try {
+            const corps = await response.json();
+            detail = corps && corps.erreur ? corps.erreur : '';
+          } catch (e) {
+            detail = '';
+          }
+
+          // Un jeton anti-robot ne sert qu'une fois : on en redemande un
+          // avant de laisser l'utilisateur réessayer.
+          if (window.turnstile && typeof window.turnstile.reset === 'function') {
+            try { window.turnstile.reset(); } catch (e) {}
+          }
+
+          reactiverEnvoi();
+          messageBox.className = 'error';
+          messageBox.innerHTML = `${detail || 'Votre demande n\'a pas pu être envoyée.'} Vous pouvez réessayer, ou nous joindre au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;
+          return;
         }
 
         const thankYouUrl = new URL('/merci', window.location.origin);
@@ -501,8 +557,12 @@ const champs = getFormulaireConfig(metier);
         window.location.href = thankYouUrl.toString();
         return;
       } catch (error) {
+        if (window.turnstile && typeof window.turnstile.reset === 'function') {
+          try { window.turnstile.reset(); } catch (e) {}
+        }
+        reactiverEnvoi();
         messageBox.className = 'error';
-        messageBox.innerHTML = `Une erreur est survenue. Vous pouvez aussi nous joindre au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;
+        messageBox.innerHTML = `Votre demande n'a pas pu être envoyée. Vérifiez votre connexion et réessayez, ou joignez-nous au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;
       }
     });
   }
