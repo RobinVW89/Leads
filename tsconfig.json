@@ -1,5 +1,6 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "comment": "functions/ et workers/ tournent sur le runtime Cloudflare, pas dans le navigateur : ils ont leur propre tsconfig avec les types Workers.",
+  "exclude": ["dist", "functions", "workers"]
 }

@@ -1,0 +1,23 @@
+{
+  // Configuration du projet Cloudflare Pages "leads-auxerre".
+  // Reprend à l'identique les réglages qui étaient définis au tableau de bord
+  // (aucune variable ni liaison n'y existait, sauvegarde faite avant modification).
+  "name": "leads-auxerre",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2025-12-08",
+
+  // Base des demandes reçues par le formulaire (région WEUR, données dans l'UE)
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lesprosdelyonne-leads",
+      "database_id": "b5f76337-c60f-437c-a9c4-5a57199e731e"
+    }
+  ],
+
+  // Clé publique du widget Turnstile : destinée au HTML, ce n'est pas un secret.
+  // La clé secrète est un secret Pages (TURNSTILE_SECRET_KEY), jamais versionnée.
+  "vars": {
+    "TURNSTILE_SITE_KEY": "0x4AAAAAAECMgELzsW8pYyu0"
+  }
+}

@@ -43,8 +43,10 @@ const breadcrumbs = [
     <article class="rule-block">
       <h2>Données collectées</h2>
       <p>
-        Prénom, téléphone, email, commune, description du besoin, délai souhaité, métier recherché, ville concernée et
-        page source de la demande.
+        Prénom, nom, téléphone, email, commune, code postal, description du besoin, délai souhaité, budget indicatif
+        lorsqu'il est renseigné, réponses au questionnaire de qualification, métier recherché, ville concernée et page
+        source de la demande. Sont également enregistrés, à des fins de sécurité et de lutte contre les envois
+        automatisés, la date et l'heure de la demande, le pays d'origine de la connexion et le navigateur utilisé.
       </p>
     </article>
 
@@ -53,6 +55,11 @@ const breadcrumbs = [
       <p>
         Les données sont transmises au professionnel local concerné afin qu'il puisse vous recontacter. Elles ne sont
         pas revendues à des tiers non concernés par votre demande.
+      </p>
+      <p>
+        Elles sont également enregistrées dans une base de données interne, hébergée par Cloudflare, Inc. sur des
+        serveurs situés en Europe de l'Ouest, afin d'assurer le suivi des demandes. L'accès à cette base est restreint
+        aux personnes habilitées du responsable de traitement, au moyen d'une authentification nominative.
       </p>
     </article>
 
@@ -67,8 +74,13 @@ const breadcrumbs = [
     <article class="rule-block">
       <h2>Durée de conservation</h2>
       <p>
-        Les données sont conservées pour la durée nécessaire au traitement de la demande et au suivi commercial
-        raisonnable, puis supprimées ou anonymisées selon les obligations légales en vigueur.
+        Les demandes sont conservées <strong>24 mois</strong> à compter de leur réception, durée correspondant au suivi
+        commercial d'un projet de travaux. Au-delà, elles sont supprimées automatiquement et définitivement de la base
+        par un traitement quotidien, sans intervention humaine.
+      </p>
+      <p>
+        Vous pouvez demander la suppression de votre demande à tout moment avant ce terme, sans avoir à motiver votre
+        demande.
       </p>
     </article>
 
@@ -86,8 +98,10 @@ const breadcrumbs = [
     <article class="rule-block">
       <h2>Minimisation et sécurité</h2>
       <p>
-        Seules les données strictement nécessaires à la prise de contact sont demandées. Des mesures techniques et
-        organisationnelles raisonnables sont mises en place pour en limiter l'accès non autorisé.
+        Seules les données strictement nécessaires à la prise de contact sont demandées. Les échanges sont chiffrés en
+        transit (HTTPS). L'accès à la base de données est protégé par une authentification nominative limitée aux
+        personnes habilitées, et le formulaire est protégé contre les envois automatisés par un dispositif anti-robot
+        qui ne dépose aucun traceur publicitaire.
       </p>
     </article>
 

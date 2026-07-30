@@ -8,5 +8,8 @@ export const SITE_CONFIG = {
   resonanceUrl: 'https://resonnance.pages.dev/',
   telContact: '07 44 96 36 60',
   telContactHref: '+33744963660',
-  contactEmail: 'contact@lesprosdelyonne.com'
+  contactEmail: 'contact@lesprosdelyonne.com',
+  // Clé publique du widget Turnstile : figure dans le HTML, ce n'est pas un secret.
+  // La clé secrète correspondante est un secret Pages (TURNSTILE_SECRET_KEY).
+  turnstileSiteKey: '0x4AAAAAAECMgELzsW8pYyu0'
 } as const;

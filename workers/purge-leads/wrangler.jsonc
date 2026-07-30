@@ -1,0 +1,24 @@
+{
+  // Worker séparé : les Pages Functions ne supportent pas les déclencheurs cron.
+  // Rôle unique : purger les demandes au-delà de la durée de conservation.
+  "name": "purge-leads-lesprosdelyonne",
+  "main": "index.ts",
+  "compatibility_date": "2025-12-08",
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lesprosdelyonne-leads",
+      "database_id": "b5f76337-c60f-437c-a9c4-5a57199e731e"
+    }
+  ],
+
+  // Tous les jours à 3 h 30 UTC
+  "triggers": {
+    "crons": ["30 3 * * *"]
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}
