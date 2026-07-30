@@ -3,20 +3,13 @@
  * Protégé par la même politique Cloudflare Access (chemin /admin).
  */
 
+import { estAdmin, identifierViaAccess } from '../_lib/access';
+
 type Env = {
   DB: D1Database;
   /** Liste blanche des identités autorisées, séparées par des virgules. */
   ADMIN_EMAILS?: string;
 };
-
-/** Défense en profondeur : Access filtre déjà, mais on revérifie ici. */
-const ADMINS_PAR_DEFAUT = ['contact@lesprosdelyonne.com', 'rbn.soyer@gmail.com'];
-
-function estAutorise(email: string | null, liste: string | undefined): boolean {
-  if (!email) return false;
-  const autorises = (liste ? liste.split(',') : ADMINS_PAR_DEFAUT).map((e) => e.trim().toLowerCase()).filter(Boolean);
-  return autorises.includes(email.trim().toLowerCase());
-}
 
 const COLONNES = [
   'id',
@@ -53,14 +46,16 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
   const url = new URL(request.url);
 
-  // Même garde que /admin : sans identité Access, on ne sert rien hors local.
-  const emailAccess = request.headers.get('Cf-Access-Authenticated-User-Email');
+  // Même garde que /admin : JWT Access vérifié, puis liste blanche.
   const estLocal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
-  if (!estLocal && !estAutorise(emailAccess, env.ADMIN_EMAILS)) {
-    return new Response('Accès refusé.', {
-      status: 403,
-      headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
-    });
+  if (!estLocal) {
+    const acces = await identifierViaAccess(request);
+    if (!acces.ok || !estAdmin(acces.email, env.ADMIN_EMAILS)) {
+      return new Response('Accès refusé.', {
+        status: 403,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
+      });
+    }
   }
 
   const conditions: string[] = [];
