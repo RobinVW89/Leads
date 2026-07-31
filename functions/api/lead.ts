@@ -6,10 +6,14 @@
  * dans /admin avec transmis_webhook = 0.
  */
 
+import { avecEntetesSecurite } from '../_lib/entetes';
+
 type Env = {
   DB: D1Database;
   TURNSTILE_SECRET_KEY?: string;
   WEBHOOK_URL?: string;
+  /** Worker de notification, joint par Service binding. */
+  NOTIFICATION?: { fetch: (request: Request) => Promise<Response> };
 };
 
 // Doit rester aligné sur SITE_CONFIG.n8nWebhookUrl (src/config/site.ts).
@@ -47,10 +51,12 @@ function texte(valeur: unknown, champ: ChampNom): string {
 }
 
 function json(data: unknown, status = 200): Response {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
-  });
+  return avecEntetesSecurite(
+    new Response(JSON.stringify(data), {
+      status,
+      headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
+    })
+  );
 }
 
 const ACTION_ATTENDUE = 'lead-form';
@@ -122,12 +128,50 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
 
   if (request.method !== 'POST') {
-    return new Response('Méthode non autorisée', { status: 405, headers: { Allow: 'POST' } });
+    return avecEntetesSecurite(
+      new Response('Méthode non autorisée', {
+        status: 405,
+        headers: { Allow: 'POST', 'Content-Type': 'text/plain; charset=utf-8' }
+      })
+    );
+  }
+
+  const url = new URL(request.url);
+
+  // --- Origine ------------------------------------------------------------
+  // Le site et son API partagent le même domaine. Une origine tierce n'a
+  // aucune raison légitime de poster ici. Une requête sans en-tête Origin
+  // reste acceptée : certains clients n'en envoient pas, et Turnstile filtre
+  // déjà. Aucun en-tête Origin n'est jamais reflété dans la réponse.
+  const origine = request.headers.get('Origin');
+  if (origine) {
+    const origineDuSite = `${url.protocol}//${url.host}`;
+    const autorisees = new Set([origineDuSite, 'https://lesprosdelyonne.com']);
+    if (!autorisees.has(origine)) {
+      return json({ ok: false, erreur: 'Origine non autorisée.' }, 403);
+    }
+  }
+
+  // --- Taille -------------------------------------------------------------
+  // Une demande légitime dépasse rarement 6 Ko. On refuse tôt, avant de lire
+  // le corps, pour ne pas consommer de ressources sur un envoi abusif.
+  const TAILLE_MAX = 24 * 1024;
+  const tailleAnnoncee = Number(request.headers.get('Content-Length') || 0);
+  if (tailleAnnoncee > TAILLE_MAX) {
+    return json({ ok: false, erreur: 'Demande trop volumineuse.' }, 413);
   }
 
   let charge: Record<string, unknown>;
   try {
-    charge = (await request.json()) as Record<string, unknown>;
+    const brut = await request.text();
+    if (brut.length > TAILLE_MAX) {
+      return json({ ok: false, erreur: 'Demande trop volumineuse.' }, 413);
+    }
+    const analyse = JSON.parse(brut) as unknown;
+    if (!analyse || typeof analyse !== 'object' || Array.isArray(analyse)) {
+      return json({ ok: false, erreur: 'Corps de requête invalide.' }, 400);
+    }
+    charge = analyse as Record<string, unknown>;
   } catch {
     return json({ ok: false, erreur: 'Corps de requête invalide.' }, 400);
   }
@@ -145,7 +189,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   // Mode fermé : hors développement local, l'absence de clé secrète bloque
   // l'endpoint. Aucune demande ne passe sans vérification anti-robot.
-  const hote = new URL(request.url).hostname;
+  const hote = url.hostname;
   const enLocal = hote === 'localhost' || hote === '127.0.0.1';
 
   if (!env.TURNSTILE_SECRET_KEY) {
@@ -250,6 +294,43 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     erreurBase = error instanceof Error ? error.message : 'inconnue';
   }
 
+  // --- Notification par e-mail --------------------------------------------
+  // Toujours APRÈS l'enregistrement : un échec d'envoi ne doit jamais faire
+  // perdre une demande. Le résultat est consigné pour être visible dans /admin.
+  let notifie = false;
+  let erreurNotification: string | null = null;
+
+  if (env.NOTIFICATION) {
+    try {
+      const reponse = await env.NOTIFICATION.fetch(
+        new Request('https://notification-lead/envoyer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...lead, id: leadId })
+        })
+      );
+      const resultat = (await reponse.json()) as { ok?: boolean; erreur?: string };
+      notifie = reponse.ok && resultat.ok === true;
+      if (!notifie) {
+        erreurNotification = (resultat.erreur || `statut ${reponse.status}`).slice(0, 200);
+      }
+    } catch (error) {
+      erreurNotification = (error instanceof Error ? error.message : 'service injoignable').slice(0, 200);
+    }
+  } else {
+    erreurNotification = 'service de notification non configuré';
+  }
+
+  if (leadId) {
+    try {
+      await env.DB.prepare('UPDATE leads SET notifie_email = ?, notification_erreur = ? WHERE id = ?')
+        .bind(notifie ? 1 : 0, erreurNotification, leadId)
+        .run();
+    } catch {
+      // L'essentiel — la demande — est déjà en base.
+    }
+  }
+
   // --- Relais vers le webhook (flux e-mail existant) ----------------------
   let transmis = false;
   try {
@@ -278,5 +359,5 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return json({ ok: false, erreur: erreurBase ? 'Enregistrement impossible.' : 'Transmission impossible.' }, 502);
   }
 
-  return json({ ok: true, enregistre: Boolean(leadId), transmis });
+  return json({ ok: true, enregistre: Boolean(leadId), transmis, notifie });
 };

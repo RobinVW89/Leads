@@ -1,0 +1,32 @@
+# En-têtes de sécurité des fichiers statiques.
+# Ce fichier est copié tel quel dans dist/ et interprété par Cloudflare Pages.
+# Il ne s'applique PAS aux Pages Functions : celles-ci posent leurs propres
+# en-têtes via functions/_lib/entetes.ts.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin
+  # CSP en mode bloquant depuis le 31/07/2026, après observation réelle en
+  # prévisualisation : navigation, formulaire de particulier, candidature pro,
+  # page /merci et scripts Astro en ligne, sans aucune violation relevée.
+  #
+  # Hôtes vérifiés par observation réseau, et non supposés :
+  #   - Turnstile     : challenges.cloudflare.com (script, iframe, connect)
+  #   - Analytics     : www.googletagmanager.com pour le script,
+  #                     region1.analytics.google.com pour la collecte — d'où
+  #                     les jokers sur *.analytics.google.com et
+  #                     *.google-analytics.com, les régions variant.
+  #   - Formspree     : ABSENT volontairement. Il n'est appelé que côté serveur
+  #                     par /api/lead ; le navigateur ne le contacte jamais.
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src https://challenges.cloudflare.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'
+
+# Les polices sont immuables : elles portent leur empreinte dans le nom.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

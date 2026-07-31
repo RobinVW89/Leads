@@ -1,6 +1,7 @@
 ---
 import { SITE_CONFIG } from '../config/site';
 import BrandMark from '../components/BrandMark.astro';
+import BandeauCookies from '../components/BandeauCookies.astro';
 import '../styles/theme.css';
 
 type Crumb = {
@@ -37,6 +38,11 @@ const normalizedPath = canonicalPath.endsWith('/') ? canonicalPath : `${canonica
 const canonicalUrl = new URL(normalizedPath, SITE_CONFIG.siteUrl).toString();
 const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 const ogImageUrl = new URL('/images/og-lesprosdelyonne.jpg', SITE_CONFIG.siteUrl).toString();
+
+// JSON.stringify n'échappe pas « </script> » : une donnée contenant cette
+// séquence sortirait du bloc. On neutralise « < » en échappement unicode,
+// ce que tout analyseur JSON comprend.
+const enJsonSur = (valeur: object) => JSON.stringify(valeur).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
@@ -69,19 +75,10 @@ const ogImageUrl = new URL('/images/og-lesprosdelyonne.jpg', SITE_CONFIG.siteUrl
 		<meta name="theme-color" content="#123d2c" />
 		<link rel="preload" href="/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/source-sans-3-400.woff2" as="font" type="font/woff2" crossorigin />
-		<!-- Google tag (gtag.js) -->
-		<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-D2Y7CDBF3X"></script>
-		<script is:inline>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag('js', new Date());
-
-			gtag('config', 'G-D2Y7CDBF3X');
-		</script>
+		<!-- Google Analytics n'est PAS chargé ici : il ne l'est qu'après
+		     acceptation explicite, par le bandeau de consentement. -->
 		{jsonLdList.map((entry) => (
-			<script is:inline type="application/ld+json" set:html={JSON.stringify(entry)} />
+			<script is:inline type="application/ld+json" set:html={enJsonSur(entry)} />
 		))}
 	</head>
 	<body>
@@ -193,12 +190,14 @@ const ogImageUrl = new URL('/images/og-lesprosdelyonne.jpg', SITE_CONFIG.siteUrl
 				<div class="footer-bottom">
 					<p>
 						<a href="/comment-ca-marche">Comment ça marche</a> • <a href="/mentions-legales">Mentions légales</a>{' '}
-						• <a href="/politique-confidentialite">Politique de confidentialité</a>
+						• <a href="/politique-confidentialite">Politique de confidentialité</a>{' '}
+						• <a href="#" data-gerer-cookies>Gérer mes cookies</a>
 					</p>
 					<p>Réseau local de l'Yonne (89) • Réponse sous 24 h</p>
 				</div>
 			</div>
 		</footer>
+		<BandeauCookies />
 		{stickyCta && (
 			<div class="mobile-sticky-cta" role="region" aria-label="Action rapide">
 				{stickyCta.badge && <span>{stickyCta.badge}</span>}

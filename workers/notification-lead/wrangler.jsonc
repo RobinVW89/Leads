@@ -1,0 +1,29 @@
+{
+  // Worker de notification. Les Pages Functions ne supportent pas le binding
+  // send_email : /api/lead appelle donc ce Worker par un Service binding.
+  "name": "notification-lead-lesprosdelyonne",
+  "main": "index.ts",
+  "compatibility_date": "2025-12-08",
+
+  // Aucune URL publique : le Worker n'est joignable que par le Service binding.
+  "workers_dev": false,
+
+  // Destinations autorisées, vérifiées dans Email Routing. Cloudflare refuse
+  // tout autre destinataire, ce qui empêche d'en faire un relais ouvert.
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "allowed_destination_addresses": ["contact@lesprosdelyonne.com", "robsinik@hotmail.fr"]
+    }
+  ],
+
+  "vars": {
+    "DESTINATAIRE": "contact@lesprosdelyonne.com",
+    "EXPEDITEUR": "notifications@lesprosdelyonne.com",
+    "URL_ADMIN": "https://lesprosdelyonne.com/admin"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}

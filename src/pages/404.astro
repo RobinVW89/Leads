@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getPriorityCities, metiersData } from '../lib/data';
+
+const title = 'Page introuvable | Travaux & Pros de l\'Yonne';
+const description = 'Cette page n\'existe pas ou a été déplacée. Retrouvez nos métiers et nos communes couvertes dans l\'Yonne.';
+
+const metiersSuggeres = metiersData.filter((metier) => metier.actif).slice(0, 6);
+const villesSuggerees = getPriorityCities().slice(0, 3);
+---
+
+<Layout title={title} description={description} canonicalPath="/404/" noindex>
+  <section class="section">
+    <span class="eyebrow">Erreur 404</span>
+    <h1 class="page-title">Cette page n'existe pas</h1>
+    <p class="hero-lede">
+      L'adresse demandée est introuvable ou a été déplacée. Voici les points d'entrée les plus utiles.
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn" href="/">Retour à l'accueil</a>
+      <a class="btn btn-ghost" href="/#metiers">Voir les métiers</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="rule-block">
+      <h2>Métiers les plus demandés</h2>
+    </div>
+    <div class="city-chips">
+      {metiersSuggeres.map((metier) => (
+        <a class="city-chip" href={`/${metier.slug}/`}>{metier.nom}</a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="rule-block">
+      <h2>Nos villes principales</h2>
+    </div>
+    <div class="city-cards">
+      {villesSuggerees.map((ville) => (
+        <a class="city-card" href={`/${ville.slug}/`}>
+          <strong>{ville.nom}</strong>
+          <span class="city-meta">{ville.codePostal}</span>
+          <span class="city-go">Voir les pros à {ville.nom}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Layout>
