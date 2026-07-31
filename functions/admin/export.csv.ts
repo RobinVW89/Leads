@@ -4,6 +4,7 @@
  */
 
 import { estAdmin, identifierViaAccess } from '../_lib/access';
+import { avecEntetesSecurite } from '../_lib/entetes';
 
 type Env = {
   DB: D1Database;
@@ -98,11 +99,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const corps = '﻿' + lignes.join('\r\n');
   const horodatage = new Date().toISOString().slice(0, 10);
 
-  return new Response(corps, {
+  return avecEntetesSecurite(new Response(corps, {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',
       'Content-Disposition': `attachment; filename="demandes-lesprosdelyonne-${horodatage}.csv"`,
       'Cache-Control': 'no-store'
     }
-  });
+  }));
 };

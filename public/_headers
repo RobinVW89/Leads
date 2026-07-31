@@ -1,0 +1,23 @@
+# En-têtes de sécurité des fichiers statiques.
+# Ce fichier est copié tel quel dans dist/ et interprété par Cloudflare Pages.
+# Il ne s'applique PAS aux Pages Functions : celles-ci posent leurs propres
+# en-têtes via functions/_lib/entetes.ts.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin
+  # CSP en observation d'abord : le site utilise des scripts en ligne (Astro
+  # is:inline), Google Analytics et Turnstile. Passer en mode bloquant seulement
+  # après avoir vérifié l'absence de violation dans la console.
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://www.google-analytics.com https://region1.google-analytics.com; frame-src https://challenges.cloudflare.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'
+
+# Les polices sont immuables : elles portent leur empreinte dans le nom.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

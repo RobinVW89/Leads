@@ -8,6 +8,7 @@
  */
 
 import { estAdmin, identifierViaAccess } from '../_lib/access';
+import { avecEntetesSecurite } from '../_lib/entetes';
 
 type Env = {
   DB: D1Database;
@@ -48,7 +49,25 @@ function echapper(valeur: unknown): string {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Une URL saisie par un candidat ne doit jamais devenir un href tel quel :
+ * « javascript:… » exécuterait du code dans l'origine de l'administration,
+ * avec la session Access ouverte. Seuls http et https sont acceptés.
+ */
+function lienExterneSur(valeur: unknown): string | null {
+  const brut = String(valeur ?? '').trim();
+  if (!brut) return null;
+  try {
+    const url = new URL(brut);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
 }
 
 function dateCourte(iso: string): string {
@@ -131,16 +150,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // Preuve d'identité : JWT signé par Cloudflare, vérifié cryptographiquement.
     const acces = await identifierViaAccess(request);
     if (!acces.ok) {
-      return new Response(
-        `Accès refusé. Authentification Cloudflare Access requise (${acces.motif}).`,
-        { status: 403, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } }
+      return avecEntetesSecurite(
+        new Response(`Accès refusé. Authentification Cloudflare Access requise (${acces.motif}).`, {
+          status: 403,
+          headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
+        })
       );
     }
     if (!estAdmin(acces.email, env.ADMIN_EMAILS)) {
-      return new Response(`Accès refusé. L'identité ${acces.email} n'est pas habilitée sur cet espace.`, {
-        status: 403,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
-      });
+      return avecEntetesSecurite(
+        new Response(`Accès refusé. L'identité ${acces.email} n'est pas habilitée sur cet espace.`, {
+          status: 403,
+          headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
+        })
+      );
     }
     identite = acces.email;
   }
@@ -256,12 +279,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 </form>`;
 
   if (nbTotal === 0) {
-    return new Response(
-      page(
-        filtres + '<div class="tablewrap"><p class="vide">Aucune demande ne correspond. La base est prête et attend le premier envoi.</p></div>',
-        identite
+    return avecEntetesSecurite(
+      new Response(
+        page(
+          filtres + '<div class="tablewrap"><p class="vide">Aucune demande ne correspond. La base est prête et attend le premier envoi.</p></div>',
+          identite
+        ),
+        { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } }
       ),
-      { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } }
+      'admin'
     );
   }
 
@@ -278,7 +304,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         l.type === 'pro'
           ? `<br><span class="tag t-traite">candidature pro</span><br><b>${echapper(l.entreprise)}</b>${
               l.siret ? `<br><span style="color:#5b6b61">SIRET ${echapper(l.siret)}</span>` : ''
-            }${l.site_web ? `<br><a href="${echapper(l.site_web)}" target="_blank" rel="noopener noreferrer">site web</a>` : ''}`
+            }${
+              lienExterneSur(l.site_web)
+                ? `<br><a href="${echapper(lienExterneSur(l.site_web))}" target="_blank" rel="noopener noreferrer">site web</a>`
+                : l.site_web
+                  ? `<br><span style="color:#97302f">site web non valide : ${echapper(l.site_web)}</span>`
+                  : ''
+            }`
           : ''
       }</td>
   <td><b>${echapper(l.prenom)} ${echapper(l.nom)}</b><br>
@@ -324,7 +356,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 <thead><tr><th>Reçue le</th><th>Métier / ville</th><th>Contact</th><th>Description</th><th>Qualification</th><th>Délai / budget</th><th>Suivi</th></tr></thead>
 <tbody>${corps}</tbody></table></div>${pagination}`;
 
-  return new Response(page(filtres + table, identite), {
+  return avecEntetesSecurite(new Response(page(filtres + table, identite), {
     headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }
-  });
+  }), 'admin');
 };

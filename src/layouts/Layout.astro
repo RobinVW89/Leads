@@ -37,6 +37,11 @@ const normalizedPath = canonicalPath.endsWith('/') ? canonicalPath : `${canonica
 const canonicalUrl = new URL(normalizedPath, SITE_CONFIG.siteUrl).toString();
 const jsonLdList = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 const ogImageUrl = new URL('/images/og-lesprosdelyonne.jpg', SITE_CONFIG.siteUrl).toString();
+
+// JSON.stringify n'échappe pas « </script> » : une donnée contenant cette
+// séquence sortirait du bloc. On neutralise « < » en échappement unicode,
+// ce que tout analyseur JSON comprend.
+const enJsonSur = (valeur: object) => JSON.stringify(valeur).replace(/</g, '\\u003c');
 ---
 
 <!doctype html>
@@ -81,7 +86,7 @@ const ogImageUrl = new URL('/images/og-lesprosdelyonne.jpg', SITE_CONFIG.siteUrl
 			gtag('config', 'G-D2Y7CDBF3X');
 		</script>
 		{jsonLdList.map((entry) => (
-			<script is:inline type="application/ld+json" set:html={JSON.stringify(entry)} />
+			<script is:inline type="application/ld+json" set:html={enJsonSur(entry)} />
 		))}
 	</head>
 	<body>
