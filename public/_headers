@@ -13,7 +13,16 @@
   # CSP en observation d'abord : le site utilise des scripts en ligne (Astro
   # is:inline), Google Analytics et Turnstile. Passer en mode bloquant seulement
   # après avoir vérifié l'absence de violation dans la console.
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://www.google-analytics.com https://region1.google-analytics.com; frame-src https://challenges.cloudflare.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'
+  #
+  # Hôtes vérifiés par observation réseau, et non supposés :
+  #   - Turnstile     : challenges.cloudflare.com (script, iframe, connect)
+  #   - Analytics     : www.googletagmanager.com pour le script,
+  #                     region1.analytics.google.com pour la collecte — d'où
+  #                     les jokers sur *.analytics.google.com et
+  #                     *.google-analytics.com, les régions variant.
+  #   - Formspree     : ABSENT volontairement. Il n'est appelé que côté serveur
+  #                     par /api/lead ; le navigateur ne le contacte jamais.
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://*.google-analytics.com https://*.analytics.google.com; font-src 'self'; connect-src 'self' https://challenges.cloudflare.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src https://challenges.cloudflare.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'
 
 # Les polices sont immuables : elles portent leur empreinte dans le nom.
 /fonts/*
