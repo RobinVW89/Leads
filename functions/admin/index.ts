@@ -35,6 +35,10 @@ type LigneLead = {
   page_source: string | null;
   statut: string;
   transmis_webhook: number;
+  entreprise: string | null;
+  siret: string | null;
+  site_web: string | null;
+  zone_intervention: string | null;
 };
 
 const PAR_PAGE = 50;
@@ -164,6 +168,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const fMetier = (url.searchParams.get('metier') || '').slice(0, 80);
   const fVille = (url.searchParams.get('ville') || '').slice(0, 120);
   const fStatut = (url.searchParams.get('statut') || '').slice(0, 20);
+  const fType = (url.searchParams.get('type') || '').slice(0, 20);
   const fRecherche = (url.searchParams.get('q') || '').slice(0, 120);
   const pageNum = Math.max(1, Number(url.searchParams.get('page') || 1) || 1);
 
@@ -182,6 +187,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     conditions.push('statut = ?');
     valeurs.push(fStatut);
   }
+  if (fType) {
+    conditions.push('type = ?');
+    valeurs.push(fType);
+  }
   if (fRecherche) {
     conditions.push('(nom LIKE ? OR prenom LIKE ? OR email LIKE ? OR telephone LIKE ? OR commune LIKE ?)');
     const motif = `%${fRecherche}%`;
@@ -198,9 +207,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       `SELECT COUNT(*) AS total,
               SUM(CASE WHEN statut = 'nouveau' THEN 1 ELSE 0 END) AS nouveaux,
               SUM(CASE WHEN transmis_webhook = 0 THEN 1 ELSE 0 END) AS non_transmis,
-              SUM(CASE WHEN created_at >= datetime('now','-7 days') THEN 1 ELSE 0 END) AS semaine
+              SUM(CASE WHEN created_at >= datetime('now','-7 days') THEN 1 ELSE 0 END) AS semaine,
+              SUM(CASE WHEN type = 'pro' THEN 1 ELSE 0 END) AS pros
        FROM leads`
-    ).first<{ total: number; nouveaux: number; non_transmis: number; semaine: number }>(),
+    ).first<{ total: number; nouveaux: number; non_transmis: number; semaine: number; pros: number }>(),
     env.DB.prepare('SELECT DISTINCT metier FROM leads WHERE metier <> "" ORDER BY metier').all<{ metier: string }>(),
     env.DB.prepare('SELECT DISTINCT ville FROM leads WHERE ville <> "" ORDER BY ville').all<{ ville: string }>(),
     env.DB.prepare(`SELECT * FROM leads ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`)
@@ -225,6 +235,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   <div class="stat"><b>${stats?.total ?? 0}</b><span>demandes au total</span></div>
   <div class="stat"><b>${stats?.nouveaux ?? 0}</b><span>à traiter</span></div>
   <div class="stat"><b>${stats?.semaine ?? 0}</b><span>ces 7 derniers jours</span></div>
+  <div class="stat"><b>${stats?.pros ?? 0}</b><span>candidatures pro</span></div>
   <div class="stat"><b class="${(stats?.non_transmis ?? 0) > 0 ? 'ko' : ''}">${stats?.non_transmis ?? 0}</b><span>non transmises au webhook</span></div>
 </div>
 <form class="filtres" method="get">
@@ -233,6 +244,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   <div><label for="f-statut">Statut</label><select id="f-statut" name="statut">
     <option value="">Tous</option>
     ${['nouveau', 'transmis', 'traite', 'perdu'].map((s) => `<option value="${s}"${s === fStatut ? ' selected' : ''}>${s}</option>`).join('')}
+  </select></div>
+  <div><label for="f-type">Type</label><select id="f-type" name="type">
+    <option value="">Tous</option>
+    ${[['lead', 'Demandes'], ['intention', 'Intentions'], ['pro', 'Candidatures pro']].map(([v, l]) => `<option value="${v}"${v === fType ? ' selected' : ''}>${l}</option>`).join('')}
   </select></div>
   <div><label for="f-q">Recherche</label><input id="f-q" name="q" value="${echapper(fRecherche)}" placeholder="nom, email, téléphone…"></div>
   <button type="submit">Filtrer</button>
@@ -259,6 +274,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       }</td>
   <td><b>${echapper(l.metier_nom || l.metier)}</b><br><span style="color:#5b6b61">${echapper(l.ville)}</span>${
         l.type === 'intention' ? '<br><span class="tag t-perdu">intention</span>' : ''
+      }${
+        l.type === 'pro'
+          ? `<br><span class="tag t-traite">candidature pro</span><br><b>${echapper(l.entreprise)}</b>${
+              l.siret ? `<br><span style="color:#5b6b61">SIRET ${echapper(l.siret)}</span>` : ''
+            }${l.site_web ? `<br><a href="${echapper(l.site_web)}" target="_blank" rel="noopener noreferrer">site web</a>` : ''}`
+          : ''
       }</td>
   <td><b>${echapper(l.prenom)} ${echapper(l.nom)}</b><br>
       ${l.telephone ? `<a href="tel:${echapper(l.telephone)}">${echapper(l.telephone)}</a><br>` : ''}
@@ -266,7 +287,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       <span style="color:#5b6b61">${echapper(l.commune)} ${echapper(l.code_postal)}</span></td>
   <td class="desc">${echapper(l.description)}</td>
   <td class="qual">${echapper(qual)}</td>
-  <td>${echapper(l.delai_souhaite)}${l.budget ? `<br>${echapper(l.budget)}` : ''}</td>
+  <td>${l.type === 'pro' ? echapper(l.zone_intervention) : `${echapper(l.delai_souhaite)}${l.budget ? `<br>${echapper(l.budget)}` : ''}`}</td>
   <td>
     <form method="post" style="display:flex;gap:.3rem;margin-bottom:.4rem">
       <input type="hidden" name="action" value="statut"><input type="hidden" name="id" value="${l.id}">

@@ -1,0 +1,269 @@
+---
+import { SITE_CONFIG } from '../config/site';
+import { metiersData } from '../lib/data';
+
+const formId = 'pro-form';
+const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
+const metiers = [...metiersData].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
+---
+
+<div class="card" id={`${formId}-wrapper`}>
+  <h2>Proposer votre entreprise</h2>
+  <p class="muted">
+    Renseignez votre activité en 2 minutes. Nous vérifions chaque candidature avant intégration et vous recontactons
+    sous 48 h ouvrées.
+  </p>
+
+  <form id={formId} novalidate>
+    <fieldset class="pro-fieldset">
+      <legend>Votre entreprise</legend>
+
+      <div class="grid cols-2">
+        <div>
+          <label for={`${formId}-entreprise`}>Raison sociale *</label>
+          <input id={`${formId}-entreprise`} name="entreprise" autocomplete="organization" required />
+        </div>
+        <div>
+          <label for={`${formId}-siret`}>SIRET *</label>
+          <input
+            id={`${formId}-siret`}
+            name="siret"
+            inputmode="numeric"
+            placeholder="14 chiffres"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="grid cols-2">
+        <div>
+          <label for={`${formId}-metier`}>Activité principale *</label>
+          <select id={`${formId}-metier`} name="metier" required>
+            <option value="">Choisir une activité</option>
+            {metiers.map((metier) => (
+              <option value={metier.slug}>{metier.nom}</option>
+            ))}
+            <option value="autre">Autre activité du bâtiment</option>
+          </select>
+        </div>
+        <div>
+          <label for={`${formId}-siteWeb`}>Site web (facultatif)</label>
+          <input id={`${formId}-siteWeb`} name="siteWeb" inputmode="url" placeholder="https://" />
+        </div>
+      </div>
+
+      <div>
+        <label for={`${formId}-zone`}>Zone d'intervention *</label>
+        <input
+          id={`${formId}-zone`}
+          name="zoneIntervention"
+          required
+          placeholder="Ex : Auxerre, Monéteau, Appoigny et 20 km alentour"
+        />
+      </div>
+    </fieldset>
+
+    <fieldset class="pro-fieldset">
+      <legend>Votre contact</legend>
+
+      <div class="grid cols-2">
+        <div>
+          <label for={`${formId}-prenom`}>Prénom *</label>
+          <input id={`${formId}-prenom`} name="prenom" autocomplete="given-name" required />
+        </div>
+        <div>
+          <label for={`${formId}-nom`}>Nom *</label>
+          <input id={`${formId}-nom`} name="nom" autocomplete="family-name" required />
+        </div>
+      </div>
+
+      <div class="grid cols-2">
+        <div>
+          <label for={`${formId}-telephone`}>Téléphone *</label>
+          <input id={`${formId}-telephone`} name="telephone" autocomplete="tel" inputmode="tel" required />
+        </div>
+        <div>
+          <label for={`${formId}-email`}>Email professionnel *</label>
+          <input id={`${formId}-email`} name="email" autocomplete="email" type="email" required />
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset class="pro-fieldset">
+      <legend>Votre activité</legend>
+
+      <div>
+        <label for={`${formId}-description`}>Présentez votre entreprise</label>
+        <textarea
+          id={`${formId}-description`}
+          name="description"
+          rows={4}
+          placeholder="Ex : entreprise familiale depuis 2011, 4 compagnons, certifiée RGE Qualibat, spécialisée en rénovation énergétique."
+        ></textarea>
+        <p class="note" style="margin-top: 0.4rem;">
+          Précisez vos certifications (RGE, Qualibat, Quali'PAC…), votre ancienneté et vos assurances : ce sont les
+          éléments que nous vérifions.
+        </p>
+      </div>
+    </fieldset>
+
+    <div>
+      <label style="display: flex; gap: 0.65rem; align-items: flex-start;">
+        <input type="checkbox" name="consentementDonnees" required style="margin-top: 0.2rem;" />
+        <span>
+          J'accepte la <a href="/politique-confidentialite">politique de gestion des données lesprosdelyonne</a>{' '}
+          pour l'étude de ma candidature.
+        </span>
+      </label>
+    </div>
+
+    <div class="hero-actions" style="margin-top: 0.2rem;">
+      <button type="submit" class="btn-lg">Envoyer ma candidature</button>
+      <span class="inline-note">Réponse sous 48 h ouvrées</span>
+    </div>
+
+    <input type="hidden" name="type" value="pro" />
+    <input type="hidden" name="page_source" />
+    <input type="hidden" name="startedAt" />
+
+    <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;" aria-hidden="true">
+      <label for={`${formId}-website`}>Ne pas remplir</label>
+      <input id={`${formId}-website`} name="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    {turnstileSiteKey && (
+      <div
+        class="cf-turnstile"
+        data-sitekey={turnstileSiteKey}
+        data-action="lead-form"
+        data-size="invisible"
+        data-appearance="interaction-only"
+      />
+    )}
+  </form>
+
+  <div id={`${formId}-message`} aria-live="polite" style="margin-top: 0.8rem;"></div>
+</div>
+
+{turnstileSiteKey && (
+  <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+)}
+
+<script
+  is:inline
+  define:vars={{ formId, endpointUrl: '/api/lead', telContact: SITE_CONFIG.telContact }}
+>
+  const form = document.getElementById(formId);
+  const messageBox = document.getElementById(`${formId}-message`);
+
+  if (form instanceof HTMLFormElement && messageBox) {
+    const submitButton = form.querySelector('button[type="submit"]');
+    const startedAtInput = form.elements.namedItem('startedAt');
+    const pageSourceInput = form.elements.namedItem('page_source');
+
+    if (startedAtInput instanceof HTMLInputElement) {
+      startedAtInput.value = String(Date.now());
+    }
+    if (pageSourceInput instanceof HTMLInputElement) {
+      pageSourceInput.value = window.location.href;
+    }
+
+    const reactiverEnvoi = () => {
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Envoyer ma candidature';
+      }
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      const data = new FormData(form);
+      const siret = String(data.get('siret') || '').replace(/\s+/g, '');
+      if (!/^\d{14}$/.test(siret)) {
+        messageBox.className = 'error';
+        messageBox.textContent = 'Le SIRET doit comporter 14 chiffres.';
+        return;
+      }
+
+      const turnstileField = form.elements.namedItem('cf-turnstile-response');
+
+      const payload = {
+        type: 'pro',
+        entreprise: String(data.get('entreprise') || ''),
+        siret,
+        siteWeb: String(data.get('siteWeb') || ''),
+        zoneIntervention: String(data.get('zoneIntervention') || ''),
+        metier: String(data.get('metier') || ''),
+        metier_nom: (() => {
+          const select = form.elements.namedItem('metier');
+          return select instanceof HTMLSelectElement ? select.options[select.selectedIndex].text : '';
+        })(),
+        prenom: String(data.get('prenom') || ''),
+        nom: String(data.get('nom') || ''),
+        telephone: String(data.get('telephone') || ''),
+        email: String(data.get('email') || ''),
+        description: String(data.get('description') || ''),
+        page_source: String(data.get('page_source') || ''),
+        startedAt: Number(data.get('startedAt') || Date.now()),
+        website: String(data.get('website') || ''),
+        submittedAt: new Date().toISOString(),
+        turnstileToken: turnstileField instanceof HTMLInputElement ? turnstileField.value : ''
+      };
+
+      if (submitButton instanceof HTMLButtonElement) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Envoi en cours…';
+      }
+
+      try {
+        const response = await fetch(endpointUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        let corps = null;
+        const typeContenu = response.headers.get('Content-Type') || '';
+        if (typeContenu.includes('application/json')) {
+          try {
+            corps = await response.json();
+          } catch (e) {
+            corps = null;
+          }
+        }
+
+        if (!(response.ok && corps && corps.ok === true)) {
+          let detail = corps && corps.erreur ? corps.erreur : '';
+          if (!detail && response.ok) {
+            detail = 'Le service d\'envoi n\'a pas répondu correctement.';
+          }
+          if (window.turnstile && typeof window.turnstile.reset === 'function') {
+            try { window.turnstile.reset(); } catch (e) {}
+          }
+          reactiverEnvoi();
+          messageBox.className = 'error';
+          messageBox.innerHTML = `${detail || 'Votre candidature n\'a pas pu être envoyée.'} Vous pouvez réessayer, ou nous joindre au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;
+          return;
+        }
+
+        form.hidden = true;
+        messageBox.className = 'success';
+        messageBox.innerHTML =
+          '<strong>Candidature reçue.</strong> Nous vérifions votre entreprise et revenons vers vous sous 48 h ouvrées.';
+        messageBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (error) {
+        if (window.turnstile && typeof window.turnstile.reset === 'function') {
+          try { window.turnstile.reset(); } catch (e) {}
+        }
+        reactiverEnvoi();
+        messageBox.className = 'error';
+        messageBox.innerHTML = `Votre candidature n'a pas pu être envoyée. Vérifiez votre connexion et réessayez, ou joignez-nous au <a href="tel:${telContact.replace(/\s+/g, '')}">${telContact}</a>.`;
+      }
+    });
+  }
+</script>

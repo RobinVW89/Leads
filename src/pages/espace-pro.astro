@@ -1,0 +1,165 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProForm from '../components/ProForm.astro';
+import { SITE_CONFIG } from '../config/site';
+import { metiersData, villesData } from '../lib/data';
+import { breadcrumbSchema } from '../lib/seo';
+
+const title = 'Espace pro — rejoindre Les Pros de l\'Yonne | Devenir partenaire';
+const description =
+  'Artisan ou entreprise du bâtiment dans l\'Yonne ? Recevez des demandes de particuliers qualifiées, sans abonnement ni commission sur devis. Candidature en 2 minutes.';
+const breadcrumbs = [
+  { label: 'Accueil', href: '/' },
+  { label: 'Espace pro' }
+];
+
+const metiersActifs = metiersData.filter((metier) => metier.actif).length;
+
+const atouts = [
+  {
+    titre: 'Des demandes déjà qualifiées',
+    texte:
+      'Chaque particulier décrit son projet, sa commune et son délai avant que la demande ne vous parvienne. Vous savez à quoi vous engager avant de rappeler.'
+  },
+  {
+    titre: 'Uniquement votre secteur',
+    texte:
+      'Vous choisissez votre activité et votre zone d\'intervention. Vous ne recevez que ce qui vous concerne, dans l\'Yonne.'
+  },
+  {
+    titre: 'Aucune commission sur vos devis',
+    texte:
+      'Ce que vous signez vous appartient. Nous ne prélevons rien sur les chantiers issus des mises en relation.'
+  },
+  {
+    titre: 'Une visibilité locale durable',
+    texte:
+      'Votre activité apparaît sur les pages métier et commune du site, référencées sur les recherches locales du département.'
+  }
+];
+
+const etapes = [
+  {
+    titre: 'Vous candidatez',
+    texte: 'Le formulaire ci-dessous prend deux minutes. Le SIRET nous permet de vérifier votre entreprise.'
+  },
+  {
+    titre: 'Nous vérifions',
+    texte:
+      'Existence légale, ancienneté, certifications et assurances. Nous appelons systématiquement avant d\'intégrer une entreprise.'
+  },
+  {
+    titre: 'Vous recevez vos premières demandes',
+    texte: 'Dès validation, les demandes de votre secteur et de votre métier vous sont transmises par téléphone et email.'
+  }
+];
+
+const schemas = breadcrumbSchema([
+  { name: 'Accueil', url: '/' },
+  { name: 'Espace pro' }
+]);
+---
+
+<Layout
+  title={title}
+  description={description}
+  canonicalPath="/espace-pro/"
+  breadcrumbs={breadcrumbs}
+  jsonLd={schemas}
+  stickyCta={{ label: 'Proposer mon entreprise', href: '#candidature', badge: 'Sans engagement' }}
+>
+  <section class="hero">
+    <div class="hero-grid">
+      <article class="hero-main">
+        <span class="eyebrow">Espace professionnels · Yonne 89</span>
+        <h1>Recevez des demandes de <span class="accent">particuliers</span> près de chez vous.</h1>
+        <p class="hero-lede">
+          Vous êtes artisan ou entreprise du bâtiment dans l'Yonne ? Rejoignez les professionnels vers qui nous
+          orientons les demandes de travaux du département.
+        </p>
+        <ul class="reassurance-list">
+          <li>
+            <span class="check-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
+            </span>
+            <span>Demandes qualifiées, avec projet, commune et délai</span>
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
+            </span>
+            <span>Aucune commission sur les devis que vous signez</span>
+          </li>
+          <li>
+            <span class="check-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7" /></svg>
+            </span>
+            <span>Vous choisissez votre métier et votre zone</span>
+          </li>
+        </ul>
+        <div class="pill-list">
+          <span class="pill">{metiersActifs} métiers couverts</span>
+          <span class="pill">{villesData.length} communes</span>
+          <span class="pill">Yonne uniquement</span>
+        </div>
+      </article>
+
+      <aside class="signature-panel">
+        <div class="search-panel">
+          <h2>Comment ça se passe</h2>
+          <ol class="pro-etapes">
+            {etapes.map((etape, index) => (
+              <li>
+                <span class="step-num" aria-hidden="true">{index + 1}</span>
+                <div>
+                  <strong>{etape.titre}</strong>
+                  <span>{etape.texte}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p class="search-foot">
+            <span>Candidature gratuite</span>
+            <span>Réponse sous 48 h ouvrées</span>
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="rule-block">
+      <h2>Ce que vous y gagnez</h2>
+      <p class="muted">Un apport d'affaires local, sans intermédiaire entre vous et le client.</p>
+    </div>
+    <div class="grid cols-2">
+      {atouts.map((atout) => (
+        <article class="step">
+          <h3>{atout.titre}</h3>
+          <p>{atout.texte}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" id="candidature">
+    <ProForm />
+  </section>
+
+  <section class="section">
+    <div class="band band-green phone-band">
+      <div>
+        <h2>Une question avant de candidater ?</h2>
+        <p class="muted" style="margin-bottom: 0;">
+          Appelez-nous, nous vous expliquons le fonctionnement et le type de demandes que vous recevriez.
+        </p>
+      </div>
+      <a class="phone-number" href={`tel:${SITE_CONFIG.telContactHref}`}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6.2 3.5h3l1.4 3.6-2 1.4a11 11 0 0 0 5 5l1.4-2 3.6 1.4v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.7a2 2 0 0 1 2-2.2Z" />
+        </svg>
+        {SITE_CONFIG.telContact}
+      </a>
+    </div>
+  </section>
+</Layout>

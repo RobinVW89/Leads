@@ -12,7 +12,7 @@ function toUrl(path: string) {
 
 export const GET: APIRoute = () => {
   const lastmod = new Date().toISOString().slice(0, 10);
-  const staticPaths = ['/', '/comment-ca-marche/', '/mentions-legales/', '/politique-confidentialite/'];
+  const staticPaths = ['/', '/comment-ca-marche/', '/espace-pro/', '/mentions-legales/', '/politique-confidentialite/'];
   const hubPaths = villesData.filter((ville) => ville.prioritaire).map((ville) => ({ path: `/${ville.slug}/`, priority: '0.9' }));
 
   // Un métier inactif n'offre pas encore le service : ses pages restent en ligne

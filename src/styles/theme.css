@@ -1964,3 +1964,57 @@ main li {
     transform: none;
   }
 }
+
+/* ---------- Espace pro ---------- */
+
+.pro-fieldset {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: clamp(0.9rem, 2vw, 1.3rem);
+  margin: 0 0 0.4rem;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.pro-fieldset legend {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--vert-profond);
+  padding: 0 0.5rem;
+}
+
+.pro-etapes {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.pro-etapes li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.pro-etapes .step-num {
+  margin-bottom: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 0.98rem;
+  flex: none;
+}
+
+.pro-etapes strong {
+  display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--vert-encre);
+  margin-bottom: 0.15rem;
+}
+
+.pro-etapes span {
+  font-size: 0.93rem;
+  color: var(--gris-doux);
+  line-height: 1.5;
+}

@@ -31,7 +31,12 @@ const CHAMPS_MAX = {
   metier_nom: 120,
   ville: 120,
   page_source: 300,
-  type: 20
+  type: 20,
+  // Champs propres aux candidatures de professionnels (type = 'pro')
+  entreprise: 160,
+  siret: 20,
+  siteWeb: 200,
+  zoneIntervention: 300
 } as const;
 
 type ChampNom = keyof typeof CHAMPS_MAX;
@@ -183,12 +188,21 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     budget: texte(charge.budget, 'budget'),
     qualification: texte(charge.qualification, 'qualification'),
     page_source: texte(charge.page_source, 'page_source'),
+    entreprise: texte(charge.entreprise, 'entreprise'),
+    siret: texte(charge.siret, 'siret').replace(/\s+/g, ''),
+    siteWeb: texte(charge.siteWeb, 'siteWeb'),
+    zoneIntervention: texte(charge.zoneIntervention, 'zoneIntervention'),
     submittedAt: typeof charge.submittedAt === 'string' ? charge.submittedAt.slice(0, 40) : new Date().toISOString()
   };
 
   // Une demande sans aucun moyen de rappel n'a pas d'intérêt.
   if (!lead.email && !lead.telephone) {
     return json({ ok: false, erreur: 'Un email ou un téléphone est nécessaire.' }, 400);
+  }
+
+  // Une candidature professionnelle doit identifier l'entreprise.
+  if (lead.type === 'pro' && !lead.entreprise) {
+    return json({ ok: false, erreur: 'Le nom de l\'entreprise est nécessaire.' }, 400);
   }
 
   // --- Écriture en base --------------------------------------------------
@@ -201,8 +215,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         submitted_at, type, metier, metier_nom, ville,
         prenom, nom, telephone, email, commune, code_postal,
         description, delai_souhaite, budget, qualification,
-        page_source, user_agent, pays
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        page_source, user_agent, pays,
+        entreprise, siret, site_web, zone_intervention
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
       .bind(
         lead.submittedAt,
@@ -222,7 +237,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         lead.qualification,
         lead.page_source,
         (request.headers.get('User-Agent') || '').slice(0, 300),
-        request.headers.get('CF-IPCountry') || ''
+        request.headers.get('CF-IPCountry') || '',
+        lead.entreprise,
+        lead.siret,
+        lead.siteWeb,
+        lead.zoneIntervention
       )
       .run();
 
