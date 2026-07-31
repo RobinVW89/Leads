@@ -178,7 +178,10 @@ export default {
         text: texte
       };
       if (repondreA) {
-        message.replyTo = { email: repondreA };
+        // Le champ « name » est obligatoire et doit être une chaîne :
+        // l'omettre fait échouer l'envoi entier.
+        const nomDemandeur = `${lead.prenom || ''} ${lead.nom || ''}`.trim();
+        message.replyTo = { email: repondreA, name: nomDemandeur || repondreA };
       }
 
       await env.EMAIL.send(message);
