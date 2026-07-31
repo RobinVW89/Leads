@@ -1,0 +1,135 @@
+---
+/**
+ * Bandeau de consentement — mode « consentement basique ».
+ *
+ * Aucun script, cookie ni appel Google n'est émis avant acceptation explicite.
+ * Le choix est conservé dans localStorage, qui n'est pas un cookie et n'est
+ * jamais transmis au serveur : rien ne part avant que l'utilisateur accepte.
+ */
+const ID_ANALYTICS = 'G-D2Y7CDBF3X';
+---
+
+<div id="bandeau-cookies" class="bandeau-cookies" role="dialog" aria-modal="false" aria-labelledby="bandeau-cookies-titre" hidden>
+  <div class="bandeau-cookies-corps">
+    <div>
+      <p id="bandeau-cookies-titre" class="bandeau-cookies-titre">Cookies de mesure d'audience</p>
+      <p class="bandeau-cookies-texte">
+        Nous souhaitons mesurer la fréquentation du site avec Google Analytics, ce qui dépose des cookies.
+        Rien n'est déposé ni transmis tant que vous n'avez pas accepté. Votre choix est modifiable à tout moment.
+        <a href="/politique-confidentialite">En savoir plus</a>
+      </p>
+    </div>
+    <div class="bandeau-cookies-actions">
+      <button type="button" id="cookies-refuser" class="btn btn-ghost">Tout refuser</button>
+      <button type="button" id="cookies-accepter" class="btn">Tout accepter</button>
+      <button type="button" id="cookies-fermer" class="bandeau-cookies-fermer" aria-label="Fermer sans accepter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ ID_ANALYTICS }}>
+  (function () {
+    const CLE = 'consentement-mesure-audience';
+    const bandeau = document.getElementById('bandeau-cookies');
+    if (!bandeau) return;
+
+    let analyticsCharge = false;
+
+    /** Charge Google Analytics. Appelé uniquement après acceptation. */
+    function chargerAnalytics() {
+      if (analyticsCharge) return;
+      analyticsCharge = true;
+
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () {
+        window.dataLayer.push(arguments);
+      };
+      window.gtag('js', new Date());
+      window.gtag('config', ID_ANALYTICS, { anonymize_ip: true });
+
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID_ANALYTICS;
+      document.head.appendChild(script);
+    }
+
+    /**
+     * Supprime les cookies déposés par Google Analytics. Utile lors d'un
+     * retrait de consentement après une acceptation.
+     */
+    function purgerCookiesAnalytics() {
+      const domaines = [location.hostname, '.' + location.hostname];
+      document.cookie.split(';').forEach(function (entree) {
+        const nom = entree.split('=')[0].trim();
+        if (!/^(_ga|_gid|_gat)/.test(nom)) return;
+        domaines.forEach(function (domaine) {
+          document.cookie = nom + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=' + domaine;
+        });
+        document.cookie = nom + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+      });
+    }
+
+    function afficher() {
+      bandeau.hidden = false;
+    }
+
+    function masquer() {
+      bandeau.hidden = true;
+    }
+
+    function enregistrer(choix) {
+      try {
+        localStorage.setItem(CLE, JSON.stringify({ choix: choix, date: new Date().toISOString() }));
+      } catch (e) {
+        // Navigation privée ou stockage refusé : on ne charge rien.
+      }
+    }
+
+    function lireChoix() {
+      try {
+        const brut = localStorage.getItem(CLE);
+        if (!brut) return null;
+        const valeur = JSON.parse(brut);
+        return valeur && valeur.choix ? valeur.choix : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    document.getElementById('cookies-accepter').addEventListener('click', function () {
+      enregistrer('accepte');
+      masquer();
+      chargerAnalytics();
+    });
+
+    // Refuser et fermer produisent le même effet : aucun dépôt.
+    function refuser() {
+      enregistrer('refuse');
+      masquer();
+      purgerCookiesAnalytics();
+    }
+    document.getElementById('cookies-refuser').addEventListener('click', refuser);
+    document.getElementById('cookies-fermer').addEventListener('click', refuser);
+
+    // Lien permanent « Gérer mes cookies », présent dans le pied de page.
+    document.addEventListener('click', function (evenement) {
+      const cible = evenement.target;
+      if (cible instanceof Element && cible.closest('[data-gerer-cookies]')) {
+        evenement.preventDefault();
+        afficher();
+      }
+    });
+
+    // Décision initiale : rien ne se charge sans un « accepte » explicite.
+    const choix = lireChoix();
+    if (choix === 'accepte') {
+      chargerAnalytics();
+    } else if (choix === null) {
+      afficher();
+    }
+  })();
+</script>

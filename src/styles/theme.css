@@ -2018,3 +2018,94 @@ main li {
   color: var(--gris-doux);
   line-height: 1.5;
 }
+
+/* ---------- Bandeau de consentement ---------- */
+
+.bandeau-cookies {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  background: #fff;
+  border-top: 1px solid var(--line-forte);
+  box-shadow: 0 -12px 40px -20px rgba(18, 61, 44, 0.6);
+  padding: 1rem 1.1rem calc(1rem + env(safe-area-inset-bottom));
+}
+
+.bandeau-cookies[hidden] {
+  display: none !important;
+}
+
+.bandeau-cookies-corps {
+  width: min(var(--container), calc(100% - 1rem));
+  margin: 0 auto;
+  display: grid;
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.bandeau-cookies-titre {
+  margin: 0 0 0.25rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  color: var(--vert-encre);
+}
+
+.bandeau-cookies-texte {
+  margin: 0;
+  font-size: 0.94rem;
+  color: var(--gris-doux);
+  max-width: 78ch;
+}
+
+.bandeau-cookies-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+/* Les deux choix ont le même poids visuel : même taille, même hiérarchie. */
+.bandeau-cookies-actions .btn {
+  flex: 1 1 auto;
+  min-width: 150px;
+  font-size: 1rem;
+  padding: 0.7rem 1.2rem;
+  min-height: 46px;
+}
+
+.bandeau-cookies-fermer {
+  background: transparent;
+  color: var(--gris-doux);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.5rem;
+  min-height: 40px;
+  min-width: 40px;
+  box-shadow: none;
+  flex: none;
+}
+
+.bandeau-cookies-fermer:hover {
+  background: var(--creme-chaud);
+  color: var(--encre);
+  box-shadow: none;
+  transform: none;
+}
+
+.bandeau-cookies-fermer svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (min-width: 820px) {
+  .bandeau-cookies-corps {
+    grid-template-columns: 1fr auto;
+    gap: 1.6rem;
+  }
+
+  .bandeau-cookies-actions .btn {
+    flex: 0 0 auto;
+  }
+}

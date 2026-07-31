@@ -1,6 +1,7 @@
 ---
 import { SITE_CONFIG } from '../config/site';
 import BrandMark from '../components/BrandMark.astro';
+import BandeauCookies from '../components/BandeauCookies.astro';
 import '../styles/theme.css';
 
 type Crumb = {
@@ -74,17 +75,8 @@ const enJsonSur = (valeur: object) => JSON.stringify(valeur).replace(/</g, '\\u0
 		<meta name="theme-color" content="#123d2c" />
 		<link rel="preload" href="/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/source-sans-3-400.woff2" as="font" type="font/woff2" crossorigin />
-		<!-- Google tag (gtag.js) -->
-		<script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-D2Y7CDBF3X"></script>
-		<script is:inline>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag('js', new Date());
-
-			gtag('config', 'G-D2Y7CDBF3X');
-		</script>
+		<!-- Google Analytics n'est PAS chargé ici : il ne l'est qu'après
+		     acceptation explicite, par le bandeau de consentement. -->
 		{jsonLdList.map((entry) => (
 			<script is:inline type="application/ld+json" set:html={enJsonSur(entry)} />
 		))}
@@ -198,12 +190,14 @@ const enJsonSur = (valeur: object) => JSON.stringify(valeur).replace(/</g, '\\u0
 				<div class="footer-bottom">
 					<p>
 						<a href="/comment-ca-marche">Comment ça marche</a> • <a href="/mentions-legales">Mentions légales</a>{' '}
-						• <a href="/politique-confidentialite">Politique de confidentialité</a>
+						• <a href="/politique-confidentialite">Politique de confidentialité</a>{' '}
+						• <a href="#" data-gerer-cookies>Gérer mes cookies</a>
 					</p>
 					<p>Réseau local de l'Yonne (89) • Réponse sous 24 h</p>
 				</div>
 			</div>
 		</footer>
+		<BandeauCookies />
 		{stickyCta && (
 			<div class="mobile-sticky-cta" role="region" aria-label="Action rapide">
 				{stickyCta.badge && <span>{stickyCta.badge}</span>}
