@@ -169,27 +169,56 @@ export default {
     const { sujet, html, texte } = construireMessage(lead, env.URL_ADMIN);
     const repondreA = adresseValide(lead.email);
 
-    try {
-      const message: Record<string, unknown> = {
-        to: env.DESTINATAIRE,
-        from: { email: env.EXPEDITEUR, name: "Les Pros de l'Yonne" },
-        subject: sujet,
-        html,
-        text: texte
-      };
-      if (repondreA) {
-        // Le champ « name » est obligatoire et doit être une chaîne :
-        // l'omettre fait échouer l'envoi entier.
-        const nomDemandeur = `${lead.prenom || ''} ${lead.nom || ''}`.trim();
-        message.replyTo = { email: repondreA, name: nomDemandeur || repondreA };
-      }
+    // Plusieurs destinataires : l'API n'accepte qu'une destination par appel,
+    // on envoie donc un message par adresse. Un seul succès suffit à
+    // considérer la demande notifiée, les échecs restant consignés.
+    const destinataires = env.DESTINATAIRE.split(',')
+      .map((adresse) => adresse.trim())
+      .filter(Boolean);
 
-      await env.EMAIL.send(message);
-      return Response.json({ ok: true });
-    } catch (erreur) {
-      // Motif court uniquement : jamais le contenu du message ni les coordonnées.
-      const motif = (erreur as Error)?.message || 'envoi impossible';
-      return Response.json({ ok: false, erreur: motif.slice(0, 160) }, { status: 502 });
+    if (destinataires.length === 0) {
+      return Response.json({ ok: false, erreur: 'aucun destinataire configuré' }, { status: 500 });
     }
+
+    const nomDemandeur = `${lead.prenom || ''} ${lead.nom || ''}`.trim();
+    const echecs: string[] = [];
+    let reussites = 0;
+
+    for (const destinataire of destinataires) {
+      try {
+        const message: Record<string, unknown> = {
+          to: destinataire,
+          from: { email: env.EXPEDITEUR, name: "Les Pros de l'Yonne" },
+          subject: sujet,
+          html,
+          text: texte
+        };
+        if (repondreA) {
+          // Le champ « name » est obligatoire et doit être une chaîne :
+          // l'omettre fait échouer l'envoi entier.
+          message.replyTo = { email: repondreA, name: nomDemandeur || repondreA };
+        }
+
+        await env.EMAIL.send(message);
+        reussites += 1;
+      } catch (erreur) {
+        // Motif court uniquement : jamais le contenu du message ni les
+        // coordonnées du demandeur.
+        const motif = (erreur as Error)?.message || 'envoi impossible';
+        echecs.push(`${destinataire} : ${motif.slice(0, 90)}`);
+      }
+    }
+
+    if (reussites === 0) {
+      return Response.json({ ok: false, erreur: echecs.join(' | ').slice(0, 200) }, { status: 502 });
+    }
+
+    // Succès partiel : la demande est notifiée, mais on signale ce qui a échoué.
+    return Response.json({
+      ok: true,
+      envoyes: reussites,
+      total: destinataires.length,
+      ...(echecs.length > 0 ? { partiel: echecs.join(' | ').slice(0, 200) } : {})
+    });
   }
 };

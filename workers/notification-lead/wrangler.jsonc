@@ -13,12 +13,18 @@
   "send_email": [
     {
       "name": "EMAIL",
-      "allowed_destination_addresses": ["contact@lesprosdelyonne.com", "robsinik@hotmail.fr"]
+      "allowed_destination_addresses": [
+        "contact@lesprosdelyonne.com",
+        "rbn.soyer@gmail.com",
+        "robsinik@hotmail.fr"
+      ]
     }
   ],
 
   "vars": {
-    "DESTINATAIRE": "contact@lesprosdelyonne.com",
+    // Deux destinataires : archive sur l'adresse professionnelle, alerte
+    // immédiate sur la boîte réellement consultée.
+    "DESTINATAIRE": "contact@lesprosdelyonne.com,rbn.soyer@gmail.com",
     "EXPEDITEUR": "notifications@lesprosdelyonne.com",
     "URL_ADMIN": "https://lesprosdelyonne.com/admin"
   },
