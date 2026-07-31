@@ -19,5 +19,23 @@
   // La clé secrète est un secret Pages (TURNSTILE_SECRET_KEY), jamais versionnée.
   "vars": {
     "TURNSTILE_SITE_KEY": "0x4AAAAAAECMgELzsW8pYyu0"
+  },
+
+  // Les déploiements de prévisualisation écrivent dans une base distincte :
+  // un test ne doit jamais toucher aux demandes réelles. Le binding racine
+  // ci-dessus reste celui de la production et n'est pas modifié.
+  "env": {
+    "preview": {
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "lesprosdelyonne-leads-preview",
+          "database_id": "545e0dd2-87af-4f28-ac40-64c399396f39"
+        }
+      ],
+      "vars": {
+        "TURNSTILE_SITE_KEY": "0x4AAAAAAECMgELzsW8pYyu0"
+      }
+    }
   }
 }
