@@ -1,9 +1,9 @@
 /**
  * Réception des demandes du formulaire.
  *
- * Ordre volontaire : on enregistre en base AVANT de relayer vers le webhook.
- * Si le relais échoue, la demande n'est pas perdue — elle reste consultable
- * dans /admin avec transmis_webhook = 0.
+ * Ordre volontaire : on enregistre en base AVANT toute notification. Si
+ * l'envoi de l'e-mail échoue, la demande n'est pas perdue — elle reste
+ * consultable dans /admin, marquée « notification NON envoyée ».
  */
 
 import { avecEntetesSecurite } from '../_lib/entetes';
@@ -11,14 +11,9 @@ import { avecEntetesSecurite } from '../_lib/entetes';
 type Env = {
   DB: D1Database;
   TURNSTILE_SECRET_KEY?: string;
-  WEBHOOK_URL?: string;
   /** Worker de notification, joint par Service binding. */
   NOTIFICATION?: { fetch: (request: Request) => Promise<Response> };
 };
-
-// Doit rester aligné sur SITE_CONFIG.n8nWebhookUrl (src/config/site.ts).
-// Surchargeable par une variable d'environnement Pages sans redéploiement.
-const WEBHOOK_PAR_DEFAUT = 'https://formspree.io/f/mpqgnvvg';
 
 const CHAMPS_MAX = {
   prenom: 80,
@@ -331,33 +326,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
   }
 
-  // --- Relais vers le webhook (flux e-mail existant) ----------------------
-  let transmis = false;
-  try {
-    const reponse = await fetch(env.WEBHOOK_URL || WEBHOOK_PAR_DEFAUT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(lead)
-    });
-    transmis = reponse.ok;
-  } catch {
-    transmis = false;
+  // La demande n'est reçue que si elle est effectivement enregistrée : c'est
+  // la base qui fait foi, la notification n'étant qu'une alerte.
+  if (!leadId) {
+    return json({ ok: false, erreur: 'Enregistrement impossible.' }, 502);
   }
 
-  if (leadId && transmis) {
-    try {
-      await env.DB.prepare('UPDATE leads SET transmis_webhook = 1, statut = ? WHERE id = ?')
-        .bind('transmis', leadId)
-        .run();
-    } catch {
-      // Sans gravité : la demande est enregistrée, seul l'indicateur reste à 0.
-    }
-  }
-
-  // La demande est considérée reçue dès qu'elle est enregistrée OU transmise.
-  if (!leadId && !transmis) {
-    return json({ ok: false, erreur: erreurBase ? 'Enregistrement impossible.' : 'Transmission impossible.' }, 502);
-  }
-
-  return json({ ok: true, enregistre: Boolean(leadId), transmis, notifie });
+  return json({ ok: true, enregistre: true, notifie });
 };

@@ -6,7 +6,7 @@ Portail statique Astro de mise en relation locale entre particuliers et professi
 
 - Astro (site statique)
 - Données pilotées par JSON (`src/data/metiers.json`, `src/data/villes.json`, `src/data/parcours.json`)
-- Formulaire JSON envoyé vers webhook n8n
+- Formulaire enregistré dans Cloudflare D1, notification par e-mail via un Worker Cloudflare
 - Compatible Cloudflare Pages
 
 ## Installation et build
@@ -50,7 +50,7 @@ Le build de production est généré dans `dist/`.
 ### Activer un métier "bientot"
 
 1. Mettre `actif: true` dans l'objet du metier dans `src/data/metiers.json`.
-2. Verifier dans votre workflow n8n/Formspree la ligne de routage du slug metier (champ `metier`) pour que les leads de ce metier soient bien traites.
+2. Verifier que le metier apparait bien dans l'espace d'administration apres un envoi de test.
 3. Relancer `npm run build` puis pousser sur `main`.
 
 Quand `actif: false`, le formulaire est remplace par une capture d'email d'intention envoyee avec `type: "intention"`.
@@ -65,14 +65,14 @@ Quand `actif: false`, le formulaire est remplace par une capture d'email d'inten
 
 Les pages métier et métier x ville sont générées automatiquement.
 
-## Où changer N8N_WEBHOOK_URL et TEL_CONTACT
+## Où changer les destinataires de notification et TEL_CONTACT
 
 Modifier le fichier unique de configuration : `src/config/site.ts`
 
-- `n8nWebhookUrl` : URL du webhook n8n
+- Destinataires des notifications : variable `DESTINATAIRE` dans `workers/notification-lead/wrangler.jsonc`
 - `telContact` et `telContactHref` : numéro affiché et lien cliquable
 
-## Exemple de payload JSON envoyé au webhook
+## Exemple de payload JSON envoyé à /api/lead
 
 ```json
 {

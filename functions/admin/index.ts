@@ -231,12 +231,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     env.DB.prepare(
       `SELECT COUNT(*) AS total,
               SUM(CASE WHEN statut = 'nouveau' THEN 1 ELSE 0 END) AS nouveaux,
-              SUM(CASE WHEN transmis_webhook = 0 THEN 1 ELSE 0 END) AS non_transmis,
               SUM(CASE WHEN created_at >= datetime('now','-7 days') THEN 1 ELSE 0 END) AS semaine,
               SUM(CASE WHEN type = 'pro' THEN 1 ELSE 0 END) AS pros,
               SUM(CASE WHEN notifie_email = 0 THEN 1 ELSE 0 END) AS non_notifies
        FROM leads`
-    ).first<{ total: number; nouveaux: number; non_transmis: number; semaine: number; pros: number; non_notifies: number }>(),
+    ).first<{ total: number; nouveaux: number; semaine: number; pros: number; non_notifies: number }>(),
     env.DB.prepare('SELECT DISTINCT metier FROM leads WHERE metier <> "" ORDER BY metier').all<{ metier: string }>(),
     env.DB.prepare('SELECT DISTINCT ville FROM leads WHERE ville <> "" ORDER BY ville').all<{ ville: string }>(),
     env.DB.prepare(`SELECT * FROM leads ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`)
@@ -306,8 +305,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
                 ? `<br><span style="font-size:.76rem;color:#97302f">${echapper(l.notification_erreur)}</span>`
                 : ''
             }`
-      }${
-        l.transmis_webhook === 0 ? '<br><span class="ko">webhook non transmis</span>' : ''
       }</td>
   <td><b>${echapper(l.metier_nom || l.metier)}</b><br><span style="color:#5b6b61">${echapper(l.ville)}</span>${
         l.type === 'intention' ? '<br><span class="tag t-perdu">intention</span>' : ''
