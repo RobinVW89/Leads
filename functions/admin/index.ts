@@ -36,6 +36,8 @@ type LigneLead = {
   page_source: string | null;
   statut: string;
   transmis_webhook: number;
+  notifie_email: number;
+  notification_erreur: string | null;
   entreprise: string | null;
   siret: string | null;
   site_web: string | null;
@@ -231,9 +233,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               SUM(CASE WHEN statut = 'nouveau' THEN 1 ELSE 0 END) AS nouveaux,
               SUM(CASE WHEN transmis_webhook = 0 THEN 1 ELSE 0 END) AS non_transmis,
               SUM(CASE WHEN created_at >= datetime('now','-7 days') THEN 1 ELSE 0 END) AS semaine,
-              SUM(CASE WHEN type = 'pro' THEN 1 ELSE 0 END) AS pros
+              SUM(CASE WHEN type = 'pro' THEN 1 ELSE 0 END) AS pros,
+              SUM(CASE WHEN notifie_email = 0 THEN 1 ELSE 0 END) AS non_notifies
        FROM leads`
-    ).first<{ total: number; nouveaux: number; non_transmis: number; semaine: number; pros: number }>(),
+    ).first<{ total: number; nouveaux: number; non_transmis: number; semaine: number; pros: number; non_notifies: number }>(),
     env.DB.prepare('SELECT DISTINCT metier FROM leads WHERE metier <> "" ORDER BY metier').all<{ metier: string }>(),
     env.DB.prepare('SELECT DISTINCT ville FROM leads WHERE ville <> "" ORDER BY ville').all<{ ville: string }>(),
     env.DB.prepare(`SELECT * FROM leads ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`)
@@ -259,7 +262,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   <div class="stat"><b>${stats?.nouveaux ?? 0}</b><span>à traiter</span></div>
   <div class="stat"><b>${stats?.semaine ?? 0}</b><span>ces 7 derniers jours</span></div>
   <div class="stat"><b>${stats?.pros ?? 0}</b><span>candidatures pro</span></div>
-  <div class="stat"><b class="${(stats?.non_transmis ?? 0) > 0 ? 'ko' : ''}">${stats?.non_transmis ?? 0}</b><span>non transmises au webhook</span></div>
+  <div class="stat"><b class="${(stats?.non_notifies ?? 0) > 0 ? 'ko' : ''}">${stats?.non_notifies ?? 0}</b><span>sans notification e-mail</span></div>
 </div>
 <form class="filtres" method="get">
   <div><label for="f-metier">Métier</label><select id="f-metier" name="metier"><option value="">Tous</option>${optionsMetier}</select></div>
@@ -296,7 +299,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       const qual = qualificationLisible(l.qualification);
       return `<tr>
   <td><b>${dateCourte(l.created_at)}</b><br><span class="tag t-${echapper(l.statut)}">${echapper(l.statut)}</span>${
-        l.transmis_webhook === 0 ? '<br><span class="ko">non transmis</span>' : ''
+        l.notifie_email === 1
+          ? '<br><span class="tag t-transmis">notification envoyée</span>'
+          : `<br><span class="ko">notification NON envoyée</span>${
+              l.notification_erreur
+                ? `<br><span style="font-size:.76rem;color:#97302f">${echapper(l.notification_erreur)}</span>`
+                : ''
+            }`
+      }${
+        l.transmis_webhook === 0 ? '<br><span class="ko">webhook non transmis</span>' : ''
       }</td>
   <td><b>${echapper(l.metier_nom || l.metier)}</b><br><span style="color:#5b6b61">${echapper(l.ville)}</span>${
         l.type === 'intention' ? '<br><span class="tag t-perdu">intention</span>' : ''

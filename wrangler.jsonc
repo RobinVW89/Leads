@@ -21,6 +21,15 @@
     "TURNSTILE_SITE_KEY": "0x4AAAAAAECMgELzsW8pYyu0"
   },
 
+  // Les Pages Functions ne supportent pas le binding send_email : la
+  // notification passe par un Worker dédié, joint en interne.
+  "services": [
+    {
+      "binding": "NOTIFICATION",
+      "service": "notification-lead-lesprosdelyonne"
+    }
+  ],
+
   // Les déploiements de prévisualisation écrivent dans une base distincte :
   // un test ne doit jamais toucher aux demandes réelles. Le binding racine
   // ci-dessus reste celui de la production et n'est pas modifié.
@@ -35,7 +44,13 @@
       ],
       "vars": {
         "TURNSTILE_SITE_KEY": "0x4AAAAAAECMgELzsW8pYyu0"
-      }
+      },
+      "services": [
+        {
+          "binding": "NOTIFICATION",
+          "service": "notification-lead-lesprosdelyonne"
+        }
+      ]
     }
   }
 }

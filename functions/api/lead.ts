@@ -12,6 +12,8 @@ type Env = {
   DB: D1Database;
   TURNSTILE_SECRET_KEY?: string;
   WEBHOOK_URL?: string;
+  /** Worker de notification, joint par Service binding. */
+  NOTIFICATION?: { fetch: (request: Request) => Promise<Response> };
 };
 
 // Doit rester aligné sur SITE_CONFIG.n8nWebhookUrl (src/config/site.ts).
@@ -292,6 +294,43 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     erreurBase = error instanceof Error ? error.message : 'inconnue';
   }
 
+  // --- Notification par e-mail --------------------------------------------
+  // Toujours APRÈS l'enregistrement : un échec d'envoi ne doit jamais faire
+  // perdre une demande. Le résultat est consigné pour être visible dans /admin.
+  let notifie = false;
+  let erreurNotification: string | null = null;
+
+  if (env.NOTIFICATION) {
+    try {
+      const reponse = await env.NOTIFICATION.fetch(
+        new Request('https://notification-lead/envoyer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...lead, id: leadId })
+        })
+      );
+      const resultat = (await reponse.json()) as { ok?: boolean; erreur?: string };
+      notifie = reponse.ok && resultat.ok === true;
+      if (!notifie) {
+        erreurNotification = (resultat.erreur || `statut ${reponse.status}`).slice(0, 200);
+      }
+    } catch (error) {
+      erreurNotification = (error instanceof Error ? error.message : 'service injoignable').slice(0, 200);
+    }
+  } else {
+    erreurNotification = 'service de notification non configuré';
+  }
+
+  if (leadId) {
+    try {
+      await env.DB.prepare('UPDATE leads SET notifie_email = ?, notification_erreur = ? WHERE id = ?')
+        .bind(notifie ? 1 : 0, erreurNotification, leadId)
+        .run();
+    } catch {
+      // L'essentiel — la demande — est déjà en base.
+    }
+  }
+
   // --- Relais vers le webhook (flux e-mail existant) ----------------------
   let transmis = false;
   try {
@@ -320,5 +359,5 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return json({ ok: false, erreur: erreurBase ? 'Enregistrement impossible.' : 'Transmission impossible.' }, 502);
   }
 
-  return json({ ok: true, enregistre: Boolean(leadId), transmis });
+  return json({ ok: true, enregistre: Boolean(leadId), transmis, notifie });
 };

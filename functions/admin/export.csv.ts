@@ -19,6 +19,8 @@ const COLONNES = [
   'type',
   'statut',
   'transmis_webhook',
+  'notifie_email',
+  'notification_erreur',
   'metier',
   'metier_nom',
   'ville',
