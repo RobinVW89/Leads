@@ -8,16 +8,21 @@
   // Aucune URL publique : le Worker n'est joignable que par le Service binding.
   "workers_dev": false,
 
-  // Destinations autorisées, vérifiées dans Email Routing. Cloudflare refuse
-  // tout autre destinataire, ce qui empêche d'en faire un relais ouvert.
+  // Aucune liste figée ici : Cloudflare n'accepte de toute façon que les
+  // adresses vérifiées dans Email Routing du compte. Énumérer les destinataires
+  // aurait imposé un redéploiement du Worker à chaque nouveau professionnel,
+  // pour une garantie que la vérification d'adresse apporte déjà.
+  //
+  // Ce n'est pas la seule condition : /admin ne propose un professionnel que
+  // s'il est actif, disponible et son adresse marquée vérifiée. Cloudflare
+  // tranche en dernier — si la destination n'a jamais été validée, l'envoi
+  // échoue, et la demande est libérée sans avoir été marquée transmise.
+  //
+  // La prévisualisation garde, elle, une liste explicite : un test ne doit
+  // jamais pouvoir atteindre un vrai professionnel.
   "send_email": [
     {
-      "name": "EMAIL",
-      "allowed_destination_addresses": [
-        "contact@lesprosdelyonne.com",
-        "rbn.soyer@gmail.com",
-        "robsinik@hotmail.fr"
-      ]
+      "name": "EMAIL"
     }
   ],
 
@@ -26,6 +31,11 @@
     // immédiate sur la boîte réellement consultée.
     "DESTINATAIRE": "contact@lesprosdelyonne.com,rbn.soyer@gmail.com",
     "EXPEDITEUR": "notifications@lesprosdelyonne.com",
+
+    // Reply-To des offres : tant que la demande n'est pas acceptée, une réponse
+    // du professionnel doit nous revenir. L'adresse du demandeur ne lui est
+    // communiquée qu'après acceptation.
+    "CONTACT_PUBLIC": "contact@lesprosdelyonne.com",
     "URL_ADMIN": "https://lesprosdelyonne.com/admin"
   },
 

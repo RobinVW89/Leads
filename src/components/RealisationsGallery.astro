@@ -1,4 +1,5 @@
 ---
+import { readdirSync } from 'node:fs';
 import { getRealisationCaptions } from '../lib/content';
 
 type Props = {
@@ -10,9 +11,43 @@ type Props = {
 const { metierSlug, metierNom, villeNom } = Astro.props;
 const locationLabel = villeNom ? `à ${villeNom}` : "dans l'Yonne";
 const captions = getRealisationCaptions(metierSlug, metierNom).slice(0, 3);
-const images = captions.map((caption, index) => ({
-  src: `/images/realisations/placeholder-${index + 1}.svg`,
-  alt: `${caption} ${locationLabel}`
+
+/**
+ * Photos du métier, déposées dans `public/images/realisations/<slug>/`.
+ *
+ * La lecture se fait au build : le site est statique, il n'y a donc rien à
+ * charger côté visiteur. Ajouter un fichier dans le dossier suffit, sans
+ * toucher au code — mais il faut relancer un build pour le voir en ligne.
+ *
+ * Tant qu'un dossier est vide, les visuels provisoires restent affichés :
+ * mieux vaut une illustration neutre qu'une grille trouée.
+ */
+const EXTENSIONS = /\.(jpe?g|png|webp|avif|svg)$/i;
+
+function photosDuMetier(slug: string): string[] {
+  try {
+    return readdirSync(`public/images/realisations/${slug}`)
+      .filter((fichier) => EXTENSIONS.test(fichier))
+      // Ordre naturel : « photo-2 » passe avant « photo-10 ».
+      .sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }))
+      .slice(0, 3)
+      .map((fichier) => `/images/realisations/${slug}/${encodeURIComponent(fichier)}`);
+  } catch {
+    // Dossier absent : un métier ajouté sans son dossier ne casse pas le build.
+    return [];
+  }
+}
+
+const photos = photosDuMetier(metierSlug);
+const provisoire = photos.length === 0;
+
+const sources = provisoire
+  ? captions.map((_, index) => `/images/realisations/placeholder-${index + 1}.svg`)
+  : photos;
+
+const images = sources.map((src, index) => ({
+  src,
+  alt: `${captions[index] ?? captions[0]} ${locationLabel}`
 }));
 
 if (villeNom === 'Auxerre' && images.length > 0) {
@@ -28,14 +63,18 @@ if (villeNom === 'Auxerre' && images.length > 0) {
     <h2>Réalisations dans l'Yonne</h2>
   </div>
   <p class="muted">
-    {villeNom ? `Exemples de chantiers proches de ${villeNom}.` : "Exemples de chantiers réalisés dans l'Yonne. Les visuels sont provisoires en attente des photos partenaires."}
+    {villeNom
+      ? `Exemples de chantiers proches de ${villeNom}.`
+      : provisoire
+        ? "Exemples de chantiers réalisés dans l'Yonne. Les visuels sont provisoires en attente des photos partenaires."
+        : "Exemples de chantiers réalisés dans l'Yonne."}
   </p>
   <div class="realisations-grid">
     {images.map((image, index) => (
       <figure class="realisations-card">
         <img src={image.src} alt={image.alt} loading="lazy" decoding="async" />
         <figcaption>
-          {captions[index]}
+          {captions[index] ?? captions[0]}
         </figcaption>
       </figure>
     ))}

@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "verifier": "tsc --noEmit -p tsconfig.cloudflare.json && npm test"
   },
   "dependencies": {
     "astro": "^7.0.6",

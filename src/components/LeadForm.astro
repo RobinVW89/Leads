@@ -159,17 +159,21 @@ const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
 
         <div>
           <label style="display: flex; gap: 0.65rem; align-items: flex-start;">
-            <input type="checkbox" name="consentementDonnees" required style="margin-top: 0.2rem;" />
+            <input
+              type="checkbox"
+              name="consentementDonnees"
+              required
+              autocomplete="off"
+              style="margin-top: 0.2rem;"
+            />
             <span>
-              J'accepte la <a href="/politique-confidentialite">politique de gestion des données lesprosdelyonne</a>{' '}
-              pour le traitement de ma demande.
+              J'accepte que mes coordonnées et les informations relatives à ma demande soient
+              transmises à un professionnel référencé correspondant au métier et à la zone
+              sélectionnés, afin qu'il puisse me contacter.{' '}
+              <a href="/politique-confidentialite">Politique de confidentialité</a>.
             </span>
           </label>
         </div>
-
-        <p class="muted" style="margin: 0;">
-          En envoyant, vous acceptez la transmission de votre demande au professionnel concerné.
-        </p>
 
         <span class="inline-note">Réponse sous 24 h</span>
 
@@ -199,10 +203,18 @@ const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
         </div>
         <div>
           <label style="display: flex; gap: 0.65rem; align-items: flex-start;">
-            <input type="checkbox" name="consentementDonnees" required style="margin-top: 0.2rem;" />
+            <input
+              type="checkbox"
+              name="consentementDonnees"
+              required
+              autocomplete="off"
+              style="margin-top: 0.2rem;"
+            />
             <span>
-              J'accepte la <a href="/politique-confidentialite">politique de gestion des données lesprosdelyonne</a>{' '}
-              pour le traitement de ma demande.
+              J'accepte que mes coordonnées et les informations relatives à ma demande soient
+              transmises à un professionnel référencé correspondant au métier et à la zone
+              sélectionnés, afin qu'il puisse me contacter.{' '}
+              <a href="/politique-confidentialite">Politique de confidentialité</a>.
             </span>
           </label>
         </div>
@@ -226,11 +238,7 @@ const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
         <>
           <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;">
             <button type="submit">Me prévenir à l'ouverture</button>
-          </div>
-          <p class="muted" style="margin: 0;">
-            En envoyant, vous acceptez la transmission de votre demande au professionnel concerné.
-          </p>
-        </>
+          </div>        </>
       )
     }
   </form>
