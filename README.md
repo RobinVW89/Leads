@@ -174,6 +174,14 @@ et `/informer-admin`) et appliquer les migrations `0004` à `0006` sur
 
 Quand `actif: false`, le formulaire est remplace par une capture d'email d'intention envoyee avec `type: "intention"`.
 
+### Ajouter des photos de réalisations
+
+Un dossier par métier dans `public/images/realisations/<slug>/`. Déposer les
+fichiers, relancer `npm run build`, déployer. Les trois premiers par ordre
+alphabétique sont affichés ; tant qu'un dossier est vide, les visuels
+provisoires restent en place. Détails et précautions :
+`public/images/realisations/LISEZ-MOI.md`.
+
 ### Ajouter une ville
 
 1. Ajouter un objet dans `src/data/villes.json` avec :
