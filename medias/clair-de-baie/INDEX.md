@@ -10,14 +10,16 @@ Je la redimensionne, la renomme selon le métier et la place dans
 
 ## Ce qui manque, et pourquoi
 
-Aucune photo de **portail** ni de **store** ne figure ici. Ce n'est pas un oubli :
+Les photos de **portail** et de **store** ont été fournies directement par
+l'entreprise et sont désormais en ligne — voir `portails/` et `stores/`.
+
+Elles ne provenaient pas de son site. Ce n'était pas un oubli de ma part :
 le site de Clair de Baie n'en publie aucune qui leur appartienne. Les seuls
 visuels de portail y sont des images de catalogue fabricant — noms de modèle et
 références RAL dans les noms de fichiers — affichées en tant que revendeur, plus
 une couverture de plaquette commerciale. Ces trois-là ne sont pas reprises ici.
 
-Il faut donc leur demander directement une photo de portail et une photo de
-store, avec l'autorisation de diffusion écrite. Deux dossiers les attendent :
+Deux dossiers les accueillent :
 
 | Dossier | Destination une fois traitée |
 |---|---|
@@ -56,7 +58,7 @@ Source : `fenetres-fenetre-moneteau.html`
 | `fenetre-09` | disponible |
 | `fenetre-10` | disponible |
 | `fenetre-11` | disponible |
-| `fenetre-12` | **déjà en ligne** → `menuisier-portail-fenetre/2-fenetres-volets.jpg` |
+| `fenetre-12` | disponible — retirée au profit du portail |
 | `fenetre-13` | disponible |
 
 ## Portes d'entrée (6)

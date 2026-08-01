@@ -18,11 +18,11 @@ contenaient des patronymes de clients particuliers.
 | Fichier | Page d'origine |
 |---|---|
 | `menuisier-portail-fenetre/1-fenetres-bois-alu.jpg` | fenetres |
-| `menuisier-portail-fenetre/2-fenetres-volets.jpg` | fenetres |
+| `menuisier-portail-fenetre/2-portail-aluminium.jpg` | fournie directement par l'entreprise |
 | `menuisier-portail-fenetre/3-porte-entree-aluminium.jpg` | porte-d-entree |
 | `veranda-pergola-store/1-veranda-alu.jpg` | verandas-pergolas |
 | `veranda-pergola-store/2-pergola-bioclimatique.jpg` | verandas-pergolas |
-| `veranda-pergola-store/3-veranda-interieur.jpg` | verandas-pergolas |
+| `veranda-pergola-store/3-store-banne.jpg` | fournie directement par l'entreprise |
 | `isolation/1-bardage-exterieur.jpg` | terrasses-isolation-stores |
 | `isolation/2-isolation-facade.jpg` | terrasses-isolation-stores |
 | `isolation/3-bardage-pignon.jpg` | terrasses-isolation-stores |
@@ -39,7 +39,15 @@ vraisemblablement pas titulaire et ne peut donc pas les céder.
 incertaine.
 
 **Photos où figure une personne.** Le droit à l'image se demande séparément de
-celui du photographe. Aucune des neuf retenues n'en comporte.
+celui du photographe. Aucune des photos retenues n'en comporte.
+
+### Portail et store
+
+Le site de l'entreprise ne publiait aucune photo de portail ni de store qui lui
+appartienne : ses pages « portails et clôtures » ne montrent que des visuels de
+catalogue de son fournisseur, reconnaissables à leurs noms de gamme et à leurs
+références de teinte. Ces deux photos ont donc été fournies directement par
+Clair de Baie, hors de son site.
 
 ### Point restant ouvert
 
