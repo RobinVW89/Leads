@@ -45,10 +45,13 @@
       "vars": {
         "TURNSTILE_SITE_KEY": "0x4AAAAAAECMgELzsW8pYyu0"
       },
+      // La prévisualisation vise un Worker de notification distinct, dont les
+      // destinataires professionnels sont limités à des adresses de test. Le
+      // Worker de production n'est ni modifié ni sollicité pendant les essais.
       "services": [
         {
           "binding": "NOTIFICATION",
-          "service": "notification-lead-lesprosdelyonne"
+          "service": "notification-lead-preview-lesprosdelyonne"
         }
       ]
     }

@@ -1,0 +1,49 @@
+{
+  // Jumeau du Worker de notification, réservé aux déploiements de
+  // prévisualisation. Il existe pour une seule raison : tester le routage sans
+  // toucher au Worker de production, qui continue de servir lesprosdelyonne.com
+  // avec le code de `main`.
+  //
+  // Déploiement :
+  //   npx wrangler deploy --config workers/notification-lead/wrangler.preview.jsonc
+  "name": "notification-lead-preview-lesprosdelyonne",
+  "main": "index.ts",
+  "compatibility_date": "2025-12-08",
+
+  // Aucune URL publique : joignable uniquement par le Service binding de la
+  // prévisualisation Pages.
+  "workers_dev": false,
+
+  // Première barrière, posée par Cloudflare lui-même : aucune autre adresse ne
+  // peut recevoir de message depuis ce Worker, quelle que soit la demande
+  // envoyée par /admin. Un test ne peut donc pas atteindre un professionnel.
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "allowed_destination_addresses": [
+        "contact@lesprosdelyonne.com",
+        "rbn.soyer@gmail.com",
+        "robsinik@hotmail.fr"
+      ]
+    }
+  ],
+
+  "vars": {
+    // Notification administrateur : les deux adresses habituelles.
+    "DESTINATAIRE": "contact@lesprosdelyonne.com,rbn.soyer@gmail.com",
+    "EXPEDITEUR": "notifications@lesprosdelyonne.com",
+
+    // Lien sécurisé de la notification : la prévisualisation de la branche,
+    // protégée par la même politique Cloudflare Access que la production.
+    "URL_ADMIN": "https://routage-leads.denys-dgm.pages.dev/admin",
+
+    // Seconde barrière, applicative : seules ces adresses peuvent recevoir un
+    // e-mail « professionnel ». En production cette variable reste vide, et
+    // c'est la vérification d'adresse Cloudflare qui borne les envois.
+    "DESTINATAIRES_PRO_AUTORISES": "rbn.soyer@gmail.com,robsinik@hotmail.fr"
+  },
+
+  "observability": {
+    "enabled": true
+  }
+}

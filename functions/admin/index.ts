@@ -7,14 +7,9 @@
  * la requête ne peut pas arriver ici sans avoir passé Access.
  */
 
-import { estAdmin, identifierViaAccess } from '../_lib/access';
-import { avecEntetesSecurite } from '../_lib/entetes';
+import { echapper, garderAdmin, pageAdmin, reponseHtml, type EnvAdmin } from '../_lib/admin-page';
 
-type Env = {
-  DB: D1Database;
-  /** Liste blanche des identités autorisées, séparées par des virgules. */
-  ADMIN_EMAILS?: string;
-};
+type Env = EnvAdmin;
 
 type LigneLead = {
   id: number;
@@ -42,18 +37,10 @@ type LigneLead = {
   siret: string | null;
   site_web: string | null;
   zone_intervention: string | null;
+  pro_actif_id: number | null;
 };
 
 const PAR_PAGE = 50;
-
-function echapper(valeur: unknown): string {
-  return String(valeur ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 /**
  * Une URL saisie par un candidat ne doit jamais devenir un href tel quel :
@@ -92,83 +79,13 @@ function qualificationLisible(brut: string | null): string {
   }
 }
 
-function page(contenu: string, identite: string): string {
-  return `<!doctype html>
-<html lang="fr"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Demandes — Les Pros de l'Yonne</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#1b2a22;background:#fdf9f1}
-header{background:#123d2c;color:#fff;padding:1rem 1.4rem;display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between}
-header h1{margin:0;font-size:1.15rem;letter-spacing:-.01em}
-header .qui{font-size:.86rem;color:#c9dccf}
-main{padding:1.4rem;max-width:1500px;margin:0 auto}
-.stats{display:flex;flex-wrap:wrap;gap:.7rem;margin-bottom:1.2rem}
-.stat{background:#fff;border:1px solid #e7dcc8;border-radius:12px;padding:.7rem 1rem;min-width:130px}
-.stat b{display:block;font-size:1.5rem;line-height:1.2;color:#123d2c}
-.stat span{font-size:.82rem;color:#5b6b61}
-form.filtres{display:flex;flex-wrap:wrap;gap:.6rem;align-items:flex-end;margin-bottom:1rem;background:#fff;border:1px solid #e7dcc8;border-radius:12px;padding:.9rem}
-form.filtres label{font-size:.8rem;font-weight:600;color:#5b6b61;display:block;margin-bottom:.2rem}
-input,select{font:inherit;padding:.5rem .6rem;border:1.5px solid #d9c8ac;border-radius:8px;background:#fff;min-height:40px}
-button{font:inherit;font-weight:700;padding:.5rem 1rem;border:0;border-radius:8px;background:#c1552b;color:#fff;cursor:pointer;min-height:40px}
-button.sec{background:#123d2c}
-button.danger{background:#fff;color:#97302f;border:1.5px solid #e4b9b8;font-weight:600;padding:.3rem .6rem;min-height:32px}
-a.btn{display:inline-flex;align-items:center;padding:.5rem 1rem;background:#123d2c;color:#fff;border-radius:8px;text-decoration:none;font-weight:700;min-height:40px}
-.tablewrap{overflow-x:auto;background:#fff;border:1px solid #e7dcc8;border-radius:12px}
-table{border-collapse:collapse;width:100%;font-size:.88rem}
-th,td{padding:.6rem .7rem;text-align:left;border-bottom:1px solid #f0e8d8;vertical-align:top}
-th{background:#f7efe1;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:#5b6b61;position:sticky;top:0}
-tr:hover td{background:#fdfaf4}
-.tag{display:inline-block;padding:.12rem .5rem;border-radius:999px;font-size:.76rem;font-weight:700;white-space:nowrap}
-.t-nouveau{background:#fdf1d3;color:#6d4a12}
-.t-transmis{background:#e4eee6;color:#123d2c}
-.t-traite{background:#dbeafe;color:#1e40af}
-.t-perdu{background:#f3f4f6;color:#4b5563}
-.ko{color:#97302f;font-weight:700}
-.desc{max-width:340px;color:#3a4a41}
-.qual{max-width:340px;font-size:.82rem;color:#5b6b61}
-.vide{padding:3rem 1rem;text-align:center;color:#5b6b61}
-.pag{display:flex;gap:.6rem;align-items:center;margin-top:1rem}
-@media(max-width:700px){main{padding:.8rem}.desc,.qual{max-width:200px}}
-</style></head><body>
-<header>
-  <h1>Demandes reçues — Les Pros de l'Yonne</h1>
-  <span class="qui">${echapper(identite)}</span>
-</header>
-<main>${contenu}</main>
-</body></html>`;
-}
-
 export const onRequest: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
   const url = new URL(request.url);
 
-  const estLocal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
-  let identite = 'session locale de développement';
-
-  if (!estLocal) {
-    // Preuve d'identité : JWT signé par Cloudflare, vérifié cryptographiquement.
-    const acces = await identifierViaAccess(request);
-    if (!acces.ok) {
-      return avecEntetesSecurite(
-        new Response(`Accès refusé. Authentification Cloudflare Access requise (${acces.motif}).`, {
-          status: 403,
-          headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
-        })
-      );
-    }
-    if (!estAdmin(acces.email, env.ADMIN_EMAILS)) {
-      return avecEntetesSecurite(
-        new Response(`Accès refusé. L'identité ${acces.email} n'est pas habilitée sur cet espace.`, {
-          status: 403,
-          headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
-        })
-      );
-    }
-    identite = acces.email;
-  }
+  const acces = await garderAdmin(request, env);
+  if (!acces.ok) return acces.reponse;
+  const identite = acces.identite;
 
   // --- Actions -----------------------------------------------------------
   if (request.method === 'POST') {
@@ -281,15 +198,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 </form>`;
 
   if (nbTotal === 0) {
-    return avecEntetesSecurite(
-      new Response(
-        page(
-          filtres + '<div class="tablewrap"><p class="vide">Aucune demande ne correspond. La base est prête et attend le premier envoi.</p></div>',
-          identite
-        ),
-        { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } }
-      ),
-      'admin'
+    return reponseHtml(
+      pageAdmin(
+        'Demandes reçues',
+        filtres + '<div class="tablewrap"><p class="vide">Aucune demande ne correspond. La base est prête et attend le premier envoi.</p></div>',
+        identite,
+        'demandes'
+      )
     );
   }
 
@@ -328,6 +243,17 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   <td class="desc">${echapper(l.description)}</td>
   <td class="qual">${echapper(qual)}</td>
   <td>${l.type === 'pro' ? echapper(l.zone_intervention) : `${echapper(l.delai_souhaite)}${l.budget ? `<br>${echapper(l.budget)}` : ''}`}</td>
+  <td>${
+        l.type === 'lead'
+          ? `<a class="btn" style="min-height:32px;padding:.3rem .7rem" href="/admin/lead/${l.id}">${
+              l.pro_actif_id ? 'Voir le routage' : 'Router'
+            }</a>${
+              l.pro_actif_id
+                ? '<br><span class="tag t-envoye" style="margin-top:.3rem">attribuée</span>'
+                : '<br><span class="tag t-nouveau" style="margin-top:.3rem">à attribuer</span>'
+            }`
+          : '<span class="muted">—</span>'
+      }</td>
   <td>
     <form method="post" style="display:flex;gap:.3rem;margin-bottom:.4rem">
       <input type="hidden" name="action" value="statut"><input type="hidden" name="id" value="${l.id}">
@@ -361,10 +287,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       : `<div class="pag"><span>${nbTotal} demande(s)</span></div>`;
 
   const table = `<div class="tablewrap"><table>
-<thead><tr><th>Reçue le</th><th>Métier / ville</th><th>Contact</th><th>Description</th><th>Qualification</th><th>Délai / budget</th><th>Suivi</th></tr></thead>
+<thead><tr><th>Reçue le</th><th>Métier / ville</th><th>Contact</th><th>Description</th><th>Qualification</th><th>Délai / budget</th><th>Routage</th><th>Suivi</th></tr></thead>
 <tbody>${corps}</tbody></table></div>${pagination}`;
 
-  return avecEntetesSecurite(new Response(page(filtres + table, identite), {
-    headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' }
-  }), 'admin');
+  return reponseHtml(pageAdmin('Demandes reçues', filtres + table, identite, 'demandes'));
 };
