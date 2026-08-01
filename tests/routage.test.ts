@@ -11,7 +11,15 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { construireBrouillon, fuites } from '../functions/_lib/modele-email-pro.ts';
+import {
+  construireBrouillon,
+  construireCoordonnees,
+  fuites,
+  masquerEmail,
+  masquerNom,
+  masquerTelephone
+} from '../functions/_lib/modele-email-pro.ts';
+import { jetonPlausible, nouveauJeton } from '../functions/_lib/reponse-pro.ts';
 import {
   comparerPros,
   enSlug,
@@ -173,33 +181,77 @@ const LEAD = {
   submitted_at: '2026-08-01T09:15:00.000Z'
 };
 
-describe('brouillon envoyé au professionnel', () => {
+describe('masquage des coordonnées', () => {
+  it('réduit le nom au prénom et à une initiale', () => {
+    assert.equal(masquerNom('Camille', 'Durand'), 'Camille D.');
+    assert.equal(masquerNom('Camille', ''), 'Camille');
+    assert.equal(masquerNom('', ''), 'Demandeur');
+  });
+
+  it('ne laisse que les deux premiers et deux derniers chiffres du téléphone', () => {
+    assert.equal(masquerTelephone('06 12 34 56 78'), '06 •• •• •• 78');
+    assert.equal(masquerTelephone('+33 6 12 34 56 78'), '33 •• •• •• 78');
+    assert.equal(masquerTelephone('12'), '');
+  });
+
+  it("ne laisse qu'une initiale et l'extension de l'adresse", () => {
+    assert.equal(masquerEmail('camille.durand@example.fr'), 'c•••@•••.fr');
+    assert.equal(masquerEmail('pas-une-adresse'), '');
+  });
+});
+
+describe('offre envoyée au professionnel', () => {
   const { sujet, corps } = construireBrouillon(LEAD);
 
-  it('contient tout ce que le professionnel doit recevoir', () => {
+  it('décrit le chantier de façon exploitable', () => {
     assert.match(corps, /Type de demande : Couvreur/);
     assert.match(corps, /Commune : Monéteau 89470/);
     assert.match(corps, /Tuiles arrachées après la tempête/);
-    assert.match(corps, /Camille Durand/);
-    assert.match(corps, /06 12 34 56 78/);
-    assert.match(corps, /camille\.durand@example\.fr/);
     assert.match(corps, /Date de la demande : samedi 1 août 2026/);
     assert.match(corps, /Les Pros de l'Yonne/);
     assert.match(sujet, /^Nouvelle demande — Couvreur à Monéteau 89470$/);
+  });
+
+  it('annonce que l’acceptation vaut achat, sans jamais citer de montant', () => {
+    assert.match(corps, /vaut confirmation de son achat/);
+    assert.doesNotMatch(corps, /\d+\s*(€|euros?|EUR)/i);
+    assert.doesNotMatch(corps, /(prix|tarif|montant|facture)/i);
+  });
+
+  it('ne livre aucune coordonnée en clair', () => {
+    assert.doesNotMatch(corps, /Durand/);
+    assert.doesNotMatch(corps, /06 12 34 56 78/);
+    assert.doesNotMatch(corps, /camille\.durand@example\.fr/);
+    assert.match(corps, /Camille D\./);
+    assert.match(corps, /06 •• •• •• 78/);
   });
 
   it('ne laisse fuiter ni lien d’administration, ni jeton, ni champ interne', () => {
     assert.deepEqual(fuites(sujet, corps), []);
     assert.doesNotMatch(corps, /\/admin/);
     assert.doesNotMatch(corps, /pages\.dev/);
-    assert.doesNotMatch(corps, /CF_Authorization/);
-    // Aucun identifiant de base : ni la référence du lead, ni un numéro de fiche.
     assert.doesNotMatch(corps, /\b42\b/);
   });
 });
 
-describe('garde-fou avant envoi', () => {
+describe('message de coordonnées, après acceptation', () => {
+  const { sujet, corps } = construireCoordonnees(LEAD);
+
+  it('livre enfin le nom et les coordonnées complètes', () => {
+    assert.match(corps, /Camille Durand/);
+    assert.match(corps, /06 12 34 56 78/);
+    assert.match(corps, /camille\.durand@example\.fr/);
+    assert.match(sujet, /^Coordonnées du demandeur/);
+  });
+
+  it('reste exempt de lien d’administration et de champ interne', () => {
+    assert.deepEqual(fuites(sujet, corps), []);
+  });
+});
+
+describe('garde-fou avant envoi de l’offre', () => {
   const { sujet, corps } = construireBrouillon(LEAD);
+  const COORDONNEES = ['camille.durand@example.fr', '06 12 34 56 78', 'Camille Durand'];
 
   it('bloque un lien vers l’administration ajouté à la main', () => {
     const trouve = fuites(sujet, `${corps}\nDétail : https://lesprosdelyonne.com/admin/lead/42`);
@@ -210,25 +262,63 @@ describe('garde-fou avant envoi', () => {
   it('bloque un jeton Cloudflare Access collé dans le message', () => {
     const jeton = 'CF_Authorization=eyJhbGciOiJSUzI1NiJ9.eyJlbWFpbCI6InRlc3QifQ.signature';
     const trouve = fuites(sujet, `${corps}\n${jeton}`);
-    assert.equal(
-      trouve.some((f) => f.libelle.includes('Cloudflare Access')),
-      true
-    );
+    assert.equal(trouve.some((f) => f.libelle.includes('Cloudflare Access')), true);
   });
 
   it('bloque la mention d’un autre professionnel', () => {
-    const trouve = fuites(sujet, `${corps}\nSinon je le passe à Toitures Martin.`, [
-      'Toitures Martin',
-      'martin@example.fr'
-    ]);
-    assert.equal(
-      trouve.some((f) => f.libelle.includes('autre professionnel')),
-      true
-    );
+    const trouve = fuites(sujet, `${corps}\nSinon je le passe à Toitures Martin.`, {
+      autresPros: ['Toitures Martin', 'martin@example.fr']
+    });
+    assert.equal(trouve.some((f) => f.libelle.includes('autre professionnel')), true);
   });
 
-  it('laisse passer un message légitime, y compris reformulé', () => {
+  it('bloque le téléphone du demandeur, même reformaté', () => {
+    const trouve = fuites(sujet, `${corps}\nIl est joignable au 06.12.34.56.78`, {
+      coordonnees: COORDONNEES
+    });
+    assert.equal(trouve.some((f) => f.libelle.includes('coordonnées du demandeur')), true);
+  });
+
+  it('bloque un numéro glissé par le demandeur dans sa propre description', () => {
+    const avecNumero = construireBrouillon({
+      ...LEAD,
+      description: 'Tuiles arrachées, rappelez-moi au 06 12 34 56 78.'
+    });
+    const trouve = fuites(avecNumero.sujet, avecNumero.corps, { coordonnees: COORDONNEES });
+    assert.equal(trouve.some((f) => f.libelle.includes('coordonnées du demandeur')), true);
+  });
+
+  it('bloque le nom complet du demandeur', () => {
+    const trouve = fuites(sujet, `${corps}\nDemandé par Camille Durand.`, { coordonnees: COORDONNEES });
+    assert.equal(trouve.some((f) => f.libelle.includes('coordonnées du demandeur')), true);
+  });
+
+  it('laisse passer une offre légitime, y compris reformulée', () => {
     const reecrit = corps.replace('Bonjour,', 'Bonjour Monsieur,');
-    assert.deepEqual(fuites(sujet, reecrit, ['Toitures Martin', 'martin@example.fr']), []);
+    assert.deepEqual(
+      fuites(reecrit ? sujet : sujet, reecrit, {
+        autresPros: ['Toitures Martin', 'martin@example.fr'],
+        coordonnees: COORDONNEES
+      }),
+      []
+    );
+  });
+});
+
+describe('jeton de réponse', () => {
+  it('produit une clé longue, urlsafe et jamais deux fois la même', () => {
+    const jetons = new Set(Array.from({ length: 200 }, () => nouveauJeton()));
+    assert.equal(jetons.size, 200);
+    for (const jeton of jetons) {
+      assert.match(jeton, /^[A-Za-z0-9_-]{40,48}$/);
+      assert.equal(jetonPlausible(jeton), jeton);
+    }
+  });
+
+  it('rejette une URL bricolée avant toute requête en base', () => {
+    assert.equal(jetonPlausible('court'), null);
+    assert.equal(jetonPlausible("' OR 1=1 --"), null);
+    assert.equal(jetonPlausible('a'.repeat(65)), null);
+    assert.equal(jetonPlausible(null), null);
   });
 });

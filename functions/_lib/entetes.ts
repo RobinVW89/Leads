@@ -15,7 +15,8 @@ const COMMUNS: Record<string, string> = {
 };
 
 /**
- * CSP de l'espace d'administration. Il ne charge aucune ressource externe :
+ * CSP des documents HTML produits par une Function. Ils ne chargent aucune
+ * ressource externe :
  * tout est en ligne dans la réponse. 'unsafe-inline' reste nécessaire pour la
  * feuille de style intégrée et la confirmation de suppression.
  */
@@ -33,7 +34,12 @@ const CSP_ADMIN = [
 /** CSP des réponses d'API : elles ne rendent jamais de document. */
 const CSP_API = ["default-src 'none'", "frame-ancestors 'none'", "base-uri 'none'"].join('; ');
 
-export type ProfilEntetes = 'api' | 'admin';
+/**
+ * `page` couvre les pages publiques rendues par une Function — aujourd'hui la
+ * réponse du professionnel. Même politique que l'administration : aucune
+ * ressource externe, tout est en ligne dans la réponse.
+ */
+export type ProfilEntetes = 'api' | 'admin' | 'page';
 
 /** Renvoie une copie de la réponse enrichie des en-têtes de sécurité. */
 export function avecEntetesSecurite(reponse: Response, profil: ProfilEntetes = 'api'): Response {
@@ -42,7 +48,7 @@ export function avecEntetesSecurite(reponse: Response, profil: ProfilEntetes = '
   for (const [nom, valeur] of Object.entries(COMMUNS)) {
     entetes.set(nom, valeur);
   }
-  entetes.set('Content-Security-Policy', profil === 'admin' ? CSP_ADMIN : CSP_API);
+  entetes.set('Content-Security-Policy', profil === 'api' ? CSP_API : CSP_ADMIN);
 
   // Ni les demandes ni l'administration ne doivent être mises en cache.
   if (!entetes.has('Cache-Control')) {

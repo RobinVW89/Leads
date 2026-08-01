@@ -33,6 +33,11 @@
     "DESTINATAIRE": "contact@lesprosdelyonne.com,rbn.soyer@gmail.com",
     "EXPEDITEUR": "notifications@lesprosdelyonne.com",
 
+    // Reply-To des offres : tant que la demande n'est pas acceptée, une réponse
+    // du professionnel doit nous revenir. L'adresse du demandeur ne lui est
+    // communiquée qu'après acceptation.
+    "CONTACT_PUBLIC": "contact@lesprosdelyonne.com",
+
     // Lien sécurisé de la notification : la prévisualisation de la branche,
     // protégée par la même politique Cloudflare Access que la production.
     "URL_ADMIN": "https://routage-leads.denys-dgm.pages.dev/admin",

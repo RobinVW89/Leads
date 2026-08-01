@@ -26,6 +26,11 @@
     // immédiate sur la boîte réellement consultée.
     "DESTINATAIRE": "contact@lesprosdelyonne.com,rbn.soyer@gmail.com",
     "EXPEDITEUR": "notifications@lesprosdelyonne.com",
+
+    // Reply-To des offres : tant que la demande n'est pas acceptée, une réponse
+    // du professionnel doit nous revenir. L'adresse du demandeur ne lui est
+    // communiquée qu'après acceptation.
+    "CONTACT_PUBLIC": "contact@lesprosdelyonne.com",
     "URL_ADMIN": "https://lesprosdelyonne.com/admin"
   },
 

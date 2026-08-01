@@ -56,15 +56,47 @@ libérée et l'échec tracé — elle n'est jamais bloquée par un incident tech
 
 ### Ce que reçoit le professionnel
 
-Type de demande, commune, description, nom et coordonnées du demandeur, date de
-la demande, identité « Les Pros de l'Yonne », et `Reply-To` sur l'adresse validée
-du demandeur.
+Deux messages, et la distinction est le cœur du dispositif.
 
-Jamais : lien vers `/admin`, jeton Cloudflare Access, mention d'un autre
-professionnel, donnée technique ou interne. Le brouillon étant modifiable, la
-règle est vérifiée sur le texte réellement envoyé — dans `/admin` puis une
-seconde fois dans le Worker (`fuites()` dans `functions/_lib/modele-email-pro.ts`).
-Un message non conforme n'est pas expédié et la demande reste attribuable.
+**1. L'offre**, envoyée depuis `/admin`. Type de demande, commune, description,
+date, identité « Les Pros de l'Yonne » — et le demandeur **masqué** :
+`Camille D.`, `06 •• •• •• 78`, `c•••@•••.fr`. Le `Reply-To` pointe sur
+`contact@lesprosdelyonne.com`, pas sur le demandeur : son adresse ne lui a pas
+encore été communiquée. Deux boutons : **Accepter** et **Refuser**, avec la
+mention que l'acceptation vaut confirmation d'achat, sans aucun montant.
+
+**2. Les coordonnées**, envoyées automatiquement après acceptation. Nom,
+téléphone, adresse, et `Reply-To` sur l'adresse validée du demandeur.
+
+Jamais, dans l'un ni dans l'autre : lien vers `/admin`, jeton Cloudflare Access,
+mention d'un autre professionnel, donnée technique ou interne. Le brouillon
+étant modifiable, la règle est vérifiée sur le texte réellement envoyé — dans
+`/admin` puis une seconde fois dans le Worker (`fuites()` dans
+`functions/_lib/modele-email-pro.ts`). Le contrôle porte aussi sur les
+coordonnées du demandeur, y compris quand il a lui-même glissé son numéro dans
+sa description. Un message non conforme n'est pas expédié et la demande reste
+attribuable.
+
+### La réponse du professionnel
+
+`/reponse/<jeton>` est **publique**, hors Cloudflare Access : elle est ouverte
+depuis un e-mail par quelqu'un qui n'a pas de compte. Le jeton est une clé de
+capacité — 256 bits d'aléa — qui n'autorise qu'une chose : répondre à cette
+demande, une fois, tant qu'elle est attribuée à son porteur, et pendant 30 jours.
+
+Les liens de l'e-mail n'enregistrent rien. Ils ouvrent une page de confirmation
+qui attend un POST. C'est indispensable : beaucoup d'antivirus de messagerie
+visitent les liens d'un message avant que le destinataire ne l'ouvre, et un GET
+qui déciderait ferait acheter des demandes par un automate. Aucune coordonnée
+n'est affichée avant l'acceptation, pour qu'un lien transféré ne livre rien.
+
+- **Accepter** → les coordonnées s'affichent, un e-mail les confirme, et
+  l'administrateur est prévenu. La demande reste attribuée.
+- **Refuser** → la demande est libérée, l'administrateur est prévenu, et le
+  professionnel suivant est proposé dans `/admin`.
+
+Comme pour la prise du lead, l'unicité de la réponse vient de la base
+(`WHERE repondu_at IS NULL`), pas de l'interface.
 
 ### Sélection du professionnel recommandé
 
@@ -107,11 +139,13 @@ npx wrangler pages deploy --branch routage-leads
 
 # Migrations, base de prévisualisation
 npx wrangler d1 execute lesprosdelyonne-leads-preview --remote --file migrations/0005_professionnels_disponibilite.sql
+npx wrangler d1 execute lesprosdelyonne-leads-preview --remote --file migrations/0006_reponse_professionnel.sql
 ```
 
 Avant une mise en production, il faut redéployer le Worker de notification de
-production (il porte désormais la route `/envoyer-pro`) et appliquer les
-migrations `0004` et `0005` sur `lesprosdelyonne-leads`.
+production (il porte désormais les routes `/envoyer-pro`, `/envoyer-coordonnees`
+et `/informer-admin`) et appliquer les migrations `0004` à `0006` sur
+`lesprosdelyonne-leads`.
 
 ## Où modifier les données
 

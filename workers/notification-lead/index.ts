@@ -7,7 +7,14 @@
  * un motif d'échec court.
  */
 
-import { adresseValide, echapper, enveloppeHtml, fuites, IDENTITE } from '../../functions/_lib/modele-email-pro';
+import {
+  adresseValide,
+  echapper,
+  enveloppeHtml,
+  enveloppeTexte,
+  fuites,
+  IDENTITE
+} from '../../functions/_lib/modele-email-pro';
 
 type Env = {
   EMAIL: { send: (message: unknown) => Promise<unknown> };
@@ -21,6 +28,12 @@ type Env = {
    * c'est alors la vérification d'adresse de Cloudflare qui borne les envois.
    */
   DESTINATAIRES_PRO_AUTORISES?: string;
+  /**
+   * Reply-To des offres. Tant que la demande n'est pas acceptée, une réponse
+   * du professionnel doit nous revenir à nous, jamais au demandeur : son
+   * adresse ne lui a pas encore été communiquée.
+   */
+  CONTACT_PUBLIC?: string;
 };
 
 type Lead = {
@@ -156,31 +169,76 @@ function construireMessage(lead: Lead, urlAdmin: string): { sujet: string; html:
 }
 
 /* -------------------------------------------------------------------------- */
-/* Envoi au professionnel retenu                                              */
+/* Envois au professionnel                                                    */
 /* -------------------------------------------------------------------------- */
 
 type EnvoiPro = {
   destinataire?: string;
-  nomDestinataire?: string;
   sujet?: string;
   corps?: string;
   repondreA?: string | null;
   nomDemandeur?: string;
+  /** Page publique de réponse. Présente sur l'offre, absente ailleurs. */
+  urlReponse?: string | null;
 };
 
 /**
- * Envoi du message relu par l'administrateur au professionnel retenu.
+ * Seules ces destinations sont acceptées pour le lien de réponse. Le lien est
+ * construit par /admin à partir de l'origine de la requête, donc déjà sûr —
+ * mais c'est la seule URL que nous introduisons nous-mêmes dans un e-mail
+ * sortant, et elle mérite d'être vérifiée là où elle est posée.
+ */
+function urlReponseValide(valeur: unknown): string | null {
+  const brut = String(valeur ?? '').trim();
+  if (!brut) return null;
+
+  let url: URL;
+  try {
+    url = new URL(brut);
+  } catch {
+    return null;
+  }
+
+  const hote = url.hostname;
+  // Le développement local sert en clair : c'est le seul cas où http est admis,
+  // et il ne concerne que des adresses de bouclage.
+  const enLocal = hote === 'localhost' || hote === '127.0.0.1';
+  if (url.protocol !== (enLocal ? 'http:' : 'https:')) return null;
+  if (!enLocal && hote !== 'lesprosdelyonne.com' && !hote.endsWith('.pages.dev')) return null;
+  if (!url.pathname.startsWith('/reponse/')) return null;
+  // Ni requête ni fragment : le choix est ajouté par le gabarit, pas ici.
+  if (url.search || url.hash) return null;
+
+  return url.toString();
+}
+
+/** Destinataire autorisé sur cet environnement ? */
+function destinataireAutorise(adresse: string, env: Env): boolean {
+  const autorises = (env.DESTINATAIRES_PRO_AUTORISES || '')
+    .split(',')
+    .map((a) => a.trim().toLowerCase())
+    .filter(Boolean);
+  return autorises.length === 0 || autorises.includes(adresse.toLowerCase());
+}
+
+/**
+ * Expédition d'un message à un professionnel.
  *
- * Le contenu vient tel quel de /admin : le Worker ne le reconstruit pas, il le
- * contrôle. Deux barrières avant l'expédition, dans cet ordre :
+ * Le contenu vient tel quel de /admin ou de la page de réponse : le Worker ne
+ * le reconstruit pas, il le contrôle. Deux barrières avant le réseau :
  * 1. la liste blanche de destinataires, quand elle est renseignée — c'est elle
  *    qui rend impossible qu'un test atteigne un vrai professionnel ;
- * 2. la relecture anti-fuite du texte, qui refuse tout lien d'administration,
- *    jeton Access ou donnée interne, y compris introduit à la main.
- * Une seconde vérification côté Worker peut sembler redondante avec /admin :
- * elle ne l'est pas, c'est le dernier point de passage avant le réseau.
+ * 2. la relecture anti-fuite, qui refuse lien d'administration, jeton Access
+ *    ou champ interne, y compris introduits à la main dans le brouillon.
+ * Cette seconde vérification double celle de /admin, et ce n'est pas
+ * redondant : c'est le dernier point de passage avant l'envoi.
+ *
+ * Le bloc « Accepter / Refuser » est ajouté APRÈS le contrôle. C'est
+ * volontaire : le lien de réponse est légitime alors que la règle interdit les
+ * URL internes, et le soumettre au filtre reviendrait à devoir l'excuser — donc
+ * à ouvrir une exception dans le filtre lui-même.
  */
-async function envoyerAuProfessionnel(charge: EnvoiPro, env: Env): Promise<Response> {
+async function envoyerAuProfessionnel(charge: EnvoiPro, env: Env, avecActions: boolean): Promise<Response> {
   const destinataire = adresseValide(charge.destinataire);
   const sujet = String(charge.sujet || '').trim().slice(0, 200);
   const corps = String(charge.corps || '').trim().slice(0, 12000);
@@ -188,12 +246,7 @@ async function envoyerAuProfessionnel(charge: EnvoiPro, env: Env): Promise<Respo
   if (!destinataire) return Response.json({ ok: false, erreur: 'destinataire invalide' }, { status: 400 });
   if (!sujet || !corps) return Response.json({ ok: false, erreur: 'message vide' }, { status: 400 });
 
-  const autorises = (env.DESTINATAIRES_PRO_AUTORISES || '')
-    .split(',')
-    .map((a) => a.trim().toLowerCase())
-    .filter(Boolean);
-
-  if (autorises.length > 0 && !autorises.includes(destinataire.toLowerCase())) {
+  if (!destinataireAutorise(destinataire, env)) {
     return Response.json(
       { ok: false, erreur: 'destinataire hors de la liste autorisée sur cet environnement' },
       { status: 403 }
@@ -208,19 +261,30 @@ async function envoyerAuProfessionnel(charge: EnvoiPro, env: Env): Promise<Respo
     );
   }
 
+  const urlReponse = avecActions ? urlReponseValide(charge.urlReponse) : null;
+  if (avecActions && !urlReponse) {
+    return Response.json({ ok: false, erreur: 'lien de réponse invalide' }, { status: 400 });
+  }
+
   const message: Record<string, unknown> = {
     to: destinataire,
     from: { email: env.EXPEDITEUR, name: IDENTITE },
     subject: sujet,
-    html: enveloppeHtml(sujet, corps),
-    text: corps
+    html: enveloppeHtml(sujet, corps, urlReponse),
+    text: enveloppeTexte(corps, urlReponse)
   };
 
-  const repondreA = adresseValide(charge.repondreA);
+  // Reply-To : le demandeur seulement une fois la demande acceptée. Sur
+  // l'offre, c'est notre adresse de contact — son adresse à lui reste masquée.
+  const repondreA = avecActions
+    ? adresseValide(env.CONTACT_PUBLIC)
+    : adresseValide(charge.repondreA);
+
   if (repondreA) {
     // Le champ « name » est obligatoire et doit être une chaîne :
     // l'omettre fait échouer l'envoi entier.
-    message.replyTo = { email: repondreA, name: String(charge.nomDemandeur || '').trim() || repondreA };
+    const nom = avecActions ? IDENTITE : String(charge.nomDemandeur || '').trim() || repondreA;
+    message.replyTo = { email: repondreA, name: nom };
   }
 
   try {
@@ -233,6 +297,57 @@ async function envoyerAuProfessionnel(charge: EnvoiPro, env: Env): Promise<Respo
   return Response.json({ ok: true, replyTo: repondreA !== null });
 }
 
+/**
+ * Alerte interne après une réponse du professionnel. Destinée à nos propres
+ * adresses, elle peut donc porter le lien vers la demande — ce qui serait
+ * interdit dans un message à un professionnel.
+ */
+async function informerAdministrateur(
+  charge: { sujet?: string; corps?: string; leadId?: number },
+  env: Env
+): Promise<Response> {
+  const sujet = String(charge.sujet || '').trim().slice(0, 200);
+  const corps = String(charge.corps || '').trim().slice(0, 4000);
+  if (!sujet || !corps) return Response.json({ ok: false, erreur: 'message vide' }, { status: 400 });
+
+  const base = (env.URL_ADMIN || '').replace(/\/+$/, '');
+  const lien = base && charge.leadId ? `${base}/lead/${charge.leadId}` : base;
+  const texte = lien ? `${corps}\n\nOuvrir la demande : ${lien}` : corps;
+
+  const html = `<!doctype html><html lang="fr"><body style="margin:0;background:#fdf9f1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:#1b2a22">
+<div style="max-width:620px;margin:0 auto;padding:24px">
+  <h1 style="margin:0 0 16px;font-size:19px;color:#0c2b1f">${echapper(sujet)}</h1>
+  <div style="background:#fff;border:1px solid #e7dcc8;border-radius:12px;padding:18px;white-space:pre-wrap">${echapper(corps)}</div>
+  ${
+    lien
+      ? `<p style="margin:20px 0 0"><a href="${echapper(lien)}" style="display:inline-block;background:#c1552b;color:#fff;text-decoration:none;padding:12px 20px;border-radius:10px;font-weight:700">Ouvrir la demande</a></p>`
+      : ''
+  }
+</div></body></html>`;
+
+  const destinataires = env.DESTINATAIRE.split(',')
+    .map((a) => a.trim())
+    .filter(Boolean);
+
+  let reussites = 0;
+  for (const destinataire of destinataires) {
+    try {
+      await env.EMAIL.send({
+        to: destinataire,
+        from: { email: env.EXPEDITEUR, name: IDENTITE },
+        subject: sujet,
+        html,
+        text: texte
+      });
+      reussites += 1;
+    } catch {
+      // Alerte de confort : la réponse du professionnel est déjà enregistrée.
+    }
+  }
+
+  return Response.json({ ok: reussites > 0, envoyes: reussites });
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method !== 'POST') {
@@ -241,9 +356,30 @@ export default {
 
     const chemin = new URL(request.url).pathname;
 
+    // Offre : coordonnées masquées, boutons de réponse, Reply-To sur nous.
     if (chemin === '/envoyer-pro') {
       try {
-        return await envoyerAuProfessionnel((await request.json()) as EnvoiPro, env);
+        return await envoyerAuProfessionnel((await request.json()) as EnvoiPro, env, true);
+      } catch {
+        return Response.json({ ok: false, erreur: 'charge invalide' }, { status: 400 });
+      }
+    }
+
+    // Après acceptation : coordonnées en clair, Reply-To sur le demandeur.
+    if (chemin === '/envoyer-coordonnees') {
+      try {
+        return await envoyerAuProfessionnel((await request.json()) as EnvoiPro, env, false);
+      } catch {
+        return Response.json({ ok: false, erreur: 'charge invalide' }, { status: 400 });
+      }
+    }
+
+    if (chemin === '/informer-admin') {
+      try {
+        return await informerAdministrateur(
+          (await request.json()) as { sujet?: string; corps?: string; leadId?: number },
+          env
+        );
       } catch {
         return Response.json({ ok: false, erreur: 'charge invalide' }, { status: 400 });
       }

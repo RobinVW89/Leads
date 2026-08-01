@@ -12,12 +12,8 @@
 
 import { echapper, garderAdmin, pageAdmin, reponseHtml, type EnvAdmin } from '../../_lib/admin-page';
 import { avecEntetesSecurite } from '../../_lib/entetes';
-import {
-  adresseValide,
-  construireBrouillon,
-  fuites,
-  type LeadPourPro
-} from '../../_lib/modele-email-pro';
+import { construireBrouillon, fuites, type LeadPourPro } from '../../_lib/modele-email-pro';
+import { nouveauJeton } from '../../_lib/reponse-pro';
 import { chargerRoutage, type Attribution, type Professionnel } from '../../_lib/routage';
 
 type Env = EnvAdmin & {
@@ -121,7 +117,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   if (request.method === 'POST') {
-    const resultat = await traiterAction(request, env, lead);
+    const resultat = await traiterAction(request, env, lead, url.origin);
     // Redirection après action : un rafraîchissement ne rejoue jamais un envoi.
     return Response.redirect(`${url.origin}/admin/lead/${id}?fait=${encodeURIComponent(resultat)}`, 303);
   }
@@ -133,13 +129,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 /* Actions                                                                    */
 /* ------------------------------------------------------------------------ */
 
-async function traiterAction(request: Request, env: Env, lead: LigneLead): Promise<string> {
+async function traiterAction(request: Request, env: Env, lead: LigneLead, origine: string): Promise<string> {
   const form = await request.formData();
   const action = String(form.get('action') || '');
   const proId = Number(form.get('pro_id') || 0) || 0;
 
   if (action === 'refus') return enregistrerRefus(env, lead, proId, form);
-  if (action === 'envoyer') return envoyer(env, lead, proId, form);
+  if (action === 'envoyer') return envoyer(env, lead, proId, form, origine);
   return 'inconnu';
 }
 
@@ -172,7 +168,19 @@ async function enregistrerRefus(env: Env, lead: LigneLead, proId: number, form: 
   return 'refus';
 }
 
-async function envoyer(env: Env, lead: LigneLead, proId: number, form: FormData): Promise<string> {
+/**
+ * Coordonnées interdites dans l'offre. Le nom complet, le téléphone et
+ * l'adresse ne doivent y figurer sous aucune forme — y compris dans la
+ * description écrite par le demandeur, qui y glisse parfois son numéro.
+ */
+function coordonneesDuDemandeur(lead: LigneLead): string[] {
+  const nomComplet = `${lead.prenom || ''} ${lead.nom || ''}`.trim();
+  return [lead.email, lead.telephone, nomComplet]
+    .map((v) => String(v || '').trim())
+    .filter((v) => v.length >= 4);
+}
+
+async function envoyer(env: Env, lead: LigneLead, proId: number, form: FormData, origine: string): Promise<string> {
   // Refus immédiat si la demande est déjà chez quelqu'un. Ce contrôle ne
   // remplace pas la prise conditionnelle plus bas — il n'existe que pour
   // afficher le bon motif ; deux requêtes simultanées passeraient toutes deux
@@ -189,9 +197,13 @@ async function envoyer(env: Env, lead: LigneLead, proId: number, form: FormData)
   // <select> du formulaire ne fait pas autorité.
   if (!destinataire) return 'pro-invalide';
 
-  const problemes = fuites(sujet, corps, empreintesDesAutres(tous, destinataire.id, lead));
+  const problemes = fuites(sujet, corps, {
+    autresPros: empreintesDesAutres(tous, destinataire.id, lead),
+    coordonnees: coordonneesDuDemandeur(lead)
+  });
   if (problemes.length > 0) {
-    return `fuite:${problemes.map((p) => p.libelle).join(', ')}`.slice(0, 180);
+    const libelles = [...new Set(problemes.map((p) => p.libelle))].join(', ');
+    return `fuite:${libelles}`.slice(0, 180);
   }
 
   // --- Prise exclusive de la demande --------------------------------------
@@ -204,6 +216,9 @@ async function envoyer(env: Env, lead: LigneLead, proId: number, form: FormData)
   if (Number(prise.meta?.changes ?? 0) !== 1) return 'deja-attribuee';
 
   // --- Envoi ---------------------------------------------------------------
+  // Le jeton est créé avant l'expédition puisqu'il figure dans le message, et
+  // n'est enregistré qu'après : un envoi échoué ne laisse pas de clé valide.
+  const jeton = nouveauJeton();
   let erreur: string | null = null;
 
   if (!env.NOTIFICATION) {
@@ -216,12 +231,11 @@ async function envoyer(env: Env, lead: LigneLead, proId: number, form: FormData)
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             destinataire: destinataire.email,
-            nomDestinataire: destinataire.raison_sociale,
             sujet,
             corps,
-            // Reply-To : l'adresse du demandeur, validée juste avant l'envoi.
-            repondreA: adresseValide(lead.email),
-            nomDemandeur: `${lead.prenom || ''} ${lead.nom || ''}`.trim()
+            // Page publique de réponse : même origine que l'administration, donc
+            // la prévisualisation renvoie vers la prévisualisation.
+            urlReponse: `${origine}/reponse/${jeton}`
           })
         })
       );
@@ -254,8 +268,8 @@ async function envoyer(env: Env, lead: LigneLead, proId: number, form: FormData)
 
   await env.DB.batch([
     env.DB.prepare(
-      'INSERT INTO attributions (lead_id, professionnel_id, statut, motif, email_envoye) VALUES (?, ?, ?, NULL, 1)'
-    ).bind(lead.id, destinataire.id, 'envoye'),
+      'INSERT INTO attributions (lead_id, professionnel_id, statut, motif, email_envoye, jeton) VALUES (?, ?, ?, NULL, 1, ?)'
+    ).bind(lead.id, destinataire.id, 'envoye', jeton),
     env.DB.prepare(
       "UPDATE professionnels SET dernier_lead_at = datetime('now'), dernier_lead_id = ? WHERE id = ?"
     ).bind(lead.id, destinataire.id)
@@ -319,9 +333,18 @@ function ficheDemande(lead: LigneLead): string {
 </div>`;
 }
 
-function blocAttribue(lead: LigneLead, pro: Professionnel): string {
+function blocAttribue(lead: LigneLead, pro: Professionnel, reponse: Attribution | null): string {
+  // Trois états bien distincts : en attente de réponse, acceptée, ou attribuée
+  // sans que le professionnel ait cliqué (réponse donnée par téléphone).
+  const etat = reponse?.statut === 'accepte'
+    ? `<p style="margin:0 0 .6rem"><span class="tag t-envoye">acceptée</span> Le professionnel a accepté le ${echapper(
+        dateCourte(reponse.created_at)
+      )} depuis l’e-mail. Les coordonnées du demandeur lui ont été communiquées.</p>`
+    : `<p style="margin:0 0 .6rem"><span class="tag t-nouveau">en attente de réponse</span> Les coordonnées du demandeur restent masquées tant qu’il n’a pas accepté.</p>`;
+
   return `<div class="carte ok">
   <h2>Demande attribuée</h2>
+  ${etat}
   <p style="margin:0 0 .6rem">
     Transmise à <b>${echapper(nomPro(pro))}</b> le ${echapper(dateCourte(lead.pro_actif_at))}.
     Aucun autre professionnel ne peut recevoir cette demande tant qu’elle lui est attribuée.
@@ -397,14 +420,16 @@ function blocEnvoi(lead: LigneLead, candidats: Professionnel[], ecartes: Array<{
     </div>
 
     <p class="muted" style="margin:.5rem 0 0">
-      Le message part au nom des Pros de l’Yonne, avec le demandeur en Reply-To.
-      Il ne contient ni lien d’administration, ni information sur les autres professionnels :
-      l’envoi est bloqué si le texte modifié en fait apparaître.
+      Le professionnel reçoit cette offre avec deux boutons, « Accepter » et « Refuser ».
+      Les coordonnées du demandeur y sont masquées et ne lui sont communiquées qu’après acceptation ;
+      d’ici là, une réponse à l’e-mail nous revient à nous.
+      L’envoi est bloqué si le texte modifié fait apparaître ces coordonnées, un lien d’administration
+      ou un autre professionnel.
     </p>
 
     <div class="actions">
       <button type="submit" id="btn-envoi">Envoyer au professionnel</button>
-      <span class="muted">Un seul envoi possible : la demande est ensuite verrouillée.</span>
+      <span class="muted">Un seul envoi possible : la demande est ensuite verrouillée jusqu’à sa réponse.</span>
     </div>
   </form>
 </div>
@@ -473,9 +498,13 @@ async function afficher(env: Env, lead: LigneLead, identite: string, url: URL): 
   // Fiche supprimée alors qu'elle détenait la demande : ne surtout pas
   // retomber sur le formulaire d'envoi, la base refuserait l'attribution et
   // l'écran serait trompeur.
+  const reponseDuPro =
+    historique.find((a) => a.professionnel_id === lead.pro_actif_id && (a.statut === 'accepte' || a.statut === 'refuse')) ??
+    null;
+
   const blocRoutage = lead.pro_actif_id
     ? proActif
-      ? blocAttribue(lead, proActif)
+      ? blocAttribue(lead, proActif, reponseDuPro)
       : `<div class="carte alerte"><h2>Demande bloquée</h2><p style="margin:0">Elle est attribuée au professionnel n° ${lead.pro_actif_id}, dont la fiche n’existe plus. Recréez la fiche pour enregistrer un refus et libérer la demande.</p></div>`
     : blocEnvoi(lead, selection.candidats, selection.ecartes);
 
