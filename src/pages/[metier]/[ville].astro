@@ -124,7 +124,7 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier, 
           {sourcesLocales.map((source, index) => (
             <>
               {index > 0 && ' · '}
-              <a href={source.url} target="_blank" rel="noopener noreferrer nofollow">{source.libelle}</a>
+              <a href={source.url} target="_blank" rel="noopener noreferrer">{source.libelle}</a>
             </>
           ))}
         </p>

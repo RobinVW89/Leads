@@ -132,21 +132,41 @@ const contenuLocalParVille: Record<string, AuxerreContent[]> = {
   joigny: localJoigny as AuxerreContent[]
 };
 
-/** Sources officielles citées au bas du bloc local, par commune. */
+/**
+ * Sources officielles citées au bas du bloc local, par commune.
+ *
+ * Règle appliquée : une source n'est affichée que si elle soutient réellement
+ * une affirmation de la page. Les portails nationaux généralistes ont été
+ * écartés — ils décrivent le droit commun, ils ne prouvent aucune particularité
+ * locale, et les afficher en bas d'une page locale laisserait croire l'inverse.
+ *
+ * Restent donc les documents des collectivités concernées, plus l'Insee, qui
+ * soutient la population affichée en tête de page, et Géorisques, cité parce
+ * que le texte invite explicitement à y vérifier les risques d'une parcelle.
+ */
 export type SourceLocale = { libelle: string; url: string };
 
 const sourcesParVille: Record<string, SourceLocale[]> = {
   sens: [
+    {
+      libelle: 'Grand Sénonais — OPAH-RU, renouvellement urbain du cœur de ville',
+      url: 'https://www.grand-senonais.fr/habiter-et-resider/operations-programmees-damelioration-de-lhabitat-prive-opah-2/en-matiere-de-renouvellement-urbain-opah-ru/'
+    },
+    {
+      libelle: 'Ville de Sens — transformation du cœur de ville',
+      url: 'https://www.ville-sens.fr/infos/transformation-coeur-de-ville/'
+    },
     { libelle: 'Insee — dossier complet, commune de Sens', url: 'https://www.insee.fr/fr/statistiques/2011101?geo=COM-89387' },
-    { libelle: 'Géorisques — risques par commune', url: 'https://www.georisques.gouv.fr/mes-risques/connaitre-les-risques-pres-de-chez-moi' },
-    { libelle: 'Service-Public.fr — autorisations d’urbanisme', url: 'https://www.service-public.fr/particuliers/vosdroits/N319' },
-    { libelle: 'France Rénov’ — aides à la rénovation', url: 'https://france-renov.gouv.fr/' }
+    { libelle: 'Géorisques — risques recensés par adresse', url: 'https://www.georisques.gouv.fr/' }
   ],
   joigny: [
+    {
+      libelle: 'Ville de Joigny — Plan de sauvegarde et de mise en valeur',
+      url: 'https://www.ville-joigny.fr/plan-de-sauvegarde-et-de-mise-en-valeur'
+    },
+    { libelle: 'Ville de Joigny — urbanisme', url: 'https://www.ville-joigny.fr/urbanisme' },
     { libelle: 'Insee — dossier complet, commune de Joigny', url: 'https://www.insee.fr/fr/statistiques/2011101?geo=COM-89206' },
-    { libelle: 'Géorisques — risques par commune', url: 'https://www.georisques.gouv.fr/mes-risques/connaitre-les-risques-pres-de-chez-moi' },
-    { libelle: 'Service-Public.fr — autorisations d’urbanisme', url: 'https://www.service-public.fr/particuliers/vosdroits/N319' },
-    { libelle: 'France Rénov’ — aides à la rénovation', url: 'https://france-renov.gouv.fr/' }
+    { libelle: 'Géorisques — risques recensés par adresse', url: 'https://www.georisques.gouv.fr/' }
   ]
 };
 
