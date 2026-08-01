@@ -566,6 +566,24 @@ const turnstileSiteKey = SITE_CONFIG.turnstileSiteKey;
           return;
         }
 
+        // Conversion : uniquement après un vrai succès JSON confirmé plus haut
+        // (statut 2xx ET corps { ok: true }). `gtag` n'existe qu'après
+        // acceptation du bandeau : sans consentement, rien n'est émis.
+        //
+        // L'événement ne porte que l'origine de la visite. Ni coordonnées, ni
+        // description, ni aucune valeur saisie dans le formulaire : GA4 n'a pas
+        // à connaître le contenu d'une demande pour en compter une.
+        if (typeof window.gtag === 'function') {
+          let sourceIA = '';
+          try {
+            sourceIA = sessionStorage.getItem('source-ia') || '';
+          } catch (e) {
+            // Stockage indisponible : la conversion partira sans origine.
+          }
+
+          window.gtag('event', 'generate_lead', sourceIA ? { source_ia: sourceIA } : {});
+        }
+
         const thankYouUrl = new URL('/merci', window.location.origin);
         thankYouUrl.searchParams.set('type', actif ? 'lead' : 'intention');
         if (payload.metier) {

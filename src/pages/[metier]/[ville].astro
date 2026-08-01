@@ -7,7 +7,7 @@ import MetierIcon from '../../components/MetierIcon.astro';
 import RealisationsGallery from '../../components/RealisationsGallery.astro';
 import YonneMap from '../../components/YonneMap.astro';
 import RelatedServices from '../../components/RelatedServices.astro';
-import { getAuxerreContentByMetierSlug, getParcoursByMetierSlug, getPriorityCities, getSeoMetierName, metiersData, villesData, type Metier, type Ville } from '../../lib/data';
+import { getContenuLocal, getParcoursByMetierSlug, getPriorityCities, getSeoMetierName, getSourcesLocales, metiersData, villesData, type Metier, type Ville } from '../../lib/data';
 import { getLocalizedIntro, getSectionOrder } from '../../lib/content';
 import { breadcrumbSchema, faqSchema, serviceSchema } from '../../lib/seo';
 
@@ -27,30 +27,33 @@ type Props = {
 
 const { metier, ville } = Astro.props;
 const seoMetierName = getSeoMetierName(metier);
-const auxerreContent = ville.slug === 'auxerre' ? getAuxerreContentByMetierSlug(metier.slug) : undefined;
-const isAuxerre = Boolean(auxerreContent && ville.slug === 'auxerre');
+// Contenu rédigé pour ce couple métier/ville. Absent, la page sert le texte
+// départemental : mieux vaut un texte assumé comme générique qu'un faux local.
+const contenuLocal = getContenuLocal(ville.slug, metier.slug);
+const sourcesLocales = getSourcesLocales(ville.slug);
+const aContenuLocal = Boolean(contenuLocal);
 
 const h1 = metier.actif
   ? `${metier.nom} à ${ville.nom} - devis gratuit`
   : `${metier.nom} à ${ville.nom} - bientôt disponible`;
-const title = isAuxerre
-  ? `${seoMetierName} à Auxerre — devis gratuit | Les Pros de l'Yonne`
+const title = aContenuLocal && metier.actif
+  ? `${seoMetierName} à ${ville.nom} — devis gratuit | Les Pros de l'Yonne`
   : metier.actif
     ? `${seoMetierName} à ${ville.nom} | Devis gratuit`
     : `${seoMetierName} à ${ville.nom} | Bientôt disponible`;
-const description = isAuxerre && auxerreContent
-  ? `${auxerreContent.intro} Demandez un devis gratuit pour votre projet à Auxerre.`
+const description = contenuLocal && metier.actif
+  ? `${contenuLocal.intro.slice(0, 150)}… Devis gratuit pour votre projet à ${ville.nom}.`
   : metier.actif
     ? `${seoMetierName} à ${ville.nom} (${ville.codePostal}). ${ville.phraseLocale} Mise en relation gratuite avec un professionnel local.`
     : `${seoMetierName} à ${ville.nom} (${ville.codePostal}). ${ville.phraseLocale} Ce service ouvre bientôt dans l'Yonne avec inscription prioritaire par email.`;
-const intro = isAuxerre && auxerreContent ? auxerreContent.intro : getLocalizedIntro(metier, ville);
+const intro = contenuLocal ? contenuLocal.intro : getLocalizedIntro(metier, ville);
 const sectionOrder = getSectionOrder(metier.slug, ville.slug);
 const parcours = getParcoursByMetierSlug(metier.slug);
 const nearby = ville.quartiersOuCommunesProches.join(', ');
 const canonicalPath = `/${metier.slug}/${ville.slug}/`;
 const priorityCities = getPriorityCities().filter((city) => city.slug !== ville.slug);
 const otherCities = [...priorityCities, ...villesData.filter((city) => !city.prioritaire && city.slug !== ville.slug && !priorityCities.some((priorityCity) => priorityCity.slug === city.slug))];
-const faqItems = isAuxerre && auxerreContent ? [...metier.questionsFrequentes, ...auxerreContent.localFaqs] : metier.questionsFrequentes.slice(0, 3);
+const faqItems = contenuLocal ? [...metier.questionsFrequentes.slice(0, 3), ...contenuLocal.localFaqs] : metier.questionsFrequentes.slice(0, 3);
 
 const breadcrumbs = [
   { label: 'Accueil', href: '/' },
@@ -58,7 +61,7 @@ const breadcrumbs = [
   { label: ville.nom }
 ];
 
-const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema({ ...metier, questionsFrequentes: faqItems }), breadcrumbSchema([
+const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema(metier, faqItems), breadcrumbSchema([
   { name: 'Accueil', url: '/' },
   { name: metier.nom, url: `/${metier.slug}/` },
   { name: ville.nom }
@@ -71,6 +74,7 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema({ ...met
   canonicalPath={canonicalPath}
   breadcrumbs={breadcrumbs}
   jsonLd={schemas}
+  noindex={!metier.actif}
   stickyCta={{ label: 'Démarrer ma demande', href: '#devis', badge: 'Réponse sous 24 h' }}
 >
   <section class="section">
@@ -91,18 +95,40 @@ const schemas = [serviceSchema(metier, ville, canonicalPath), faqSchema({ ...met
     </div>
   </section>
 
-  {isAuxerre && auxerreContent && (
-    <section class="section" id="auxerre-local">
+  {contenuLocal && (
+    <section class="section" id="contexte-local">
       <div class="rule-block">
-        <h2>{auxerreContent.localTitle}</h2>
+        <h2>{contenuLocal.localTitle}</h2>
       </div>
       <div class="steps">
-        {auxerreContent.localParagraphs.map((paragraph) => (
+        {contenuLocal.localParagraphs.map((paragraph) => (
           <article class="step">
             <p>{paragraph}</p>
           </article>
         ))}
       </div>
+
+      <div class="local-faq">
+        <h3>Questions fréquentes à {ville.nom}</h3>
+        {contenuLocal.localFaqs.map((faq) => (
+          <details>
+            <summary>{faq.question}</summary>
+            <p>{faq.reponse}</p>
+          </details>
+        ))}
+      </div>
+
+      {sourcesLocales.length > 0 && (
+        <p class="sources-locales">
+          Sources :{' '}
+          {sourcesLocales.map((source, index) => (
+            <>
+              {index > 0 && ' · '}
+              <a href={source.url} target="_blank" rel="noopener noreferrer">{source.libelle}</a>
+            </>
+          ))}
+        </p>
+      )}
     </section>
   )}
 

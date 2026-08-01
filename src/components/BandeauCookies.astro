@@ -5,11 +5,22 @@
  * Aucun script, cookie ni appel Google n'est émis avant acceptation explicite.
  * Le choix est conservé dans localStorage, qui n'est pas un cookie et n'est
  * jamais transmis au serveur : rien ne part avant que l'utilisateur accepte.
+ *
+ * La mesure de la provenance obéit à la même règle : ni détection, ni écriture
+ * en sessionStorage, ni événement avant le clic sur « Tout accepter ».
  */
 const ID_ANALYTICS = 'G-D2Y7CDBF3X';
 ---
 
-<div id="bandeau-cookies" class="bandeau-cookies" role="dialog" aria-modal="false" aria-labelledby="bandeau-cookies-titre" hidden>
+<div
+  id="bandeau-cookies"
+  class="bandeau-cookies"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="bandeau-cookies-titre"
+  data-analytics-id={ID_ANALYTICS}
+  hidden
+>
   <div class="bandeau-cookies-corps">
     <div>
       <p id="bandeau-cookies-titre" class="bandeau-cookies-titre">Cookies de mesure d'audience</p>
@@ -31,30 +42,124 @@ const ID_ANALYTICS = 'G-D2Y7CDBF3X';
   </div>
 </div>
 
-<script is:inline define:vars={{ ID_ANALYTICS }}>
+<script>
+  import { analyticsAutorise } from '../lib/analytics-hotes';
+  import { detecterIA, verdictDeSession } from '../lib/detection-ia';
+
   (function () {
     const CLE = 'consentement-mesure-audience';
-    const bandeau = document.getElementById('bandeau-cookies');
-    if (!bandeau) return;
+    /** Étiquette de la plateforme d'IA, conservée le temps de la session. */
+    const CLE_SOURCE = 'source-ia';
+    /** Marque l'envoi de visite_ia : un seul par session, pas un par page. */
+    const CLE_VISITE = 'visite-ia-mesuree';
 
+    const bandeau = document.getElementById('bandeau-cookies');
+    const boutonAccepter = document.getElementById('cookies-accepter');
+    const boutonRefuser = document.getElementById('cookies-refuser');
+    const boutonFermer = document.getElementById('cookies-fermer');
+    if (!bandeau || !boutonAccepter || !boutonRefuser || !boutonFermer) return;
+
+    // Copie non nulle : le rétrécissement de type du garde ci-dessus ne
+    // traverse pas les fonctions déclarées plus bas.
+    const panneau: HTMLElement = bandeau;
+    const idAnalytics = panneau.getAttribute('data-analytics-id') || '';
+
+    /**
+     * Domaine de mesure. Une prévisualisation `*.pages.dev` sert le même code
+     * que la production : sans ce contrôle, chaque relecture d'une branche
+     * ajouterait des visites et des conversions fictives aux statistiques.
+     *
+     * Le bandeau, lui, reste présenté à l'identique partout : on vérifie ainsi
+     * son comportement en prévisualisation sans qu'aucune donnée ne parte.
+     */
+    const domaineMesure = analyticsAutorise(window.location.hostname);
     let analyticsCharge = false;
 
     /** Charge Google Analytics. Appelé uniquement après acceptation. */
     function chargerAnalytics() {
-      if (analyticsCharge) return;
+      if (analyticsCharge || !idAnalytics || !domaineMesure) return;
       analyticsCharge = true;
 
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function () {
-        window.dataLayer.push(arguments);
+      const file: unknown[] = (window.dataLayer = window.dataLayer || []);
+      const envoyer = function (...args: unknown[]) {
+        file.push(args);
       };
-      window.gtag('js', new Date());
-      window.gtag('config', ID_ANALYTICS, { anonymize_ip: true });
+      window.gtag = envoyer;
+      envoyer('js', new Date());
+      envoyer('config', idAnalytics, { anonymize_ip: true });
 
       const script = document.createElement('script');
       script.async = true;
-      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID_ANALYTICS;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + idAnalytics;
       document.head.appendChild(script);
+    }
+
+    /**
+     * Mesure de la provenance : quelle IA a amené cette visite.
+     *
+     * Ce qui part vers GA4 se limite à deux étiquettes courtes — jamais l'URL,
+     * jamais le référent complet, donc jamais un paramètre susceptible de
+     * porter une donnée personnelle.
+     *
+     * Limite assumée : la détection s'appuie sur l'URL et le référent au moment
+     * du consentement. Comme rien ne peut être mémorisé avant, une personne qui
+     * n'accepte qu'à la troisième page n'est plus rattachable à l'IA d'origine.
+     * Le bandeau s'affichant dès l'arrivée, ce cas reste minoritaire, et la
+     * règle du consentement préalable prime sur l'exhaustivité de la mesure.
+     */
+    function mesurerProvenance() {
+      let verdict = null;
+
+      try {
+        verdict = verdictDeSession(sessionStorage.getItem(CLE_SOURCE));
+      } catch (e) {
+        // Navigation privée ou stockage refusé : on repart de la détection.
+      }
+
+      if (!verdict) {
+        verdict = detecterIA({ url: window.location.href, referent: document.referrer });
+        if (verdict) {
+          try {
+            sessionStorage.setItem(CLE_SOURCE, verdict.source_ia);
+          } catch (e) {
+            // Sans stockage, la conversion ne portera pas la source. C'est
+            // préférable à un abandon de la mesure de visite.
+          }
+        }
+      }
+
+      if (!verdict) return;
+
+      let dejaMesuree = false;
+      try {
+        dejaMesuree = sessionStorage.getItem(CLE_VISITE) === '1';
+      } catch (e) {
+        // Sans stockage, on accepte un doublon plutôt qu'une perte.
+      }
+      if (dejaMesuree) return;
+
+      window.gtag?.('event', 'visite_ia', {
+        source_ia: verdict.source_ia,
+        methode_attribution: verdict.methode_attribution
+      });
+
+      try {
+        sessionStorage.setItem(CLE_VISITE, '1');
+      } catch (e) {
+        // Sans marque, l'événement pourra repartir à la page suivante.
+      }
+    }
+
+    /**
+     * Tout ce qui suit l'acceptation, dans l'ordre.
+     * Hors du domaine de production, on s'arrête net : ni chargement, ni
+     * détection, ni écriture en session. Le consentement est enregistré malgré
+     * tout, pour que le bandeau ne se represente pas à chaque page.
+     */
+    function activerMesure() {
+      if (!domaineMesure) return;
+      chargerAnalytics();
+      mesurerProvenance();
     }
 
     /**
@@ -71,17 +176,25 @@ const ID_ANALYTICS = 'G-D2Y7CDBF3X';
         });
         document.cookie = nom + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
       });
+
+      // Un refus efface aussi ce qui avait été mémorisé de la provenance.
+      try {
+        sessionStorage.removeItem(CLE_SOURCE);
+        sessionStorage.removeItem(CLE_VISITE);
+      } catch (e) {
+        // Rien à purger si le stockage est indisponible.
+      }
     }
 
     function afficher() {
-      bandeau.hidden = false;
+      panneau.hidden = false;
     }
 
     function masquer() {
-      bandeau.hidden = true;
+      panneau.hidden = true;
     }
 
-    function enregistrer(choix) {
+    function enregistrer(choix: string) {
       try {
         localStorage.setItem(CLE, JSON.stringify({ choix: choix, date: new Date().toISOString() }));
       } catch (e) {
@@ -100,10 +213,10 @@ const ID_ANALYTICS = 'G-D2Y7CDBF3X';
       }
     }
 
-    document.getElementById('cookies-accepter').addEventListener('click', function () {
+    boutonAccepter.addEventListener('click', function () {
       enregistrer('accepte');
       masquer();
-      chargerAnalytics();
+      activerMesure();
     });
 
     // Refuser et fermer produisent le même effet : aucun dépôt.
@@ -112,8 +225,8 @@ const ID_ANALYTICS = 'G-D2Y7CDBF3X';
       masquer();
       purgerCookiesAnalytics();
     }
-    document.getElementById('cookies-refuser').addEventListener('click', refuser);
-    document.getElementById('cookies-fermer').addEventListener('click', refuser);
+    boutonRefuser.addEventListener('click', refuser);
+    boutonFermer.addEventListener('click', refuser);
 
     // Lien permanent « Gérer mes cookies », présent dans le pied de page.
     document.addEventListener('click', function (evenement) {
@@ -127,7 +240,7 @@ const ID_ANALYTICS = 'G-D2Y7CDBF3X';
     // Décision initiale : rien ne se charge sans un « accepte » explicite.
     const choix = lireChoix();
     if (choix === 'accepte') {
-      chargerAnalytics();
+      activerMesure();
     } else if (choix === null) {
       afficher();
     }

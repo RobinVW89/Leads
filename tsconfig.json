@@ -1,5 +1,10 @@
 {
   "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    // `RealisationsGallery` lit le dossier de photos au build, et les tests
+    // tournent sous Node : les deux ont besoin des types de la plateforme.
+    "types": ["node"]
+  },
   "include": [".astro/types.d.ts", "**/*"],
   "comment": "functions/ et workers/ tournent sur le runtime Cloudflare, pas dans le navigateur : ils ont leur propre tsconfig avec les types Workers.",
   "exclude": ["dist", "functions", "workers"]

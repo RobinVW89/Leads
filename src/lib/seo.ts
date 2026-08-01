@@ -25,11 +25,16 @@ export function serviceSchema(metier: Metier, ville: Ville, canonicalPath: strin
   };
 }
 
-export function faqSchema(metier: Metier) {
+/**
+ * `questions` permet de déclarer exactement ce que la page affiche, FAQ locale
+ * comprise. Un FAQPage qui annonce des questions absentes de la page est une
+ * cause classique de perte du rich result.
+ */
+export function faqSchema(metier: Metier, questions?: Array<{ question: string; reponse: string }>) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: metier.questionsFrequentes.map((faq) => ({
+    mainEntity: (questions ?? metier.questionsFrequentes).map((faq) => ({
       '@type': 'Question',
       name: faq.question,
       acceptedAnswer: {
@@ -93,27 +98,55 @@ export function metierServiceSchema(metier: Metier, canonicalPath: string) {
   };
 }
 
-export function localBusinessSchema() {
+/**
+ * Identité de l'éditeur.
+ *
+ * Remplace l'ancien `ProfessionalService`, qui déclarait une adresse postale à
+ * Auxerre. Cette adresse n'existe pas : le site est un service de mise en
+ * relation, sans établissement recevant du public. Annoncer une implantation
+ * locale fictive à Google, c'est prendre le risque d'une pénalité et, surtout,
+ * affirmer quelque chose de faux.
+ *
+ * `Organization` dit ce qui est vrai — qui édite le site, comment le joindre,
+ * quel territoire est couvert — sans prétendre à un local commercial.
+ */
+export function organizationSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'ProfessionalService',
+    '@type': 'Organization',
     name: SITE_CONFIG.siteName,
     url: SITE_CONFIG.siteUrl,
     description: SITE_CONFIG.description,
     telephone: SITE_CONFIG.telContact,
     email: SITE_CONFIG.contactEmail,
-    image: new URL('/images/og-lesprosdelyonne.jpg', SITE_CONFIG.siteUrl).toString(),
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Auxerre',
-      postalCode: '89000',
-      addressRegion: 'Bourgogne-Franche-Comté',
-      addressCountry: 'FR'
-    },
+    logo: new URL('/images/og-lesprosdelyonne.jpg', SITE_CONFIG.siteUrl).toString(),
     areaServed: {
       '@type': 'AdministrativeArea',
-      name: "Yonne (89)"
+      name: 'Yonne (89)'
     },
-    priceRange: 'Gratuit pour le particulier'
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      telephone: SITE_CONFIG.telContact,
+      email: SITE_CONFIG.contactEmail,
+      areaServed: 'FR',
+      availableLanguage: 'French'
+    }
+  };
+}
+
+/** Le site lui-même, avec son moteur de recherche interne de métiers. */
+export function webSiteSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_CONFIG.siteName,
+    url: SITE_CONFIG.siteUrl,
+    inLanguage: 'fr-FR',
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.siteName,
+      url: SITE_CONFIG.siteUrl
+    }
   };
 }
