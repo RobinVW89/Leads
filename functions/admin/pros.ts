@@ -242,6 +242,10 @@ function formulaire(pro: Professionnel | null): string {
 
   return `<div class="carte">
   <h2>${pro ? `Modifier la fiche n° ${pro.id}` : 'Ajouter un professionnel'}</h2>
+  <p class="muted" style="margin:-.4rem 0 1rem">
+    Parmi les professionnels compatibles avec une demande, celui de plus forte priorité est
+    recommandé en premier. Vous restez libre d’en choisir un autre au moment de transmettre.
+  </p>
   <form method="post">
     <input type="hidden" name="action" value="enregistrer">
     ${pro ? `<input type="hidden" name="id" value="${pro.id}">` : ''}
@@ -260,7 +264,11 @@ function formulaire(pro: Professionnel | null): string {
       <div><label for="priorite">Priorité</label>
         <input id="priorite" name="priorite" type="number" min="0" max="100" style="width:100%" value="${
           pro ? pro.priorite : 0
-        }"></div>
+        }">
+        <span class="muted" style="display:block;margin-top:.25rem;font-size:.8rem">
+          Ordre de passage, pas une note. À égalité, c’est le moins récemment servi qui passe.
+          Laissez 0 partout pour une rotation équitable.
+        </span></div>
     </div>
 
     <div style="margin-bottom:.9rem">

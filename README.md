@@ -82,7 +82,14 @@ attribuable.
 `/reponse/<jeton>` est **publique**, hors Cloudflare Access : elle est ouverte
 depuis un e-mail par quelqu'un qui n'a pas de compte. Le jeton est une clé de
 capacité — 256 bits d'aléa — qui n'autorise qu'une chose : répondre à cette
-demande, une fois, tant qu'elle est attribuée à son porteur, et pendant 30 jours.
+demande, une fois, tant qu'elle est attribuée à son porteur, et pendant
+**48 heures**. Passé ce délai la demande reste réservée : c'est depuis `/admin`
+qu'on enregistre l'absence de réponse pour la proposer au suivant.
+
+Tous les POST de `/admin` exigent un en-tête `Origin` identique à l'origine
+servie. Une origine étrangère, absente ou `null` est refusée en 403 : Access
+authentifie une session, il ne dit pas d'où part la requête, et un formulaire
+hébergé ailleurs pourrait sinon déclencher une suppression ou un envoi.
 
 Les liens de l'e-mail n'enregistrent rien. Ils ouvrent une page de confirmation
 qui attend un POST. C'est indispensable : beaucoup d'antivirus de messagerie

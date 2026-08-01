@@ -19,7 +19,8 @@ import {
   masquerNom,
   masquerTelephone
 } from '../functions/_lib/modele-email-pro.ts';
-import { jetonPlausible, nouveauJeton } from '../functions/_lib/reponse-pro.ts';
+import { verifierOrigine } from '../functions/_lib/origine.ts';
+import { jetonPlausible, nouveauJeton, VALIDITE_HEURES } from '../functions/_lib/reponse-pro.ts';
 import {
   comparerPros,
   enSlug,
@@ -320,5 +321,57 @@ describe('jeton de réponse', () => {
     assert.equal(jetonPlausible("' OR 1=1 --"), null);
     assert.equal(jetonPlausible('a'.repeat(65)), null);
     assert.equal(jetonPlausible(null), null);
+  });
+});
+
+describe('contrôle d’origine des actions d’administration', () => {
+  const NOTRE = 'https://lesprosdelyonne.com';
+
+  it('laisse passer une action partie de l’administration elle-même', () => {
+    assert.deepEqual(verifierOrigine('POST', NOTRE, NOTRE), { ok: true });
+  });
+
+  it('refuse un formulaire hébergé sur un autre site', () => {
+    const verdict = verifierOrigine('POST', 'https://exemple-malveillant.fr', NOTRE);
+    assert.equal(verdict.ok, false);
+    assert.match(verdict.ok === false ? verdict.motif : '', /étrangère/);
+  });
+
+  it('refuse un en-tête Origin absent', () => {
+    assert.equal(verifierOrigine('POST', null, NOTRE).ok, false);
+    assert.equal(verifierOrigine('POST', '', NOTRE).ok, false);
+  });
+
+  it('refuse une origine opaque « null »', () => {
+    const verdict = verifierOrigine('POST', 'null', NOTRE);
+    assert.equal(verdict.ok, false);
+    assert.match(verdict.ok === false ? verdict.motif : '', /opaque/);
+  });
+
+  it('refuse un sous-domaine ou un schéma qui ne correspond pas exactement', () => {
+    assert.equal(verifierOrigine('POST', 'https://admin.lesprosdelyonne.com', NOTRE).ok, false);
+    assert.equal(verifierOrigine('POST', 'http://lesprosdelyonne.com', NOTRE).ok, false);
+    assert.equal(verifierOrigine('POST', 'https://lesprosdelyonne.com.exemple.fr', NOTRE).ok, false);
+  });
+
+  it('couvre toutes les méthodes qui modifient, et laisse les lectures tranquilles', () => {
+    for (const methode of ['POST', 'PUT', 'PATCH', 'DELETE']) {
+      assert.equal(verifierOrigine(methode, 'https://ailleurs.fr', NOTRE).ok, false, methode);
+    }
+    for (const methode of ['GET', 'HEAD', 'OPTIONS']) {
+      assert.deepEqual(verifierOrigine(methode, null, NOTRE), { ok: true }, methode);
+    }
+  });
+
+  it('vaut aussi en développement local, où Access n’est pas devant', () => {
+    const local = 'http://127.0.0.1:8788';
+    assert.deepEqual(verifierOrigine('POST', local, local), { ok: true });
+    assert.equal(verifierOrigine('POST', 'https://exemple-malveillant.fr', local).ok, false);
+  });
+});
+
+describe('validité du lien de réponse', () => {
+  it('est de 48 heures', () => {
+    assert.equal(VALIDITE_HEURES, 48);
   });
 });

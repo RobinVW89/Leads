@@ -9,6 +9,7 @@
 
 import { estAdmin, identifierViaAccess } from './access';
 import { avecEntetesSecurite } from './entetes';
+import { verifierOrigineDe } from './origine';
 
 export type EnvAdmin = {
   DB: D1Database;
@@ -40,8 +41,23 @@ export type Acces = { ok: true; identite: string } | { ok: false; reponse: Respo
  * Identité prouvée par le JWT Cloudflare Access, puis confrontée à la liste
  * blanche applicative. En développement local, Access n'est pas devant : la
  * page reste ouverte, mais l'identité affichée le dit explicitement.
+ *
+ * Le contrôle d'origine, lui, s'applique partout — y compris en local. Le
+ * placer ici plutôt que dans chaque page est délibéré : une page ajoutée plus
+ * tard hérite de la protection sans que personne ait à y penser, et l'oubli
+ * serait silencieux.
  */
 export async function garderAdmin(request: Request, env: EnvAdmin): Promise<Acces> {
+  const origine = verifierOrigineDe(request);
+  if (!origine.ok) {
+    return {
+      ok: false,
+      reponse: refus(
+        `Requête refusée : ${origine.motif}. Une action d'administration doit partir de l'espace d'administration lui-même.`
+      )
+    };
+  }
+
   const hote = new URL(request.url).hostname;
   if (hote === 'localhost' || hote === '127.0.0.1') {
     return { ok: true, identite: 'session locale de développement' };

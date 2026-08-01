@@ -123,7 +123,8 @@ const IMPASSES: Record<string, { titre: string; texte: string }> = {
   },
   expire: {
     titre: 'Ce lien a expiré',
-    texte: 'Les demandes ne restent réservées que quelques semaines. Contactez-nous si vous êtes toujours intéressé.'
+    texte:
+      'Une demande ne reste joignable par ce lien que 48 heures : passé ce délai, le demandeur a généralement déjà fait appel ailleurs. Contactez-nous si vous êtes toujours intéressé.'
   }
 };
 

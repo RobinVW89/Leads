@@ -15,8 +15,18 @@
  * réattribue pas une demande vieille de plusieurs mois.
  */
 
-/** Au-delà, le lien ne répond plus : la demande a depuis longtemps été traitée. */
-export const VALIDITE_JOURS = 30;
+/**
+ * Durée de validité du lien de réponse.
+ *
+ * Une demande de travaux se périme vite : passé deux jours sans réponse, le
+ * demandeur a souvent déjà appelé ailleurs, et transmettre ses coordonnées
+ * n'aurait plus de sens. Le lien cesse donc d'agir au bout de 48 heures.
+ *
+ * Conséquence à connaître : la demande reste réservée au professionnel qui n'a
+ * pas répondu. C'est depuis /admin qu'on enregistre son absence de réponse pour
+ * la proposer au suivant.
+ */
+export const VALIDITE_HEURES = 48;
 
 /**
  * 256 bits d'aléa, en base64url pour tenir dans une URL sans encodage.
@@ -117,7 +127,7 @@ export async function ouvrirJeton(db: D1Database, jeton: string): Promise<EtatJe
   if (ligne.pro_actif_id !== ligne.professionnel_id) return { ok: false, motif: 'plus-attribuee' };
 
   const envoye = enDate(ligne.envoye_le);
-  if (!envoye || Date.now() - envoye.getTime() > VALIDITE_JOURS * 86_400_000) {
+  if (!envoye || Date.now() - envoye.getTime() > VALIDITE_HEURES * 3_600_000) {
     return { ok: false, motif: 'expire' };
   }
 
