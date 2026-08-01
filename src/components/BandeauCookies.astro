@@ -43,6 +43,7 @@ const ID_ANALYTICS = 'G-D2Y7CDBF3X';
 </div>
 
 <script>
+  import { analyticsAutorise } from '../lib/analytics-hotes';
   import { detecterIA, verdictDeSession } from '../lib/detection-ia';
 
   (function () {
@@ -62,11 +63,21 @@ const ID_ANALYTICS = 'G-D2Y7CDBF3X';
     // traverse pas les fonctions déclarées plus bas.
     const panneau: HTMLElement = bandeau;
     const idAnalytics = panneau.getAttribute('data-analytics-id') || '';
+
+    /**
+     * Domaine de mesure. Une prévisualisation `*.pages.dev` sert le même code
+     * que la production : sans ce contrôle, chaque relecture d'une branche
+     * ajouterait des visites et des conversions fictives aux statistiques.
+     *
+     * Le bandeau, lui, reste présenté à l'identique partout : on vérifie ainsi
+     * son comportement en prévisualisation sans qu'aucune donnée ne parte.
+     */
+    const domaineMesure = analyticsAutorise(window.location.hostname);
     let analyticsCharge = false;
 
     /** Charge Google Analytics. Appelé uniquement après acceptation. */
     function chargerAnalytics() {
-      if (analyticsCharge || !idAnalytics) return;
+      if (analyticsCharge || !idAnalytics || !domaineMesure) return;
       analyticsCharge = true;
 
       const file: unknown[] = (window.dataLayer = window.dataLayer || []);
@@ -139,8 +150,14 @@ const ID_ANALYTICS = 'G-D2Y7CDBF3X';
       }
     }
 
-    /** Tout ce qui suit l'acceptation, dans l'ordre. */
+    /**
+     * Tout ce qui suit l'acceptation, dans l'ordre.
+     * Hors du domaine de production, on s'arrête net : ni chargement, ni
+     * détection, ni écriture en session. Le consentement est enregistré malgré
+     * tout, pour que le bandeau ne se represente pas à chaque page.
+     */
     function activerMesure() {
+      if (!domaineMesure) return;
       chargerAnalytics();
       mesurerProvenance();
     }

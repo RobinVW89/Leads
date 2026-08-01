@@ -2,6 +2,8 @@ import metiers from '../data/metiers.json';
 import villes from '../data/villes.json';
 import parcours from '../data/parcours.json';
 import localAuxerre from '../data/local-auxerre.json';
+import localSens from '../data/local-sens.json';
+import localJoigny from '../data/local-joigny.json';
 
 export type FaqItem = {
   question: string;
@@ -118,6 +120,43 @@ export const metiersData = metiers as Metier[];
 export const villesData = villes as Ville[];
 export const parcoursData = parcours as ParcoursMetier[];
 export const auxerreContentData = localAuxerre as AuxerreContent[];
+
+/**
+ * Contenu local, par commune. Une commune absente de cette table sert la page
+ * générique : mieux vaut un texte assumé comme départemental qu'un texte
+ * pseudo-local obtenu en substituant un nom de ville.
+ */
+const contenuLocalParVille: Record<string, AuxerreContent[]> = {
+  auxerre: localAuxerre as AuxerreContent[],
+  sens: localSens as AuxerreContent[],
+  joigny: localJoigny as AuxerreContent[]
+};
+
+/** Sources officielles citées au bas du bloc local, par commune. */
+export type SourceLocale = { libelle: string; url: string };
+
+const sourcesParVille: Record<string, SourceLocale[]> = {
+  sens: [
+    { libelle: 'Insee — dossier complet, commune de Sens', url: 'https://www.insee.fr/fr/statistiques/2011101?geo=COM-89387' },
+    { libelle: 'Géorisques — risques par commune', url: 'https://www.georisques.gouv.fr/mes-risques/connaitre-les-risques-pres-de-chez-moi' },
+    { libelle: 'Service-Public.fr — autorisations d’urbanisme', url: 'https://www.service-public.fr/particuliers/vosdroits/N319' },
+    { libelle: 'France Rénov’ — aides à la rénovation', url: 'https://france-renov.gouv.fr/' }
+  ],
+  joigny: [
+    { libelle: 'Insee — dossier complet, commune de Joigny', url: 'https://www.insee.fr/fr/statistiques/2011101?geo=COM-89206' },
+    { libelle: 'Géorisques — risques par commune', url: 'https://www.georisques.gouv.fr/mes-risques/connaitre-les-risques-pres-de-chez-moi' },
+    { libelle: 'Service-Public.fr — autorisations d’urbanisme', url: 'https://www.service-public.fr/particuliers/vosdroits/N319' },
+    { libelle: 'France Rénov’ — aides à la rénovation', url: 'https://france-renov.gouv.fr/' }
+  ]
+};
+
+export function getContenuLocal(villeSlug: string, metierSlug: string): AuxerreContent | undefined {
+  return contenuLocalParVille[villeSlug]?.find((entry) => entry.slug === metierSlug);
+}
+
+export function getSourcesLocales(villeSlug: string): SourceLocale[] {
+  return sourcesParVille[villeSlug] ?? [];
+}
 
 export function getMetierBySlug(slug: string): Metier | undefined {
   return metiersData.find((metier) => metier.slug === slug);

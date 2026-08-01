@@ -81,6 +81,80 @@ async function evenementsCaptures(page) {
   }, CLE_CAPTURE);
 }
 
+/**
+ * Remplit et envoie le formulaire sans jamais appeler l'API réelle.
+ * `/api/lead` est intercepté et renvoie la réussite attendue : aucune demande
+ * n'est créée, et c'est bien le chemin de succès qui est exercé.
+ */
+async function envoyerFormulaire(page, { reponse }) {
+  await page.route('**/api/lead', (route) =>
+    route.fulfill({
+      status: reponse.status,
+      contentType: reponse.contentType,
+      body: reponse.body
+    })
+  );
+
+  const message = await page.evaluate(() => {
+    const form = document.querySelector('form[id$="-form"], form');
+    if (!form) throw new Error('formulaire introuvable');
+
+    const poser = (nom, valeur) => {
+      const champ = form.querySelector(`input[name="${nom}"], textarea[name="${nom}"], select[name="${nom}"]`);
+      if (champ) {
+        champ.value = valeur;
+        champ.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    };
+
+    poser('prenom', 'Test');
+    poser('nom', 'Navigateur');
+    poser('telephone', '0600000000');
+    poser('email', 'test@example.invalid');
+    poser('commune', 'Auxerre');
+    poser('codePostal', '89000');
+    poser('description', 'Vérification automatisée du suivi de conversion.');
+
+    // Le parcours de qualification pose des questions à choix unique, toutes
+    // obligatoires : sans réponse, le navigateur refuse la validation. On
+    // répond au premier choix proposé, quelle que soit la forme du champ.
+    for (const champ of form.querySelectorAll('[required]')) {
+      if (champ.type === 'radio') {
+        const premier = form.querySelector(`input[type="radio"][name="${champ.name}"]`);
+        if (premier && !form.querySelector(`input[type="radio"][name="${champ.name}"]:checked`)) {
+          premier.checked = true;
+          premier.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      } else if (champ.tagName === 'SELECT' && !champ.value) {
+        const option = Array.from(champ.options).find((o) => o.value);
+        if (option) {
+          champ.value = option.value;
+          champ.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+    }
+
+    const consentement = form.querySelector('[name="consentementDonnees"]');
+    if (consentement) consentement.checked = true;
+
+    // Le formulaire refuse un envoi trop rapide : on antidate l'ouverture.
+    const depart = form.querySelector('[name="startedAt"]');
+    if (depart) depart.value = String(Date.now() - 20000);
+
+    // Un champ resté invalide bloquerait avant l'appel réseau, et le test
+    // passerait pour de mauvaises raisons : on le signale explicitement.
+    if (!form.reportValidity()) {
+      const fautif = form.querySelector(':invalid');
+      return 'champ invalide : ' + (fautif ? fautif.name || fautif.id : 'inconnu');
+    }
+
+    form.requestSubmit();
+    return null;
+  });
+
+  if (message) throw new Error(message);
+}
+
 test.describe('avant tout consentement', () => {
   test('le bandeau est visible et rien ne part vers Google', async ({ page }) => {
     const appels = await surveillerGoogle(page);
@@ -199,7 +273,7 @@ test.describe('après acceptation', () => {
       route.fulfill({
         status: 200,
         contentType: 'text/html',
-        body: `<a id="lien" href="http://localhost:4321${PAGE}">aller</a>`
+        body: `<a id="lien" href="http://lesprosdelyonne.com:4321${PAGE}">aller</a>`
       })
     );
 
@@ -223,80 +297,6 @@ test.describe('après acceptation', () => {
 });
 
 test.describe('conversion', () => {
-  /**
-   * Remplit et envoie le formulaire sans jamais appeler l'API réelle.
-   * `/api/lead` est intercepté et renvoie la réussite attendue : aucune demande
-   * n'est créée, et c'est bien le chemin de succès qui est exercé.
-   */
-  async function envoyerFormulaire(page, { reponse }) {
-    await page.route('**/api/lead', (route) =>
-      route.fulfill({
-        status: reponse.status,
-        contentType: reponse.contentType,
-        body: reponse.body
-      })
-    );
-
-    const message = await page.evaluate(() => {
-      const form = document.querySelector('form[id$="-form"], form');
-      if (!form) throw new Error('formulaire introuvable');
-
-      const poser = (nom, valeur) => {
-        const champ = form.querySelector(`input[name="${nom}"], textarea[name="${nom}"], select[name="${nom}"]`);
-        if (champ) {
-          champ.value = valeur;
-          champ.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-      };
-
-      poser('prenom', 'Test');
-      poser('nom', 'Navigateur');
-      poser('telephone', '0600000000');
-      poser('email', 'test@example.invalid');
-      poser('commune', 'Auxerre');
-      poser('codePostal', '89000');
-      poser('description', 'Vérification automatisée du suivi de conversion.');
-
-      // Le parcours de qualification pose des questions à choix unique, toutes
-      // obligatoires : sans réponse, le navigateur refuse la validation. On
-      // répond au premier choix proposé, quelle que soit la forme du champ.
-      for (const champ of form.querySelectorAll('[required]')) {
-        if (champ.type === 'radio') {
-          const premier = form.querySelector(`input[type="radio"][name="${champ.name}"]`);
-          if (premier && !form.querySelector(`input[type="radio"][name="${champ.name}"]:checked`)) {
-            premier.checked = true;
-            premier.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        } else if (champ.tagName === 'SELECT' && !champ.value) {
-          const option = Array.from(champ.options).find((o) => o.value);
-          if (option) {
-            champ.value = option.value;
-            champ.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        }
-      }
-
-      const consentement = form.querySelector('[name="consentementDonnees"]');
-      if (consentement) consentement.checked = true;
-
-      // Le formulaire refuse un envoi trop rapide : on antidate l'ouverture.
-      const depart = form.querySelector('[name="startedAt"]');
-      if (depart) depart.value = String(Date.now() - 20000);
-
-      // Un champ resté invalide bloquerait avant l'appel réseau, et le test
-      // passerait pour de mauvaises raisons : on le signale explicitement.
-      if (!form.reportValidity()) {
-        const fautif = form.querySelector(':invalid');
-        return 'champ invalide : ' + (fautif ? fautif.name || fautif.id : 'inconnu');
-      }
-
-      form.requestSubmit();
-      return null;
-    });
-
-    if (message) throw new Error(message);
-  }
-
   test('generate_lead part avec la source, après un succès JSON confirmé', async ({ page }) => {
     await surveillerGoogle(page);
     await page.goto(`${PAGE}?utm_source=gemini`);
@@ -378,5 +378,67 @@ test.describe('conversion', () => {
 
     expect(appels).toEqual([]);
     expect(await page.evaluate(() => (window.dataLayer || []).length)).toBe(0);
+  });
+});
+
+/**
+ * Le domaine de prévisualisation réel se termine en `.pages.dev`, que Chrome
+ * force en HTTPS (HSTS préchargé) et qu'on ne peut donc pas servir en clair
+ * depuis un serveur de développement. On utilise ici un hôte en `.test`, TLD
+ * réservé : le mécanisme exercé est identique, puisque l'autorisation repose
+ * sur une liste fermée de deux domaines et non sur un motif d'exclusion.
+ * Le cas littéral `*.pages.dev` est couvert par tests/analytics-hotes.test.ts.
+ */
+test.describe('garde-fou de domaine', () => {
+  test('hors du domaine de production, rien n’est mesuré même après acceptation', async ({ page }) => {
+    const appels = await surveillerGoogle(page);
+
+    await page.goto(`http://preview.pages.test:4321${PAGE}?utm_source=gemini`);
+    await expect(page.locator('#bandeau-cookies')).toBeVisible();
+    await accepter(page);
+    await page.waitForTimeout(1000);
+
+    // Le bandeau se comporte normalement — il disparaît, le choix est retenu —
+    // mais aucune mesure ne part.
+    await expect(page.locator('#bandeau-cookies')).toBeHidden();
+    expect(appels).toEqual([]);
+
+    const etat = await page.evaluate(() => ({
+      gtag: typeof window.gtag,
+      dataLayer: window.dataLayer ? window.dataLayer.length : 0,
+      source: sessionStorage.getItem('source-ia'),
+      consentement: localStorage.getItem('consentement-mesure-audience')
+    }));
+
+    expect(etat.gtag).toBe('undefined');
+    expect(etat.dataLayer).toBe(0);
+    expect(etat.source).toBeNull();
+    expect(etat.consentement).toContain('accepte');
+  });
+
+  test('une conversion réussie hors production n’émet rien non plus', async ({ page }) => {
+    const appels = await surveillerGoogle(page);
+    await page.goto(`http://preview.pages.test:4321${PAGE}?utm_source=chatgpt`);
+    await accepter(page);
+
+    await envoyerFormulaire(page, {
+      reponse: { status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) }
+    });
+    await page.waitForURL(/\/merci/, { timeout: 10_000 });
+
+    expect(appels).toEqual([]);
+    expect(await page.evaluate(() => (window.dataLayer || []).length)).toBe(0);
+  });
+
+  test('sur le domaine de production, la mesure fonctionne', async ({ page }) => {
+    const appels = await surveillerGoogle(page);
+    await page.goto(`http://www.lesprosdelyonne.com:4321${PAGE}?utm_source=gemini`);
+    await accepter(page);
+    await page.waitForTimeout(800);
+
+    expect(appels.some((url) => url.includes('googletagmanager.com'))).toBe(true);
+    const visites = (await evenements(page)).filter((e) => e.nom === 'visite_ia');
+    expect(visites).toHaveLength(1);
+    expect(visites[0].params.source_ia).toBe('gemini');
   });
 });

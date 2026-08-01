@@ -2109,3 +2109,23 @@ main li {
     flex: 0 0 auto;
   }
 }
+
+/* Bloc local des pages métier x ville : FAQ dépliable et sources discrètes. */
+.local-faq { margin-top: 1.6rem; }
+.local-faq h3 { font-size: 1.05rem; margin: 0 0 0.6rem; }
+.local-faq details {
+	border: 1px solid var(--rule, #e7dcc8);
+	border-radius: 10px;
+	padding: 0.7rem 0.9rem;
+	margin-bottom: 0.5rem;
+	background: #fff;
+}
+.local-faq summary { cursor: pointer; font-weight: 600; }
+.local-faq details p { margin: 0.6rem 0 0; }
+.sources-locales {
+	margin-top: 1.2rem;
+	font-size: 0.78rem;
+	line-height: 1.6;
+	color: #6b7a71;
+}
+.sources-locales a { color: inherit; text-decoration: underline; }

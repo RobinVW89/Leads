@@ -15,15 +15,31 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [['list']],
   use: {
-    baseURL: 'http://localhost:4321',
+    // Les tests s'exécutent sous le VRAI domaine de production, résolu vers la
+    // machine locale. C'est ce qui permet d'exercer le garde-fou de mesure sans
+    // ajouter d'exception « localhost » dans le code du site.
+    baseURL: 'http://lesprosdelyonne.com:4321',
     trace: 'retain-on-failure'
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
-  // Le projet lance son serveur de développement en arrière-plan
-  // (voir AGENTS.md). On le réutilise s'il tourne déjà, sinon on le démarre.
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          args: [
+            '--host-resolver-rules=MAP lesprosdelyonne.com 127.0.0.1, MAP www.lesprosdelyonne.com 127.0.0.1, MAP preview.pages.test 127.0.0.1'
+          ]
+        }
+      }
+    }
+  ],
+  // Le serveur doit écouter sur 127.0.0.1 : c'est vers cette adresse que les
+  // noms d'hôte de test sont résolus. Un serveur de développement déjà lancé
+  // en arrière-plan n'écoute que sur localhost en IPv6 — d'où le port dédié.
   webServer: {
-    command: 'npx astro dev --port 4321',
-    url: 'http://localhost:4321/',
+    command: 'npx astro dev --port 4321 --host 127.0.0.1',
+    url: 'http://127.0.0.1:4321/',
     reuseExistingServer: true,
     timeout: 120_000
   }
