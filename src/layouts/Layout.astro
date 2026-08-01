@@ -2,6 +2,7 @@
 import { SITE_CONFIG } from '../config/site';
 import BrandMark from '../components/BrandMark.astro';
 import BandeauCookies from '../components/BandeauCookies.astro';
+import BoutonUrgence from '../components/BoutonUrgence.astro';
 import '../styles/theme.css';
 
 type Crumb = {
@@ -101,13 +102,7 @@ const enJsonSur = (valeur: object) => JSON.stringify(valeur).replace(/</g, '\\u0
 					<a href="/mentions-legales">Mentions légales</a>
 				</nav>
 				<div class="header-actions">
-					<a class="tel-link" href={`tel:${SITE_CONFIG.telContactHref}`}>
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-							<path d="M6.2 3.5h3l1.4 3.6-2 1.4a11 11 0 0 0 5 5l1.4-2 3.6 1.4v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.7a2 2 0 0 1 2-2.2Z" />
-						</svg>
-						<span class="tel-text">{SITE_CONFIG.telContact}</span>
-						<span class="sr-only">Appeler le {SITE_CONFIG.telContact}</span>
-					</a>
+					<BoutonUrgence />
 					<button
 						type="button"
 						class="nav-toggle"
@@ -152,12 +147,7 @@ const enJsonSur = (valeur: object) => JSON.stringify(valeur).replace(/</g, '\\u0
 							l'Yonne.
 						</p>
 						<p>
-							<a class="tel-link" href={`tel:${SITE_CONFIG.telContactHref}`}>
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-									<path d="M6.2 3.5h3l1.4 3.6-2 1.4a11 11 0 0 0 5 5l1.4-2 3.6 1.4v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.7a2 2 0 0 1 2-2.2Z" />
-								</svg>
-								<span>{SITE_CONFIG.telContact}</span>
-							</a>
+							<BoutonUrgence />
 						</p>
 					</div>
 					<div>

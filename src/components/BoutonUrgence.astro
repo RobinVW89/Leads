@@ -1,0 +1,31 @@
+---
+/**
+ * Bouton d'appel, sans afficher le numéro.
+ *
+ * Le numéro reste dans le `href` : un appui compose l'appel sur mobile, et
+ * les lecteurs d'écran l'annoncent grâce au libellé accessible. Ce qui change,
+ * c'est qu'il n'est plus écrit en clair sur la page — ni pour un visiteur qui
+ * le noterait sans passer par le formulaire, ni pour un aspirateur d'adresses.
+ *
+ * Le numéro reste affiché en clair sur les mentions légales, où la loi
+ * l'impose. Ce composant n'y est donc pas utilisé.
+ */
+import { SITE_CONFIG } from '../config/site';
+
+type Props = {
+  /** `compact` pour l'en-tête et le pied de page, `large` pour les encarts. */
+  variante?: 'compact' | 'large';
+  libelle?: string;
+};
+
+const { variante = 'compact', libelle = 'Une urgence ?' } = Astro.props;
+const classe = variante === 'large' ? 'phone-number' : 'tel-link';
+---
+
+<a class={`${classe} bouton-urgence`} href={`tel:${SITE_CONFIG.telContactHref}`}>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M6.2 3.5h3l1.4 3.6-2 1.4a11 11 0 0 0 5 5l1.4-2 3.6 1.4v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.7a2 2 0 0 1 2-2.2Z" />
+  </svg>
+  <span class="tel-text">{libelle}</span>
+  <span class="sr-only">Appeler le {SITE_CONFIG.telContact}</span>
+</a>

@@ -1568,6 +1568,18 @@ main li {
   text-decoration: underline;
 }
 
+/*
+ * Le bouton d'appel du pied de page a un fond vert profond. La règle
+ * `.footer a` ci-dessus, plus tardive dans la feuille, écrasait son texte
+ * blanc par un vert sombre : le libellé devenait illisible sur son propre
+ * fond. On le rétablit explicitement, au survol comme au repos.
+ */
+.footer .tel-link,
+.footer .tel-link:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
 .footer-grid {
   display: grid;
   gap: clamp(1.4rem, 3vw, 2.4rem);

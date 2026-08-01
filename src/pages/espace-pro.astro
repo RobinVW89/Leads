@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import BoutonUrgence from '../components/BoutonUrgence.astro';
 import ProForm from '../components/ProForm.astro';
 import { SITE_CONFIG } from '../config/site';
 import { metiersData, villesData } from '../lib/data';
@@ -154,12 +155,7 @@ const schemas = breadcrumbSchema([
           Appelez-nous, nous vous expliquons le fonctionnement et le type de demandes que vous recevriez.
         </p>
       </div>
-      <a class="phone-number" href={`tel:${SITE_CONFIG.telContactHref}`}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M6.2 3.5h3l1.4 3.6-2 1.4a11 11 0 0 0 5 5l1.4-2 3.6 1.4v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.7a2 2 0 0 1 2-2.2Z" />
-        </svg>
-        {SITE_CONFIG.telContact}
-      </a>
+      <BoutonUrgence variante="large" libelle="Une question ? Appelez-nous" />
     </div>
   </section>
 </Layout>

@@ -6,6 +6,7 @@ import YonneMap from '../components/YonneMap.astro';
 import { SITE_CONFIG } from '../config/site';
 import { metiersData, villesData } from '../lib/data';
 import { organizationSchema, webSiteSchema } from '../lib/seo';
+import BoutonUrgence from '../components/BoutonUrgence.astro';
 
 const title = `${SITE_CONFIG.siteName} | Devis gratuit dans l'Yonne`;
 const description = SITE_CONFIG.tagline;
@@ -299,12 +300,7 @@ const siteSchema = webSiteSchema();
 					l'Yonne.
 				</p>
 			</div>
-			<a class="phone-number" href={`tel:${SITE_CONFIG.telContactHref}`}>
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-					<path d="M6.2 3.5h3l1.4 3.6-2 1.4a11 11 0 0 0 5 5l1.4-2 3.6 1.4v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.2 5.7a2 2 0 0 1 2-2.2Z" />
-				</svg>
-				{SITE_CONFIG.telContact}
-			</a>
+			<BoutonUrgence variante="large" libelle="Une urgence ? Appelez-nous" />
 		</div>
 	</section>
 
