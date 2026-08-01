@@ -27,11 +27,11 @@ const EXTENSIONS = /\.(jpe?g|png|webp|avif|svg)$/i;
 function photosDuMetier(slug: string): string[] {
   try {
     return readdirSync(`public/images/realisations/${slug}`)
-      .filter((fichier) => EXTENSIONS.test(fichier))
+      .filter((fichier: string) => EXTENSIONS.test(fichier))
       // Ordre naturel : « photo-2 » passe avant « photo-10 ».
-      .sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }))
+      .sort((a: string, b: string) => a.localeCompare(b, 'fr', { numeric: true }))
       .slice(0, 3)
-      .map((fichier) => `/images/realisations/${slug}/${encodeURIComponent(fichier)}`);
+      .map((fichier: string) => `/images/realisations/${slug}/${encodeURIComponent(fichier)}`);
   } catch {
     // Dossier absent : un métier ajouté sans son dossier ne casse pas le build.
     return [];

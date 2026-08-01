@@ -29,3 +29,7 @@ pnpm-debug.log*
 # Exports de la base : ils contiennent les coordonnées réelles des demandeurs.
 # Ils restent sur le poste, jamais dans le dépôt.
 sauvegardes/
+
+# Artefacts des tests navigateur.
+test-results/
+playwright-report/

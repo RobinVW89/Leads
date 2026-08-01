@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "node --experimental-strip-types --test tests/*.test.ts",
-    "verifier": "tsc --noEmit -p tsconfig.cloudflare.json && npm test"
+    "verifier": "astro check && npm test && npm run test:navigateur",
+    "test:navigateur": "playwright test"
   },
   "dependencies": {
     "astro": "^7.0.6",
@@ -20,6 +21,8 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@cloudflare/workers-types": "^5.20260730.1",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^22.20.1",
     "typescript": "^6.0.3"
   }
 }
