@@ -86,7 +86,16 @@ const MESSAGES: Record<string, { ton: 'ok' | 'alerte'; texte: string }> = {
     ton: 'alerte',
     texte: 'Envoi refusé : ce professionnel n’est pas un candidat valide pour cette demande.'
   },
-  'brouillon-vide': { ton: 'alerte', texte: 'Envoi refusé : le sujet et le corps du message sont obligatoires.' }
+  'brouillon-vide': { ton: 'alerte', texte: 'Envoi refusé : le sujet et le corps du message sont obligatoires.' },
+  liberee: {
+    ton: 'ok',
+    texte: 'Réservation annulée. Aucun e-mail n’était parti ; la demande est de nouveau attribuable.'
+  },
+  'envoi-trace': {
+    ton: 'alerte',
+    texte:
+      'Annulation impossible : un e-mail a bien été envoyé à ce professionnel. Enregistrez plutôt son refus.'
+  }
 };
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -134,9 +143,39 @@ async function traiterAction(request: Request, env: Env, lead: LigneLead, origin
   const action = String(form.get('action') || '');
   const proId = Number(form.get('pro_id') || 0) || 0;
 
+  if (action === 'liberer') return liberer(env, lead, proId);
   if (action === 'refus') return enregistrerRefus(env, lead, proId, form);
   if (action === 'envoyer') return envoyer(env, lead, proId, form, origine);
   return 'inconnu';
+}
+
+/**
+ * Annulation d'une réservation restée sans envoi.
+ *
+ * Le cas est rare mais réel : si l'exécution s'interrompt entre la réservation
+ * et le résultat de l'envoi — isolate arrêté, coupure réseau — la demande reste
+ * réservée alors qu'aucun e-mail n'est parti. Sans ce bouton elle serait bloquée
+ * pour toujours. La libération n'est possible que dans ce cas précis : dès qu'un
+ * envoi est tracé, seul un refus peut libérer la demande.
+ */
+async function liberer(env: Env, lead: LigneLead, proId: number): Promise<string> {
+  if (proId <= 0 || lead.pro_actif_id !== proId) return 'pro-invalide';
+
+  const envoiTrace = await env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM attributions WHERE lead_id = ? AND professionnel_id = ? AND statut = 'envoye'"
+  )
+    .bind(lead.id, proId)
+    .first<{ n: number }>();
+
+  if ((envoiTrace?.n ?? 0) > 0) return 'envoi-trace';
+
+  const liberation = await env.DB.prepare(
+    'UPDATE leads SET pro_actif_id = NULL, pro_actif_at = NULL WHERE id = ? AND pro_actif_id = ?'
+  )
+    .bind(lead.id, proId)
+    .run();
+
+  return Number(liberation.meta?.changes ?? 0) === 1 ? 'liberee' : 'deja-attribuee';
 }
 
 /**
@@ -152,9 +191,9 @@ async function enregistrerRefus(env: Env, lead: LigneLead, proId: number, form: 
   const motif = String(form.get('motif') || '').trim().slice(0, MOTIF_MAX);
 
   const liberation = await env.DB.prepare(
-    'UPDATE leads SET pro_actif_id = NULL, pro_actif_at = NULL, statut = ? WHERE id = ? AND pro_actif_id = ?'
+    "UPDATE leads SET pro_actif_id = NULL, pro_actif_at = NULL, statut = 'nouveau' WHERE id = ? AND pro_actif_id = ?"
   )
-    .bind('nouveau', lead.id, proId)
+    .bind(lead.id, proId)
     .run();
 
   if (Number(liberation.meta?.changes ?? 0) !== 1) return 'deja-attribuee';
@@ -206,9 +245,14 @@ async function envoyer(env: Env, lead: LigneLead, proId: number, form: FormData,
     return `fuite:${libelles}`.slice(0, 180);
   }
 
-  // --- Prise exclusive de la demande --------------------------------------
+  // --- Réservation exclusive de la demande ---------------------------------
+  // Seul `pro_actif_id` est posé ici : `statut` reste tel quel. Une demande
+  // n'est dite « transmise » qu'une fois l'e-mail réellement parti — si l'envoi
+  // échoue, ou si l'exécution s'interrompt entre les deux, elle n'aura jamais
+  // porté ce statut. La réservation, elle, est indispensable dès maintenant :
+  // c'est elle qui interdit un second envoi simultané.
   const prise = await env.DB.prepare(
-    "UPDATE leads SET pro_actif_id = ?, pro_actif_at = datetime('now'), statut = 'transmis' WHERE id = ? AND pro_actif_id IS NULL"
+    "UPDATE leads SET pro_actif_id = ?, pro_actif_at = datetime('now') WHERE id = ? AND pro_actif_id IS NULL"
   )
     .bind(destinataire.id, lead.id)
     .run();
@@ -249,10 +293,11 @@ async function envoyer(env: Env, lead: LigneLead, proId: number, form: FormData,
   }
 
   if (erreur) {
-    // L'e-mail n'est pas parti : la demande doit redevenir attribuable, sans
-    // quoi un échec technique la bloquerait définitivement.
+    // L'e-mail n'est pas parti : la réservation est annulée, sans quoi un échec
+    // technique bloquerait la demande définitivement. `statut` n'a pas été
+    // touché, la demande n'a donc jamais été présentée comme transmise.
     await env.DB.prepare(
-      "UPDATE leads SET pro_actif_id = NULL, pro_actif_at = NULL, statut = 'nouveau' WHERE id = ? AND pro_actif_id = ?"
+      'UPDATE leads SET pro_actif_id = NULL, pro_actif_at = NULL WHERE id = ? AND pro_actif_id = ?'
     )
       .bind(lead.id, destinataire.id)
       .run();
@@ -266,10 +311,13 @@ async function envoyer(env: Env, lead: LigneLead, proId: number, form: FormData,
     return `echec:${erreur}`.slice(0, 180);
   }
 
+  // L'envoi a abouti : c'est seulement maintenant que la demande devient
+  // « transmise », et que la trace d'attribution porteuse du jeton est écrite.
   await env.DB.batch([
     env.DB.prepare(
       'INSERT INTO attributions (lead_id, professionnel_id, statut, motif, email_envoye, jeton) VALUES (?, ?, ?, NULL, 1, ?)'
     ).bind(lead.id, destinataire.id, 'envoye', jeton),
+    env.DB.prepare("UPDATE leads SET statut = 'transmis' WHERE id = ?").bind(lead.id),
     env.DB.prepare(
       "UPDATE professionnels SET dernier_lead_at = datetime('now'), dernier_lead_id = ? WHERE id = ?"
     ).bind(lead.id, destinataire.id)
@@ -330,6 +378,23 @@ function ficheDemande(lead: LigneLead): string {
         )}</div>`
       : ''
   }
+</div>`;
+}
+
+/** Réservation posée mais aucun envoi tracé : l'exécution s'est interrompue. */
+function blocReservationIncomplete(lead: LigneLead, pro: Professionnel): string {
+  return `<div class="carte alerte">
+  <h2>Réservation incomplète</h2>
+  <p style="margin:0 0 .6rem">
+    La demande a été réservée pour <b>${echapper(nomPro(pro))}</b> le ${echapper(dateCourte(lead.pro_actif_at))},
+    mais <b class="ko">aucun e-mail n’a été envoyé</b> : le traitement s’est interrompu en cours de route.
+    Elle n’a jamais été marquée comme transmise. Annulez la réservation pour pouvoir la proposer de nouveau.
+  </p>
+  <form method="post">
+    <input type="hidden" name="action" value="liberer">
+    <input type="hidden" name="pro_id" value="${pro.id}">
+    <button type="submit" class="sec">Annuler la réservation</button>
+  </form>
 </div>`;
 }
 
@@ -502,9 +567,15 @@ async function afficher(env: Env, lead: LigneLead, identite: string, url: URL): 
     historique.find((a) => a.professionnel_id === lead.pro_actif_id && (a.statut === 'accepte' || a.statut === 'refuse')) ??
     null;
 
+  const envoiConfirme = historique.some(
+    (a) => a.professionnel_id === lead.pro_actif_id && a.statut === 'envoye'
+  );
+
   const blocRoutage = lead.pro_actif_id
     ? proActif
-      ? blocAttribue(lead, proActif, reponseDuPro)
+      ? envoiConfirme
+        ? blocAttribue(lead, proActif, reponseDuPro)
+        : blocReservationIncomplete(lead, proActif)
       : `<div class="carte alerte"><h2>Demande bloquée</h2><p style="margin:0">Elle est attribuée au professionnel n° ${lead.pro_actif_id}, dont la fiche n’existe plus. Recréez la fiche pour enregistrer un refus et libérer la demande.</p></div>`
     : blocEnvoi(lead, selection.candidats, selection.ecartes);
 
