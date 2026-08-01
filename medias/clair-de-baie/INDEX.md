@@ -17,7 +17,16 @@ références RAL dans les noms de fichiers — affichées en tant que revendeur,
 une couverture de plaquette commerciale. Ces trois-là ne sont pas reprises ici.
 
 Il faut donc leur demander directement une photo de portail et une photo de
-store, avec l'autorisation de diffusion écrite.
+store, avec l'autorisation de diffusion écrite. Deux dossiers les attendent :
+
+| Dossier | Destination une fois traitée |
+|---|---|
+| `portails/` | `public/images/realisations/menuisier-portail-fenetre/` |
+| `stores/` | `public/images/realisations/veranda-pergola-store/` |
+
+Déposez le fichier tel quel, sous n'importe quel nom : chaque dossier contient
+un `A-DEPOSER-ICI.md` qui rappelle ce qui convient. Je m'occupe du
+redimensionnement, du renommage et de la mise en ligne.
 
 ## Droits
 
