@@ -92,18 +92,44 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const form = await request.formData();
     const action = String(form.get('action') || '');
     const id = Number(form.get('id') || 0);
+    let fait = '';
 
     if (action === 'supprimer' && id > 0) {
-      await env.DB.prepare('DELETE FROM leads WHERE id = ?').bind(id).run();
+      /**
+       * L'effacement doit emporter la trace de routage.
+       *
+       * `attributions.lead_id` référence `leads.id` et D1 applique les clés
+       * étrangères : supprimer la demande seule échouait dès qu'elle avait été
+       * routée — c'est-à-dire dans le cas le plus courant. L'exception n'était
+       * pas rattrapée, la page renvoyait une erreur, et rien n'indiquait
+       * pourquoi. Le droit à l'effacement devenait inapplicable là où il compte.
+       *
+       * On efface donc l'historique, on détache la référence que les fiches
+       * professionnels gardent vers cette demande, puis on supprime la demande.
+       * En un seul lot : un effacement partiel serait pire que pas d'effacement.
+       */
+      try {
+        await env.DB.batch([
+          env.DB.prepare('DELETE FROM attributions WHERE lead_id = ?').bind(id),
+          env.DB.prepare('UPDATE professionnels SET dernier_lead_id = NULL WHERE dernier_lead_id = ?').bind(id),
+          env.DB.prepare('DELETE FROM leads WHERE id = ?').bind(id)
+        ]);
+        fait = 'supprime';
+      } catch (erreur) {
+        fait = 'suppression-echec';
+      }
     } else if (action === 'statut' && id > 0) {
       const statut = String(form.get('statut') || 'nouveau');
       if (['nouveau', 'transmis', 'traite', 'perdu'].includes(statut)) {
         await env.DB.prepare('UPDATE leads SET statut = ? WHERE id = ?').bind(statut, id).run();
+        fait = 'statut';
       }
     }
 
     // Redirection pour éviter le renvoi du formulaire au rafraîchissement.
-    return Response.redirect(url.origin + url.pathname + url.search, 303);
+    const retour = new URL(url.origin + url.pathname + url.search);
+    if (fait) retour.searchParams.set('fait', fait);
+    return Response.redirect(retour.toString(), 303);
   }
 
   // --- Filtres -----------------------------------------------------------
@@ -172,7 +198,20 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const exportUrl = `/admin/export.csv${url.search}`;
 
-  const filtres = `
+  const MESSAGES: Record<string, { ton: string; texte: string }> = {
+    supprime: { ton: 'ok', texte: 'Demande supprimée, ainsi que son historique de routage.' },
+    statut: { ton: 'ok', texte: 'Statut mis à jour.' },
+    'suppression-echec': {
+      ton: 'alerte',
+      texte: 'La suppression a échoué. La demande et son historique sont intacts.'
+    }
+  };
+  const retour = MESSAGES[(url.searchParams.get('fait') || '').slice(0, 40)];
+  const banniere = retour
+    ? `<div class="carte ${retour.ton === 'ok' ? 'ok' : 'alerte'}">${echapper(retour.texte)}</div>`
+    : '';
+
+  const filtres = `${banniere}
 <div class="stats">
   <div class="stat"><b>${stats?.total ?? 0}</b><span>demandes au total</span></div>
   <div class="stat"><b>${stats?.nouveaux ?? 0}</b><span>à traiter</span></div>
