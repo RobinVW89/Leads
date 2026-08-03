@@ -13,6 +13,16 @@ export const GET: APIRoute = () => {
     'Disallow: /admin',
     'Disallow: /api/',
     'Disallow: /merci',
+    // `/cdn-cgi/l/email-protection` n'est pas une page du site : Cloudflare
+    // réécrit à la volée les liens `mailto:` sous cette forme pour masquer les
+    // adresses aux aspirateurs. L'adresse réelle tient dans le fragment `#…`,
+    // que le navigateur ne transmet jamais au serveur — l'URL seule répond
+    // donc 404, ce que la Search Console signalait comme page introuvable.
+    //
+    // On vise ce chemin précis plutôt que tout `/cdn-cgi/` : le script de
+    // déchiffrement vit sous le même préfixe, et le bloquer empêcherait Google
+    // de rendre correctement les deux pages qui portent une adresse.
+    'Disallow: /cdn-cgi/l/email-protection',
     '',
     `Sitemap: ${SITE_CONFIG.siteUrl}/sitemap.xml`,
     ''
