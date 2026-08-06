@@ -51,8 +51,12 @@ const enJsonSur = (valeur: object) => JSON.stringify(valeur).replace(/</g, '\\u0
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- Le SVG est l'icône de référence : un seul tracé, net à toutes les
+		     tailles. Le .ico ne sert que d'appui pour les agents qui ignorent
+		     encore le SVG, et l'apple-touch-icon pour l'écran d'accueil iOS. -->
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<meta name="description" content={description} />
