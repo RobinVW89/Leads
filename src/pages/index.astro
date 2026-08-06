@@ -5,7 +5,7 @@ import MetierIcon from '../components/MetierIcon.astro';
 import YonneMap from '../components/YonneMap.astro';
 import { SITE_CONFIG } from '../config/site';
 import { metiersData, villesData } from '../lib/data';
-import { organizationSchema, webSiteSchema } from '../lib/seo';
+import { faqPageSchema, organizationSchema, webSiteSchema } from '../lib/seo';
 import BoutonUrgence from '../components/BoutonUrgence.astro';
 
 const title = `${SITE_CONFIG.siteName} | Devis gratuit dans l'Yonne`;
@@ -49,6 +49,34 @@ const atouts = [
 	}
 ];
 
+/**
+ * Bloc de bas de page. Les requêtes « artisan Yonne » et « trouver un artisan
+ * dans l'Yonne » n'étaient portées par aucun titre : le hero parle de
+ * « professionnels » et de « travaux », jamais d'artisan. Plutôt que de
+ * réécrire une accroche qui fonctionne, on ajoute ici un contenu de fond qui
+ * les porte naturellement — et qui répond à des questions réellement posées.
+ *
+ * Les mêmes questions alimentent l'affichage et le schéma : un FAQPage qui
+ * déclarerait autre chose que ce que la page montre serait invalide.
+ */
+const questionsAccueil = [
+  {
+    question: "Comment trouver un artisan dans l'Yonne avec ce service ?",
+    reponse:
+      "Décrivez votre projet en quelques minutes : le métier concerné, votre commune et la nature des travaux. La demande part ensuite vers un professionnel référencé qui couvre votre secteur, et qui vous rappelle sous 24 heures."
+  },
+  {
+    question: 'Le service est-il payant pour les particuliers ?',
+    reponse:
+      "Non. La mise en relation est gratuite et sans engagement, et aucune commission n'est prélevée sur le devis que vous signez."
+  },
+  {
+    question: "Quelles communes de l'Yonne sont couvertes ?",
+    reponse:
+      "L'ensemble du département. Auxerre, Sens et Joigny disposent de pages dédiées par métier, et les communes voisines sont couvertes par les professionnels qui s'y déplacent."
+  }
+];
+
 const identiteSchema = organizationSchema();
 const siteSchema = webSiteSchema();
 ---
@@ -56,7 +84,7 @@ const siteSchema = webSiteSchema();
 <Layout
 	title={title}
 	description={description}
-	jsonLd={[identiteSchema, siteSchema]}
+	jsonLd={[identiteSchema, siteSchema, faqPageSchema(questionsAccueil)]}
 	stickyCta={{ label: 'Trouver mon professionnel', href: '#quick-access', badge: 'Gratuit · 24 h' }}
 >
 	<section class="hero">
@@ -187,7 +215,7 @@ const siteSchema = webSiteSchema();
 
 	<section class="section" id="metiers">
 		<div class="rule-block">
-			<h2>Métiers disponibles dans l'Yonne</h2>
+			<h2>Artisans et professionnels disponibles dans l'Yonne</h2>
 			<p class="muted">Chaque fiche locale explique les prestations, les prix indicatifs et les délais de rappel.</p>
 		</div>
 		<div class="bento-grid">
@@ -316,6 +344,36 @@ const siteSchema = webSiteSchema();
 				<span class="inline-note">Candidature gratuite, réponse sous 48 h</span>
 			</div>
 		</div>
+	</section>
+
+	<section class="section" id="trouver-artisan-yonne">
+		<div class="rule-block">
+			<h2>Pourquoi passer par nous pour trouver un artisan dans l'Yonne&nbsp;?</h2>
+		</div>
+		<p>
+			Chercher un artisan dans l'Yonne prend du temps : appels sans réponse, entreprises qui ne se déplacent pas
+			jusqu'à votre commune, devis promis qui n'arrivent jamais. Nous faisons ce tri en amont, sur le seul
+			département 89.
+		</p>
+		<p>
+			Une différence avec les plateformes nationales de devis : votre demande n'est transmise qu'à
+			<strong>un seul professionnel</strong>, choisi pour son métier et son secteur d'intervention. Vous n'êtes pas
+			rappelé par cinq entreprises le même jour, et l'artisan ne verse aucune commission sur le chantier qu'il signe.
+		</p>
+
+		<div class="local-faq">
+			{questionsAccueil.map((faq) => (
+				<details>
+					<summary>{faq.question}</summary>
+					<p>{faq.reponse}</p>
+				</details>
+			))}
+		</div>
+
+		<p class="muted">
+			Pages par ville : <a href="/auxerre/">artisans à Auxerre</a> · <a href="/sens/">artisans à Sens</a> ·
+			<a href="/joigny/">artisans à Joigny</a>
+		</p>
 	</section>
 
 	<script is:inline>

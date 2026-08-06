@@ -30,11 +30,12 @@ export function serviceSchema(metier: Metier, ville: Ville, canonicalPath: strin
  * comprise. Un FAQPage qui annonce des questions absentes de la page est une
  * cause classique de perte du rich result.
  */
-export function faqSchema(metier: Metier, questions?: Array<{ question: string; reponse: string }>) {
+/** FAQPage à partir des seules questions affichées sur la page. */
+export function faqPageSchema(questions: Array<{ question: string; reponse: string }>) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: (questions ?? metier.questionsFrequentes).map((faq) => ({
+    mainEntity: questions.map((faq) => ({
       '@type': 'Question',
       name: faq.question,
       acceptedAnswer: {
@@ -43,6 +44,10 @@ export function faqSchema(metier: Metier, questions?: Array<{ question: string; 
       }
     }))
   };
+}
+
+export function faqSchema(metier: Metier, questions?: Array<{ question: string; reponse: string }>) {
+  return faqPageSchema(questions ?? metier.questionsFrequentes);
 }
 
 export function breadcrumbSchema(items: Array<{ name: string; url?: string }>) {
