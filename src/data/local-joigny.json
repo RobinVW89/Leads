@@ -313,5 +313,47 @@
         "reponse": "La réponse dépend du coût d'entretien, de la valeur du bien et de votre horizon. Un chiffrage des travaux autorisés et une estimation permettent de comparer les options."
       }
     ]
+  },
+  {
+    "slug": "terrassement-assainissement",
+    "title": "Terrassement et assainissement à Joigny",
+    "intro": "Terrasser et assainir suppose de connaître le terrain avant d'y toucher. À Joigny, deux documents commandent ce qui est possible : le Plan de sauvegarde et de mise en valeur dans le centre protégé, le Plan local d'urbanisme intercommunal du Jovinien ailleurs.",
+    "localTitle": "Vos travaux à Joigny",
+    "localParagraphs": [
+      "Avant d'engager un terrassement, le classement de la parcelle se vérifie sur le portail Géorisques, qui recense les risques connus adresse par adresse. Ce point conditionne la profondeur des fouilles autant que le choix de la filière d'assainissement, et il se consulte en quelques minutes.",
+      "Dans le périmètre du Plan de sauvegarde et de mise en valeur, une intervention qui modifie les abords, un mur ou un niveau de sol relève de prescriptions. Le service urbanisme indique ce qui est soumis à autorisation avant que la pelle n'arrive, et non une fois la tranchée ouverte.",
+      "Si votre terrain présente un dénivelé, l'écoulement devient le premier sujet. Pente des canalisations, position des regards et exutoire des eaux pluviales se calculent ensemble : une contre-pente involontaire ne se corrige qu'en rouvrant ce qui vient d'être refermé."
+    ],
+    "localFaqs": [
+      {
+        "question": "Comment savoir ce qui est autorisé sur mon terrain à Joigny ?",
+        "reponse": "Le service urbanisme précise si votre parcelle relève du Plan de sauvegarde et de mise en valeur ou du Plan local d'urbanisme intercommunal du Jovinien, approuvé en décembre 2019."
+      },
+      {
+        "question": "Faut-il une étude avant d'installer un assainissement individuel ?",
+        "reponse": "Oui. Une étude de filière détermine le dispositif adapté à la nature du sol et à la surface disponible, et le contrôle de conformité relève ensuite du service public compétent."
+      }
+    ]
+  },
+  {
+    "slug": "carreleur-plaquiste",
+    "title": "Carreleur plaquiste à Joigny",
+    "intro": "Carrelage et plâtrerie passent pour des travaux intérieurs, donc libres. Dans le centre de Joigny, couvert par le Plan de sauvegarde et de mise en valeur du Site patrimonial remarquable, ce n'est pas toujours le cas : ce document peut aussi porter sur des dispositions intérieures du bâti protégé.",
+    "localTitle": "Vos travaux à Joigny",
+    "localParagraphs": [
+      "Avant d'ouvrir un chantier dans le secteur protégé, faites préciser par le service urbanisme ce qui est concerné. Un sol ancien, un enduit ou une distribution intérieure peuvent relever de prescriptions, là où les mêmes travaux seraient libres quelques rues plus loin.",
+      "Sur un plancher bois ancien, la pose collée directe finit par fissurer : le support travaille avec l'humidité et les charges. Une natte de désolidarisation ou une chape adaptée absorbe ces mouvements. C'est ce poste, invisible une fois terminé, qui détermine la durée de vie du carrelage.",
+      "En plâtrerie, les murs anciens sont rarement d'aplomb. Doubler pour rattraper fait gagner du temps mais mange de la surface et peut piéger l'humidité contre la paroi ; enduire suit le mur et demande davantage de main-d'œuvre. L'arbitrage se pose pièce par pièce."
+    ],
+    "localFaqs": [
+      {
+        "question": "Des travaux intérieurs sont-ils soumis à autorisation à Joigny ?",
+        "reponse": "Dans le périmètre du Plan de sauvegarde et de mise en valeur, certaines dispositions intérieures du bâti protégé sont encadrées. Le service urbanisme indique ce qui est concerné à votre adresse."
+      },
+      {
+        "question": "Peut-on carreler directement sur un plancher bois ?",
+        "reponse": "Rarement en direct : le support bouge et la pose se fissure. Une désolidarisation ou une chape adaptée est nécessaire, et son coût doit figurer explicitement au devis."
+      }
+    ]
   }
 ]
