@@ -526,7 +526,7 @@
     ],
     "urgence": false,
     "saison": "toute-annee",
-    "actif": false
+    "actif": true
   },
   {
     "slug": "carreleur-plaquiste",
@@ -566,7 +566,7 @@
     ],
     "urgence": false,
     "saison": "toute-annee",
-    "actif": false
+    "actif": true
   },
   {
     "slug": "photovoltaique-solaire",
